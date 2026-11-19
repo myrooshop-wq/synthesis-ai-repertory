@@ -220,6 +220,8 @@
       .symptom-chip { width: 100%; min-width: 0; }
     }
   </style>
+  <script src="sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
 </head>
 <body>
 
@@ -233,6 +235,11 @@
       </div>
     </div>
     <div class="header-actions">
+      <div id="dbStatusBadge" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; font-weight: 600;">
+        <span id="dbStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: #eab308; display: inline-block;"></span>
+        <span id="dbStatusText">Initializing In-Browser DB...</span>
+      </div>
+
       <button class="btn btn-outline" onclick="openSettingsModal()"><i class="fa-solid fa-gear"></i> Gemini API Key</button>
       <button class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Rx</button>
       <button class="btn btn-primary" onclick="generatePrescription()"><i class="fa-solid fa-file-prescription"></i> Export to Rx</button>
@@ -654,6 +661,122 @@
 
     // Step 2: Autocomplete Synthesis Rubric Search (Standard & Semantic Mode)
     let searchDebounce = null;
+    
+    // ==========================================
+    // OPTION 3: IN-BROWSER WEBASSEMBLY SQLITE ENGINE
+    // Works 100% Client-Side Even When PC is Off!
+    // ==========================================
+    let wasmDb = null;
+    let isWasmDbReady = false;
+    const DB_CACHE_NAME = 'synthesis_core_v2_db';
+    const GZ_DB_URL = 'https://github.com/myrooshop-wq/synthesis-ai-repertory/releases/download/v2.0-db/synthesis_core.db.gz';
+
+    async function initBrowserSqlite() {
+      const dot = document.getElementById('dbStatusDot');
+      const text = document.getElementById('dbStatusText');
+
+      try {
+        text.textContent = "Loading WebAssembly SQL...";
+        const SQL = await initSqlJs({
+          locateFile: file => file
+        });
+
+        // 1. Try to load from browser IndexedDB cache
+        let dbBuffer = await loadDbFromIndexedDB();
+
+        if (!dbBuffer) {
+          text.textContent = "Downloading 180k Rubric DB (33MB)...";
+          dot.style.background = "#3b82f6";
+          
+          const resp = await fetch(GZ_DB_URL);
+          if (!resp.ok) throw new Error("Could not download database release asset");
+
+          const reader = resp.body.getReader();
+          const contentLength = +resp.headers.get('Content-Length') || 34626788;
+          let received = 0;
+          let chunks = [];
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            const pct = Math.round((received / contentLength) * 100);
+            text.textContent = `Downloading DB: ${pct}%`;
+          }
+
+          let allChunks = new Uint8Array(received);
+          let pos = 0;
+          for (let chunk of chunks) {
+            allChunks.set(chunk, pos);
+            pos += chunk.length;
+          }
+
+          text.textContent = "Decompressing Database...";
+          dbBuffer = pako.ungzip(allChunks);
+
+          // Save to IndexedDB so subsequent visits load instantly!
+          await saveDbToIndexedDB(dbBuffer);
+        }
+
+        text.textContent = "Mounting In-Memory SQLite...";
+        wasmDb = new SQL.Database(dbBuffer);
+        isWasmDbReady = true;
+
+        dot.style.background = "#108a00";
+        text.textContent = "In-Browser DB (180,386 Rubrics Ready)";
+        console.log("[WasmDB] In-browser SQLite successfully loaded!");
+      } catch (err) {
+        console.warn("[WasmDB] Fallback to live cloud tunnel:", err);
+        dot.style.background = "#108a00";
+        text.textContent = "Cloud Tunnel Active";
+      }
+    }
+
+    // IndexedDB helpers for offline caching
+    function openIDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('synthesis_local_store', 1);
+        req.onupgradeneeded = e => {
+          e.target.result.createObjectStore('db_cache');
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e);
+      });
+    }
+
+    async function loadDbFromIndexedDB() {
+      try {
+        const idb = await openIDB();
+        return new Promise((resolve) => {
+          const tx = idb.transaction('db_cache', 'readonly');
+          const store = tx.objectStore('db_cache');
+          const req = store.get(DB_CACHE_NAME);
+          req.onsuccess = () => resolve(req.result ? new Uint8Array(req.result) : null);
+          req.onerror = () => resolve(null);
+        });
+      } catch(e) {
+        return null;
+      }
+    }
+
+    async function saveDbToIndexedDB(buffer) {
+      try {
+        const idb = await openIDB();
+        const tx = idb.transaction('db_cache', 'readwrite');
+        const store = tx.objectStore('db_cache');
+        store.put(buffer.buffer, DB_CACHE_NAME);
+      } catch(e) {
+        console.warn("Could not cache DB in IndexedDB:", e);
+      }
+    }
+
+    // Start loading database on page start
+    window.addEventListener('DOMContentLoaded', () => {
+      initBrowserSqlite();
+    });
+
+
     function handleRubricSearch(query) {
       clearTimeout(searchDebounce);
       const dropdown = document.getElementById('rubricDropdown');
@@ -664,9 +787,90 @@
       const isSemantic = document.getElementById('semanticSearchToggle')?.checked || false;
 
       searchDebounce = setTimeout(async () => {
-        const url = `${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
-        const res = await fetch(url);
-        const list = await res.json();
+        let list = [];
+
+        // Check if WebAssembly in-browser database is active!
+        if (isWasmDbReady && wasmDb && !isSemantic) {
+          try {
+            const cleanQ = query.trim().toUpperCase();
+            const terms = cleanQ.split(/\s+/).filter(t => t.length > 0);
+            
+            let sql = "";
+            let params = [];
+            
+            if (terms.length === 1) {
+              const term = terms[0];
+              sql = `
+                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                FROM syntree s
+                WHERE s.path LIKE ? OR s.path LIKE ?
+                ORDER BY 
+                  CASE WHEN s.path LIKE ? THEN 1 WHEN s.path LIKE ? THEN 2 ELSE 3 END,
+                  remedy_count DESC
+                LIMIT 12
+              `;
+              params = [`${term}%`, `% - ${term}%`, `${term}%`, `% - ${term}%`];
+            } else {
+              const likes = terms.map(t => "s.path LIKE ?").join(" AND ");
+              sql = `
+                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                FROM syntree s
+                WHERE ${likes}
+                ORDER BY remedy_count DESC
+                LIMIT 12
+              `;
+              params = terms.map(t => `%${t}%`);
+            }
+
+            const stmt = wasmDb.prepare(sql);
+            stmt.bind(params);
+            while (stmt.step()) {
+              const row = stmt.getAsObject();
+              list.push({
+                id: row.id,
+                path: row.path,
+                level: row.level,
+                remedy_count: row.remedy_count || 0,
+                is_xref_alias: false,
+                match_type: "In-Browser WebAssembly"
+              });
+            }
+            stmt.free();
+
+            // If few matches, check cross references (e.g. MIGRAINE -> HEAD - PAIN)
+            if (list.length < 5) {
+              const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
+              xrStmt.bind([`%${cleanQ}%`]);
+              while (xrStmt.step()) {
+                const xr = xrStmt.getAsObject();
+                list.push({
+                  id: xr.symptom_id,
+                  path: `${xr.text} ➔ (See Target)`,
+                  level: 2,
+                  remedy_count: 0,
+                  is_xref_alias: true,
+                  match_type: "Cross Reference"
+                });
+              }
+              xrStmt.free();
+            }
+          } catch(e) {
+            console.warn("WASM search error, falling back to network API:", e);
+          }
+        }
+
+        // Fallback to Network API if list is empty or semantic search is chosen
+        if (list.length === 0) {
+          try {
+            const url = `${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
+            const res = await fetch(url);
+            list = await res.json();
+          } catch(err) {
+            console.error("Network fetch failed:", err);
+          }
+        }
         dropdown.innerHTML = '';
         if (list.length === 0) {
           dropdown.innerHTML = `<div class="dropdown-item" style="color: var(--text-muted); padding: 12px;">No matching Synthesis rubrics found</div>`;
@@ -716,8 +920,34 @@
 
     // Expand Sub-rubrics (e.g. MIND - ANXIETY -> Bladder, with pain in)
     async function expandSubRubrics(parentId, parentPath) {
-      const res = await fetch(`${API_BASE}/api/rubric-children?parent_id=${parentId}`);
-      const children = await res.json();
+      let children = [];
+
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const stmt = wasmDb.prepare(`
+            SELECT s.id, s.item, s.path, s.level,
+              (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+            FROM syntree s
+            WHERE s.id_father = ?
+            ORDER BY s.item ASC
+            LIMIT 50
+          `);
+          stmt.bind([parentId]);
+          while (stmt.step()) {
+            children.push(stmt.getAsObject());
+          }
+          stmt.free();
+        } catch(e) {
+          console.warn("WASM sub-rubric error:", e);
+        }
+      }
+
+      if (children.length === 0) {
+        try {
+          const res = await fetch(`${API_BASE}/api/rubric-children?parent_id=${parentId}`);
+          children = await res.json();
+        } catch(e) {}
+      }
       const dropdown = document.getElementById('rubricDropdown');
       dropdown.innerHTML = '';
 
@@ -1165,8 +1395,29 @@
 
     // Modal to browse all 41 top-level chapters (Mind, Vertigo, Head, etc.)
     async function openChaptersDirectory(replaceTargetId = null) {
-      const res = await fetch(API_BASE + '/api/chapters');
-      const chapters = await res.json();
+      let chapters = [];
+
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const stmt = wasmDb.prepare(`
+            SELECT c.id, s.item as name, s.path
+            FROM chapters c
+            JOIN syntree s ON c.id = s.id
+            ORDER BY s.item ASC
+          `);
+          while (stmt.step()) {
+            chapters.push(stmt.getAsObject());
+          }
+          stmt.free();
+        } catch(e) {}
+      }
+
+      if (chapters.length === 0) {
+        try {
+          const res = await fetch(API_BASE + '/api/chapters');
+          chapters = await res.json();
+        } catch(e) {}
+      }
       
       document.getElementById('modalTitle').innerHTML = `
         <i class="fa-solid fa-book" style="color: var(--primary); margin-right: 6px;"></i>
