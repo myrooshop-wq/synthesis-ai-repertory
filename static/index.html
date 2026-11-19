@@ -191,33 +191,205 @@
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
 
     /* Mobile Responsive Optimizations */
+    /* Mobile-First Responsive Styles & Touch Ergonomics */
     @media (max-width: 768px) {
-      header { padding: 10px 14px; flex-direction: column; gap: 10px; align-items: flex-start; }
-      .brand { width: 100%; }
-      .brand-title { font-size: 16px; }
-      .header-actions { width: 100%; display: flex; justify-content: space-between; gap: 6px; }
-      .header-actions .btn { flex: 1; justify-content: center; padding: 8px 6px; font-size: 11px; }
-      
-      .container { padding: 0 10px; margin: 12px auto; gap: 16px; }
-      .card { padding: 14px; }
-      .card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
-      
-      .mic-button-row { flex-direction: column; width: 100%; gap: 8px; }
-      .mic-button-row .btn { width: 100%; justify-content: center; }
-      
-      .search-rubrics-bar { flex-direction: column; gap: 8px; }
-      .search-input-group { width: 100%; }
-      .search-rubrics-bar > button { width: 100%; justify-content: center; }
-      
-      .dropdown-item { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .dropdown-item > div:last-child { width: 100%; justify-content: space-between; }
+      /* Prevent iOS/Android auto-zoom on input tap */
+      input, select, textarea, button {
+        font-size: 16px !important;
+      }
 
-      .filter-bar { flex-direction: column; align-items: stretch; gap: 10px; }
-      .filter-item { justify-content: space-between; width: 100%; }
-      .filter-item select { flex: 1; max-width: 60%; }
+      header {
+        padding: 10px 14px;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+      }
+      .brand {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand-title {
+        font-size: 15px;
+        line-height: 1.25;
+      }
+      .brand-subtitle {
+        font-size: 10px;
+      }
+      .header-actions {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 6px;
+      }
+      .header-actions .btn {
+        flex: 1 1 45%;
+        justify-content: center;
+        padding: 8px 6px;
+        font-size: 12px;
+      }
+      #dbStatusBadge {
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 2px;
+        font-size: 11px;
+      }
 
-      .modal-box { width: 96%; padding: 14px; max-height: 92vh; }
-      .symptom-chip { width: 100%; min-width: 0; }
+      .container {
+        padding: 0 8px;
+        margin: 10px auto;
+        gap: 14px;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+      }
+      .card {
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .card-title {
+        font-size: 15px;
+      }
+
+      .mic-button-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 8px;
+      }
+      .mic-button-row .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 10px 12px;
+        font-size: 13px !important;
+      }
+
+      .buckets-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .bucket {
+        padding: 10px 12px;
+      }
+
+      /* Search Bar Ergonomics */
+      .search-rubrics-bar {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      .search-input-group {
+        width: 100%;
+      }
+      .search-rubric-input {
+        padding: 10px 12px 10px 38px;
+        font-size: 15px !important;
+        border-radius: 8px;
+      }
+      .search-icon {
+        left: 12px;
+        font-size: 14px;
+      }
+      .search-rubrics-bar > button {
+        width: 100%;
+        justify-content: center;
+        height: 38px;
+        font-size: 13px !important;
+      }
+
+      /* Mobile Autocomplete Dropdown - Prevents Screen Overflow */
+      .autocomplete-dropdown {
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-width: 100vw;
+        max-height: 55vh;
+        border-radius: 8px;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+      }
+      .dropdown-item {
+        padding: 10px 10px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .dropdown-item-content {
+        max-width: 100% !important;
+        width: 100%;
+      }
+      .dropdown-item-content > div:first-child {
+        font-size: 13px;
+        white-space: normal !important;
+        word-break: break-word;
+        line-height: 1.35;
+      }
+      .dropdown-item-actions {
+        width: 100%;
+        justify-content: space-between;
+        margin-left: 0;
+        border-top: 1px dashed #e2e8f0;
+        padding-top: 6px;
+      }
+      .dropdown-item-actions .btn {
+        padding: 5px 10px;
+        font-size: 12px !important;
+      }
+
+      /* Repertorisation Grid Mobile Responsiveness */
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      .filter-item {
+        justify-content: space-between;
+        width: 100%;
+        font-size: 12px;
+      }
+      .filter-item select {
+        flex: 1;
+        max-width: 60%;
+        padding: 6px 8px;
+      }
+
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 10px;
+      }
+      table.rep-table th, table.rep-table td {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      table.rep-table th:first-child, table.rep-table td:first-child {
+        min-width: 220px !important;
+        max-width: 240px;
+        word-break: break-word;
+      }
+
+      /* Modal Boxes on Mobile */
+      .modal-box {
+        width: 95% !important;
+        max-width: 95vw !important;
+        padding: 12px !important;
+        max-height: 90vh !important;
+      }
+      .symptom-chip {
+        width: 100%;
+        min-width: 0;
+      }
+      .synth-breadcrumbs {
+        flex-wrap: wrap;
+        font-size: 12px;
+      }
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
@@ -777,6 +949,108 @@
     });
 
 
+    // ------------------------------------------------------------------------
+    // In-Browser Semantic & Natural Language Repertory Engine (Client-Side)
+    // ------------------------------------------------------------------------
+    const CLIENT_SYNONYMS = {
+      "headache": ["HEAD", "PAIN"],
+      "migraine": ["HEAD", "PAIN", "HEMICRANIA"],
+      "hemicrania": ["HEAD", "PAIN"],
+      "vomiting": ["STOMACH", "VOMITING"],
+      "vomit": ["STOMACH", "VOMITING"],
+      "nausea": ["STOMACH", "NAUSEA"],
+      "diarrhea": ["RECTUM", "DIARRHEA"],
+      "loose": ["RECTUM", "DIARRHEA"],
+      "motion": ["RECTUM", "DIARRHEA"],
+      "fever": ["FEVER"],
+      "chill": ["CHILL"],
+      "cold": ["NOSE", "CORYZA"],
+      "coryza": ["NOSE", "CORYZA"],
+      "cough": ["COUGH"],
+      "anorexia": ["STOMACH", "APPETITE", "WANTING"],
+      "appetite": ["STOMACH", "APPETITE"],
+      "hunger": ["STOMACH", "APPETITE"],
+      "weakness": ["GENERALS", "WEAKNESS"],
+      "fatigue": ["GENERALS", "WEAKNESS"],
+      "debility": ["GENERALS", "DEBILITY"],
+      "tired": ["GENERALS", "WEAKNESS", "TIRED"],
+      "thirst": ["STOMACH", "THIRST"],
+      "thirsty": ["STOMACH", "THIRST"],
+      "sleeplessness": ["SLEEP", "SLEEPLESSNESS"],
+      "insomnia": ["SLEEP", "SLEEPLESSNESS"],
+      "sleepless": ["SLEEP", "SLEEPLESSNESS"],
+      "sleep": ["SLEEP"],
+      "restlessness": ["MIND", "RESTLESSNESS"],
+      "restless": ["MIND", "RESTLESSNESS"],
+      "anxiety": ["MIND", "ANXIETY"],
+      "anxious": ["MIND", "ANXIETY"],
+      "fear": ["MIND", "FEAR"],
+      "afraid": ["MIND", "FEAR"],
+      "dark": ["DARK"],
+      "darkness": ["DARK"],
+      "death": ["DEATH"],
+      "anger": ["MIND", "ANGER"],
+      "angry": ["MIND", "ANGER"],
+      "irritability": ["MIND", "IRRITABILITY"],
+      "irritable": ["MIND", "IRRITABILITY"],
+      "vertigo": ["VERTIGO"],
+      "dizziness": ["VERTIGO"],
+      "dizzy": ["VERTIGO"],
+      "burning": ["BURNING"],
+      "cramp": ["CRAMPING", "PAIN"],
+      "cramps": ["CRAMPING", "PAIN"],
+      "cramping": ["CRAMPING", "PAIN"],
+      "acidity": ["STOMACH", "ERUCTATIONS", "ACIDITY"],
+      "acid": ["STOMACH", "ERUCTATIONS", "ACIDITY"],
+      "gas": ["ABDOMEN", "DISTENSION", "FLATULENCE"],
+      "flatulence": ["ABDOMEN", "FLATULENCE"],
+      "bloating": ["ABDOMEN", "DISTENSION"],
+      "constipation": ["RECTUM", "CONSTIPATION"],
+      "piles": ["RECTUM", "HEMORRHOIDS"],
+      "hemorrhoids": ["RECTUM", "HEMORRHOIDS"],
+      "itching": ["SKIN", "ITCHING"],
+      "itch": ["SKIN", "ITCHING"],
+      "eruptions": ["SKIN", "ERUPTIONS"],
+      "sweat": ["PERSPIRATION"],
+      "perspiration": ["PERSPIRATION"],
+      "backache": ["BACK", "PAIN"],
+      "joint": ["EXTREMITIES", "PAIN", "JOINTS"],
+      "joints": ["EXTREMITIES", "PAIN", "JOINTS"],
+      "throat": ["THROAT", "PAIN"],
+      "chest": ["CHEST"]
+    };
+
+    const CLIENT_PHRASE_EXPANSIONS = {
+      "loose motion": ["RECTUM - DIARRHEA", "STOOL - THIN", "STOOL - WATERY"],
+      "loose motions": ["RECTUM - DIARRHEA", "STOOL - THIN", "STOOL - WATERY"],
+      "watery stool": ["RECTUM - DIARRHEA", "STOOL - WATERY"],
+      "stomach ache": ["ABDOMEN - PAIN", "STOMACH - PAIN"],
+      "belly ache": ["ABDOMEN - PAIN"],
+      "runny nose": ["NOSE - CORYZA", "NOSE - DISCHARGE"],
+      "body ache": ["GENERALS - PAIN", "EXTREMITIES - PAIN"],
+      "limb pain": ["EXTREMITIES - PAIN"],
+      "loss of appetite": ["STOMACH - APPETITE - wanting"],
+      "no appetite": ["STOMACH - APPETITE - wanting"],
+      "burning stomach": ["STOMACH - PAIN - burning"],
+      "burning in stomach": ["STOMACH - PAIN - burning"],
+      "dry mouth": ["MOUTH - DRYNESS"],
+      "restless night": ["MIND - RESTLESSNESS - night", "SLEEP - RESTLESS - night"],
+      "restlessness at night": ["MIND - RESTLESSNESS - night"],
+      "night sweat": ["PERSPIRATION - NIGHT"],
+      "sweating at night": ["PERSPIRATION - NIGHT"],
+      "high fever": ["FEVER - INTENSE heat", "FEVER - CONTINUED fever"],
+      "chill with fever": ["FEVER - CHILL; with", "CHILL - FEVER; with"],
+      "migraine": ["HEAD - PAIN", "HEAD - PAIN - Sides - one side"],
+      "headache": ["HEAD - PAIN"],
+      "vomiting": ["STOMACH - VOMITING"],
+      "nausea": ["STOMACH - NAUSEA"],
+      "acidity": ["STOMACH - ERUCTATIONS; TYPE OF - sour", "STOMACH - ACIDITY"],
+      "gas in stomach": ["ABDOMEN - DISTENSION", "ABDOMEN - FLATULENCE"],
+      "bloating": ["ABDOMEN - DISTENSION"]
+    };
+
+    const CLIENT_STOPWORDS = new Set(["and", "or", "the", "a", "an", "in", "on", "at", "to", "for", "of", "with", "from", "by", "is", "after", "before", "during"]);
+// Search Autocomplete with Hybrid Semantic Matching in Browser SQLite
     function handleRubricSearch(query) {
       clearTimeout(searchDebounce);
       const dropdown = document.getElementById('rubricDropdown');
@@ -788,71 +1062,153 @@
 
       searchDebounce = setTimeout(async () => {
         let list = [];
+        const seenIds = new Set();
 
-        // Check if WebAssembly in-browser database is active!
+        // 1. Check if WebAssembly in-browser database is active!
         if (isWasmDbReady && wasmDb) {
           try {
+            const rawQ = query.trim().toLowerCase();
             const cleanQ = query.trim().toUpperCase();
-            const terms = cleanQ.split(/\s+/).filter(t => t.length > 0);
-            
-            let sql = "";
-            let params = [];
-            
-            if (terms.length === 1) {
-              const term = terms[0];
-              sql = `
-                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
-                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
-                FROM syntree s
-                WHERE s.path LIKE ? OR s.path LIKE ?
-                ORDER BY 
-                  CASE WHEN s.path LIKE ? THEN 1 WHEN s.path LIKE ? THEN 2 ELSE 3 END,
-                  remedy_count DESC
-                LIMIT 12
-              `;
-              params = [`${term}%`, `% - ${term}%`, `${term}%`, `% - ${term}%`];
-            } else {
-              const likes = terms.map(t => "s.path LIKE ?").join(" AND ");
-              sql = `
-                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
-                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
-                FROM syntree s
-                WHERE ${likes}
-                ORDER BY remedy_count DESC
-                LIMIT 12
-              `;
-              params = terms.map(t => `%${t}%`);
+
+            // A. If Semantic Mode is ON: evaluate clinical phrase expansions & concept synonyms!
+            if (isSemantic) {
+              // Check direct phrase expansions (e.g. "loose motion" -> "RECTUM - DIARRHEA")
+              for (const [phrase, targets] of Object.entries(CLIENT_PHRASE_EXPANSIONS)) {
+                if (rawQ.includes(phrase)) {
+                  for (const tpath of targets) {
+                    const pStmt = wasmDb.prepare(`
+                      SELECT s.id, s.path, s.level,
+                        (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                      FROM syntree s
+                      WHERE s.path = ?
+                    `);
+                    pStmt.bind([tpath]);
+                    if (pStmt.step()) {
+                      const row = pStmt.getAsObject();
+                      if (!seenIds.has(row.id)) {
+                        seenIds.add(row.id);
+                        list.push({
+                          id: row.id,
+                          path: row.path,
+                          level: row.level,
+                          remedy_count: row.remedy_count || 0,
+                          is_xref_alias: false,
+                          match_type: "Semantic Match"
+                        });
+                      }
+                    }
+                    pStmt.free();
+                  }
+                }
+              }
+
+              // Check concept synonyms expansion (e.g. "headache" -> HEAD + PAIN)
+              const rawTokens = rawQ.split(/[^a-zA-Z0-9]+/).filter(w => w && !CLIENT_STOPWORDS.has(w));
+              const expandedConcepts = new Set(rawTokens.map(t => t.toUpperCase()));
+              for (const tok of rawTokens) {
+                if (CLIENT_SYNONYMS[tok]) {
+                  CLIENT_SYNONYMS[tok].forEach(syn => expandedConcepts.add(syn.toUpperCase()));
+                }
+              }
+
+              if (list.length < 12 && expandedConcepts.size > 0) {
+                const conceptList = Array.from(expandedConcepts);
+                const likes = conceptList.map(() => "s.path LIKE ?").join(" AND ");
+                const sStmt = wasmDb.prepare(`
+                  SELECT s.id, s.path, s.level,
+                    (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                  FROM syntree s
+                  WHERE ${likes}
+                  ORDER BY remedy_count DESC
+                  LIMIT 12
+                `);
+                sStmt.bind(conceptList.map(c => `%${c}%`));
+                while (sStmt.step()) {
+                  const row = sStmt.getAsObject();
+                  if (!seenIds.has(row.id)) {
+                    seenIds.add(row.id);
+                    list.push({
+                      id: row.id,
+                      path: row.path,
+                      level: row.level,
+                      remedy_count: row.remedy_count || 0,
+                      is_xref_alias: false,
+                      match_type: "Semantic Match"
+                    });
+                  }
+                }
+                sStmt.free();
+              }
             }
 
-            const stmt = wasmDb.prepare(sql);
-            stmt.bind(params);
-            while (stmt.step()) {
-              const row = stmt.getAsObject();
-              list.push({
-                id: row.id,
-                path: row.path,
-                level: row.level,
-                remedy_count: row.remedy_count || 0,
-                is_xref_alias: false,
-                match_type: "In-Browser WebAssembly"
-              });
-            }
-            stmt.free();
+            // B. Standard / Exact / Substring Search
+            if (list.length < 12) {
+              const terms = cleanQ.split(/\s+/).filter(t => t.length > 0);
+              let sql = "";
+              let params = [];
+              
+              if (terms.length === 1) {
+                const term = terms[0];
+                sql = `
+                  SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                    (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                  FROM syntree s
+                  WHERE s.path LIKE ? OR s.path LIKE ?
+                  ORDER BY 
+                    CASE WHEN s.path LIKE ? THEN 1 WHEN s.path LIKE ? THEN 2 ELSE 3 END,
+                    remedy_count DESC
+                  LIMIT 12
+                `;
+                params = [`${term}%`, `% - ${term}%`, `${term}%`, `% - ${term}%`];
+              } else {
+                const likes = terms.map(() => "s.path LIKE ?").join(" AND ");
+                sql = `
+                  SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                    (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                  FROM syntree s
+                  WHERE ${likes}
+                  ORDER BY remedy_count DESC
+                  LIMIT 12
+                `;
+                params = terms.map(t => `%${t}%`);
+              }
 
-            // If few matches, check cross references (e.g. MIGRAINE -> HEAD - PAIN)
-            if (list.length < 5) {
+              const stmt = wasmDb.prepare(sql);
+              stmt.bind(params);
+              while (stmt.step()) {
+                const row = stmt.getAsObject();
+                if (!seenIds.has(row.id)) {
+                  seenIds.add(row.id);
+                  list.push({
+                    id: row.id,
+                    path: row.path,
+                    level: row.level,
+                    remedy_count: row.remedy_count || 0,
+                    is_xref_alias: false,
+                    match_type: "In-Browser WebAssembly"
+                  });
+                }
+              }
+              stmt.free();
+            }
+
+            // C. Cross References (e.g. MIGRAINE -> HEAD - PAIN)
+            if (list.length < 6) {
               const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
               xrStmt.bind([`%${cleanQ}%`]);
               while (xrStmt.step()) {
                 const xr = xrStmt.getAsObject();
-                list.push({
-                  id: xr.symptom_id,
-                  path: `${xr.text} ➔ (See Target)`,
-                  level: 2,
-                  remedy_count: 0,
-                  is_xref_alias: true,
-                  match_type: "Cross Reference"
-                });
+                if (!seenIds.has(xr.symptom_id)) {
+                  seenIds.add(xr.symptom_id);
+                  list.push({
+                    id: xr.symptom_id,
+                    path: `${xr.text} ➔ (See Target)`,
+                    level: 2,
+                    remedy_count: 0,
+                    is_xref_alias: true,
+                    match_type: "Cross Reference"
+                  });
+                }
               }
               xrStmt.free();
             }
@@ -861,7 +1217,7 @@
           }
         }
 
-        // Fallback to Network API if list is empty or semantic search is chosen
+        // Fallback to Network API if list is still empty
         if (list.length === 0) {
           try {
             const url = `${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
@@ -871,6 +1227,7 @@
             console.error("Network fetch failed:", err);
           }
         }
+
         dropdown.innerHTML = '';
         if (list.length === 0) {
           dropdown.innerHTML = `<div class="dropdown-item" style="color: var(--text-muted); padding: 12px;">No matching Synthesis rubrics found</div>`;
@@ -903,7 +1260,13 @@
               </div>
             `;
             div.onclick = () => {
-              addCustomRubric(item);
+              addSymptom({
+                id: item.id,
+                path: item.path.replace(' ➔ (See Target)', ''),
+                weight: 2,
+                is_eliminating: false,
+                category: 'Particulars'
+              });
               dropdown.style.display = 'none';
               document.getElementById('rubricSearchInput').value = '';
             };
@@ -915,10 +1278,10 @@
     }
 
     function escapeQuotes(str) {
+      if (!str) return '';
       return str.replace(/'/g, "\\'");
     }
 
-    // Expand Sub-rubrics (e.g. MIND - ANXIETY -> Bladder, with pain in)
     async function expandSubRubrics(parentId, parentPath) {
       let children = [];
 
