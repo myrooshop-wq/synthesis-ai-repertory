@@ -443,7 +443,7 @@
 
   <script>
     // Configurable API Backend (Defaults to local machine or user-saved endpoint)
-    let API_BASE = localStorage.getItem('synthesis_api_base') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'http://192.168.7.178:5055');
+    let API_BASE = localStorage.getItem('synthesis_api_base') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://jobs-justin-gathering-basic.trycloudflare.com');
     function setApiBase(url) {
       API_BASE = url.replace(/\/$/, '');
       localStorage.setItem('synthesis_api_base', API_BASE);

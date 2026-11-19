@@ -29,3 +29,8 @@ disasm_*.py
 read_*.py
 gemini_*.py
 generate_*.py
+
+synthesis_core.db
+synthesis_core.db.gz
+cloudflared.exe
+synthesis.db.gz
