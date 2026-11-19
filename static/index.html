@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Synthesis Homeopathy AI - Autonomous Repertorisation Workstation</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -591,8 +591,23 @@
         </div>
       </div>
 
+      <!-- Dual View Switcher (Full Matrix Table vs Mobile Touch Cards) -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 8px;">
+        <span style="font-size: 12px; font-weight: 700; color: #475569;">
+          <i class="fa-solid fa-layer-group" style="color: var(--accent);"></i> Display Mode:
+        </span>
+        <div style="display: flex; gap: 6px;">
+          <button id="viewToggleCardsBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px; font-weight: 700; background: #eff6ff; color: #1d4ed8; border-color: #93c5fd;" onclick="switchGridMode('cards')">
+            <i class="fa-solid fa-list-check"></i> Remedy Cards (Mobile)
+          </button>
+          <button id="viewToggleTableBtn" class="btn btn-outline" style="padding: 4px 10px; font-size: 11px; font-weight: 700;" onclick="switchGridMode('table')">
+            <i class="fa-solid fa-table-columns"></i> Full Matrix Table
+          </button>
+        </div>
+      </div>
+
       <!-- Verification Grid Table -->
-      <div class="table-container">
+      <div class="table-container" id="gridTableContainer">
         <table class="rep-table" id="matrixTable">
           <thead>
             <tr>
@@ -610,6 +625,24 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Touch Cards Container (Edge-to-Edge Portrait Mode) -->
+      <div id="mobileCardsContainer" style="display: none; width: 100%; margin-top: 10px;">
+        <!-- Mobile Selected Rubrics List -->
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 12px;">
+          <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+            <span><i class="fa-solid fa-sliders"></i> Active Rubrics in Repertorisation:</span>
+            <span id="mobileRubricCountBadge" style="background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 10px;">0 rubrics</span>
+          </div>
+          <div id="mobileRubricsList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+
+        <!-- Ranked Remedy Cards Feed -->
+        <div style="font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 8px;">
+          <i class="fa-solid fa-trophy" style="color: #eab308;"></i> Ranked Synthesis Remedy Match:
+        </div>
+        <div id="mobileRemedyCardsFeed" style="display: flex; flex-direction: column; gap: 10px;"></div>
       </div>
     </div>
 
@@ -1282,15 +1315,45 @@
     }
 
     function selectRubricDirectly(id, path) {
-      addSymptom({
-        id: id,
-        path: path,
-        weight: 2,
-        is_eliminating: false,
-        category: 'Particulars'
-      });
-      document.getElementById('rubricDropdown').style.display = 'none';
-      document.getElementById('rubricSearchInput').value = '';
+      if (!currentSymptoms.some(s => s.id === id)) {
+        currentSymptoms.push({
+          id: id,
+          path: path,
+          weight: 2,
+          is_eliminating: false,
+          category: 'Particulars'
+        });
+      }
+
+      // Hide dropdown and clear search input
+      const dropdown = document.getElementById('rubricDropdown');
+      if (dropdown) dropdown.style.display = 'none';
+      const sInput = document.getElementById('rubricSearchInput');
+      if (sInput) sInput.value = '';
+
+      // Also render chip in bucket-particulars so user sees it in their case
+      const bucket = document.getElementById('bucket-particulars');
+      if (bucket) {
+        const chip = document.createElement('div');
+        chip.className = 'symptom-chip selected';
+        chip.id = `symptom-chip-${id}`;
+        chip.innerHTML = `
+          <div class="chip-top-row">
+            <span class="chip-symptom-title">${escapeHtml(path)}</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span class="chip-weight w2" onclick="cycleWeight(this, ${id})">2x</span>
+              <span class="chip-del" onclick="this.closest('.symptom-chip').remove(); removeSymptom(${id})"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+          </div>
+          <div class="chip-rubric-link" onclick="openSynthesisBookView(${id}, '', ${id})">
+            <span class="chip-rubric-text"><i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${escapeHtml(path)}</span>
+          </div>
+        `;
+        bucket.appendChild(chip);
+      }
+
+      // Trigger instant in-browser recalculation
+      recalculateMatrix();
     }
 
     function escapeQuotes(str) {
