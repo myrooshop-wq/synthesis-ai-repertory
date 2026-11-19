@@ -29,7 +29,22 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+    html, body, input, select, textarea, button {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Font Awesome Icon Fix - Guarantee icons never render as empty boxes */
+    .fa, .fas, .fa-solid, .far, .fa-regular, .fab, .fa-brands {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+      display: inline-block;
+      font-style: normal;
+      font-variant: normal;
+      text-rendering: auto;
+      line-height: 1;
+    }
+    .fa::before, .fas::before, .fa-solid::before, .far::before, .fa-regular::before, .fab::before, .fa-brands::before {
+      font-family: inherit !important;
     }
     html, body {
       width: 100%;
@@ -971,6 +986,7 @@
     }
 
     // Step 1: AI Symptom Extraction
+    // Step 1: AI Symptom Extraction with Dynamic Google Gemini Model Discovery
     async function runExtraction() {
       const text = document.getElementById('consultationText').value;
       if (!text.trim()) {
@@ -1007,54 +1023,102 @@
           try {
             const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n"""${text}"""\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. "Mind & Emotion"\n2. "Physical Generals" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. "Modalities (< / >)" (time of aggravation <, amelioration >)\n4. "Particulars & Locations" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR "synthesis_query":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. "STOMACH APPETITE WANTING", "FEVER HEAT", "HEAD PAIN", "EXTREMITIES PAIN", "GENERALS WEAKNESS", "MIND RESTLESSNESS NIGHT").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  "symptoms": [\n     {\n       "category": "Particulars",\n       "name": "Symptom in Hindi/English",\n       "weight": 2,\n       "synthesis_query": "REPERTORY KEYWORDS"\n     }\n  ]\n}`;
 
-            // Model Priority List (Gemini 1.5 & 2.0 Flash)
-            const modelsToTry = [
-              'gemini-1.5-flash',
+            // 1A. Dynamically discover supported models directly from Google's ModelService
+            let availableModels = [];
+            let defaultApiVersion = 'v1beta';
+
+            try {
+              let listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+              if (!listRes.ok) {
+                listRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
+                if (listRes.ok) defaultApiVersion = 'v1';
+              }
+
+              if (listRes.ok) {
+                const listData = await listRes.json();
+                availableModels = (listData.models || [])
+                  .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+                  .map(m => m.name.replace(/^models\//, ''));
+                console.log("[Gemini] Discovered authorized models for user key:", availableModels);
+              } else {
+                const listErr = await listRes.json().catch(() => ({}));
+                lastGeminiError = listErr?.error?.message || `API key error (HTTP ${listRes.status})`;
+                console.warn("[Gemini] ModelService.ListModels error:", lastGeminiError);
+              }
+            } catch(listNetErr) {
+              console.warn("[Gemini] ListModels fetch failed:", listNetErr);
+            }
+
+            // 1B. Build the prioritized candidate models list
+            const priorityOrder = [
               'gemini-2.0-flash',
-              'gemini-1.5-flash-latest',
+              'gemini-1.5-flash',
+              'gemini-1.5-flash-8b',
               'gemini-2.0-flash-exp',
-              'gemini-1.5-pro'
+              'gemini-2.5-flash',
+              'gemini-1.5-pro',
+              'gemini-1.0-pro'
             ];
+
+            let modelsToTry = [];
+            if (availableModels.length > 0) {
+              priorityOrder.forEach(p => {
+                if (availableModels.includes(p)) modelsToTry.push(p);
+              });
+              availableModels.forEach(m => {
+                if (!modelsToTry.includes(m)) modelsToTry.push(m);
+              });
+            } else {
+              // Fallback list across standard identifiers
+              modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
+            }
 
             let geminiRawText = null;
             let modelUsed = null;
 
+            // 1C. Attempt generation across candidates and API versions
             for (const model of modelsToTry) {
-              try {
-                const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: {
-                      temperature: 0.1,
-                      responseMimeType: "application/json"
-                    }
-                  })
-                });
+              const versionsToAttempt = [defaultApiVersion, defaultApiVersion === 'v1beta' ? 'v1' : 'v1beta'];
 
-                if (gRes.ok) {
-                  const gData = await gRes.json();
-                  geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
-                  if (geminiRawText) {
-                    modelUsed = model;
-                    console.log(`Successfully generated symptoms using Gemini model: ${model}`);
-                    break;
+              for (const ver of versionsToAttempt) {
+                try {
+                  const gRes = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${model}:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      contents: [{ parts: [{ text: prompt }] }],
+                      generationConfig: {
+                        temperature: 0.1,
+                        responseMimeType: "application/json"
+                      }
+                    })
+                  });
+
+                  if (gRes.ok) {
+                    const gData = await gRes.json();
+                    geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (geminiRawText) {
+                      modelUsed = `${model}`;
+                      console.log(`[Gemini] Successfully generated symptoms using model: ${model} (${ver})`);
+                      break;
+                    }
+                  } else {
+                    const errJson = await gRes.json().catch(() => ({}));
+                    lastGeminiError = errJson?.error?.message || `HTTP ${gRes.status}: ${gRes.statusText}`;
+                    console.warn(`[Gemini] Model ${model} (${ver}) returned:`, lastGeminiError);
                   }
-                } else {
-                  const errJson = await gRes.json().catch(() => ({}));
-                  lastGeminiError = errJson?.error?.message || `HTTP ${gRes.status}: ${gRes.statusText}`;
-                  console.warn(`Model ${model} returned error:`, lastGeminiError);
+                } catch(e) {
+                  lastGeminiError = e.message || 'Network error';
+                  console.warn(`[Gemini] Model ${model} (${ver}) fetch error:`, e);
                 }
-              } catch(e) {
-                lastGeminiError = e.message || 'Network error';
-                console.warn(`Model ${model} request failed:`, e);
               }
+
+              if (geminiRawText) break; // Successful extraction
             }
 
             if (geminiRawText) {
               const parsed = extractJsonFromGemini(geminiRawText);
-              if (parsed && parsed.symptoms) {
+              if (parsed && parsed.symptoms && parsed.symptoms.length > 0) {
                 const symptoms = parsed.symptoms;
 
                 // Resolve candidate rubrics from in-browser wasmDb
@@ -1092,11 +1156,11 @@
             }
           } catch(geminiErr) {
             lastGeminiError = geminiErr.message;
-            console.warn("Direct Gemini call failed:", geminiErr);
+            console.warn("[Gemini] API process error:", geminiErr);
           }
         }
 
-        // 2. Offline Fallback if Gemini was not available or threw an error
+        // 2. Offline Fallback if Gemini failed or key had errors
         if (!data || !data.symptoms || data.symptoms.length === 0) {
           const offlineSymptoms = [];
           const lower = text.toLowerCase();
@@ -1147,7 +1211,7 @@
 
 ${lastGeminiError || 'Unknown Error'}
 
-Please verify that your API key is active and has Gemini API enabled in Google AI Studio.`);
+Please verify that your API key is active and has Generative Language API enabled in Google AI Studio.`);
             }, 300);
           }
 
@@ -1242,8 +1306,7 @@ Please verify that your API key is active and has Gemini API enabled in Google A
         }
       }
     }
-
-    function cycleWeight(badge, id) {
+function cycleWeight(badge, id) {
       const sym = currentSymptoms.find(s => s.id === id);
       if (!sym) return;
       if (sym.weight === 1) sym.weight = 2;
