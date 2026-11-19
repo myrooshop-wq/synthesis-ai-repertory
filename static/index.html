@@ -190,6 +190,14 @@
     .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
 
+    /* Responsive Dual View Utility */
+    .mobile-only { display: none; }
+    .desktop-only { display: inline; }
+    @media (max-width: 768px) {
+      .mobile-only { display: inline; }
+      .desktop-only { display: none; }
+    }
+    
     /* Mobile Responsive Optimizations */
     /* Mobile-First Responsive Styles & Touch Ergonomics */
     @media (max-width: 768px) {
@@ -1070,76 +1078,8 @@
             const rawQ = query.trim().toLowerCase();
             const cleanQ = query.trim().toUpperCase();
 
-            // A. If Semantic Mode is ON: evaluate clinical phrase expansions & concept synonyms!
-            if (isSemantic) {
-              // Check direct phrase expansions (e.g. "loose motion" -> "RECTUM - DIARRHEA")
-              for (const [phrase, targets] of Object.entries(CLIENT_PHRASE_EXPANSIONS)) {
-                if (rawQ.includes(phrase)) {
-                  for (const tpath of targets) {
-                    const pStmt = wasmDb.prepare(`
-                      SELECT s.id, s.path, s.level,
-                        (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
-                      FROM syntree s
-                      WHERE s.path = ?
-                    `);
-                    pStmt.bind([tpath]);
-                    if (pStmt.step()) {
-                      const row = pStmt.getAsObject();
-                      if (!seenIds.has(row.id)) {
-                        seenIds.add(row.id);
-                        list.push({
-                          id: row.id,
-                          path: row.path,
-                          level: row.level,
-                          remedy_count: row.remedy_count || 0,
-                          is_xref_alias: false,
-                          match_type: "Semantic Match"
-                        });
-                      }
-                    }
-                    pStmt.free();
-                  }
-                }
-              }
-
-              // Check concept synonyms expansion (e.g. "headache" -> HEAD + PAIN)
-              const rawTokens = rawQ.split(/[^a-zA-Z0-9]+/).filter(w => w && !CLIENT_STOPWORDS.has(w));
-              const expandedConcepts = new Set(rawTokens.map(t => t.toUpperCase()));
-              for (const tok of rawTokens) {
-                if (CLIENT_SYNONYMS[tok]) {
-                  CLIENT_SYNONYMS[tok].forEach(syn => expandedConcepts.add(syn.toUpperCase()));
-                }
-              }
-
-              if (list.length < 12 && expandedConcepts.size > 0) {
-                const conceptList = Array.from(expandedConcepts);
-                const likes = conceptList.map(() => "s.path LIKE ?").join(" AND ");
-                const sStmt = wasmDb.prepare(`
-                  SELECT s.id, s.path, s.level,
-                    (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
-                  FROM syntree s
-                  WHERE ${likes}
-                  ORDER BY remedy_count DESC
-                  LIMIT 12
-                `);
-                sStmt.bind(conceptList.map(c => `%${c}%`));
-                while (sStmt.step()) {
-                  const row = sStmt.getAsObject();
-                  if (!seenIds.has(row.id)) {
-                    seenIds.add(row.id);
-                    list.push({
-                      id: row.id,
-                      path: row.path,
-                      level: row.level,
-                      remedy_count: row.remedy_count || 0,
-                      is_xref_alias: false,
-                      match_type: "Semantic Match"
-                    });
-                  }
-                }
-                sStmt.free();
-              }
-            }
+            // Advanced In-Browser Phrase & Semantic Engine (Scores multiple terms simultaneously!)
+            list = executeAdvancedPhraseSearch(wasmDb, query, cleanQ, rawQ, isSemantic);
 
             // B. Standard / Exact / Substring Search
             if (list.length < 12) {
@@ -2028,6 +1968,267 @@
       html += `</div>`;
       document.getElementById('modalBody').innerHTML = html;
       document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    
+    let currentGridMode = window.innerWidth <= 768 ? 'cards' : 'table';
+
+    function switchGridMode(mode) {
+      currentGridMode = mode;
+      const tblCont = document.getElementById('gridTableContainer');
+      const crdCont = document.getElementById('mobileCardsContainer');
+      const btnCards = document.getElementById('viewToggleCardsBtn');
+      const btnTable = document.getElementById('viewToggleTableBtn');
+
+      if (mode === 'cards') {
+        tblCont.style.display = 'none';
+        crdCont.style.display = 'block';
+        btnCards.style.background = '#eff6ff';
+        btnCards.style.color = '#1d4ed8';
+        btnCards.style.borderColor = '#93c5fd';
+        btnTable.style.background = 'white';
+        btnTable.style.color = 'var(--text)';
+        btnTable.style.borderColor = 'var(--border)';
+      } else {
+        tblCont.style.display = 'block';
+        crdCont.style.display = 'none';
+        btnTable.style.background = '#eff6ff';
+        btnTable.style.color = '#1d4ed8';
+        btnTable.style.borderColor = '#93c5fd';
+        btnCards.style.background = 'white';
+        btnCards.style.color = 'var(--text)';
+        btnCards.style.borderColor = 'var(--border)';
+      }
+    }
+
+    // Auto-initialize view mode based on screen size
+    setTimeout(() => {
+      if (window.innerWidth <= 768) {
+        switchGridMode('cards');
+      } else {
+        switchGridMode('table');
+      }
+    }, 100);
+
+    // Mobile Cards Renderer for small screens (Portrait mode ergonomics)
+    function renderMobileCards(data) {
+      const rubList = document.getElementById('mobileRubricsList');
+      const remFeed = document.getElementById('mobileRemedyCardsFeed');
+      const countBadge = document.getElementById('mobileRubricCountBadge');
+
+      if (!rubList || !remFeed) return;
+
+      countBadge.textContent = `${currentSymptoms.length} rubrics`;
+      rubList.innerHTML = '';
+      remFeed.innerHTML = '';
+
+      if (currentSymptoms.length === 0) {
+        rubList.innerHTML = `<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 10px;">No rubrics added yet.</div>`;
+        remFeed.innerHTML = `<div style="font-size: 13px; color: var(--text-muted); text-align: center; padding: 20px; background: white; border: 1px dashed var(--border); border-radius: 8px;">Dictate or search symptoms above to see ranked remedies.</div>`;
+        return;
+      }
+
+      // 1. Render Rubric Controls (Weights, Elimination, Remove)
+      currentSymptoms.forEach(sym => {
+        const row = document.createElement('div');
+        row.style.cssText = "display: flex; justify-content: space-between; align-items: center; gap: 8px; background: white; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px;";
+        row.innerHTML = `
+          <div style="flex: 1; min-width: 0;">
+            <div style="font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${sym.path}">
+              ${sym.path}
+            </div>
+            <div style="font-size: 10px; color: var(--text-muted); display: flex; gap: 6px; margin-top: 2px;">
+              <span style="color: ${sym.is_eliminating ? '#dc2626' : '#64748b'}; font-weight: ${sym.is_eliminating ? '700' : 'normal'};">
+                <i class="fa-solid fa-filter"></i> ${sym.is_eliminating ? 'Eliminating Rubric' : 'Standard'}
+              </span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 6px;">
+            <select onchange="updateRowWeight(${sym.id}, this.value)" style="padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 12px; font-weight: 700;">
+              <option value="1" ${sym.weight === 1 ? 'selected' : ''}>1x</option>
+              <option value="2" ${sym.weight === 2 ? 'selected' : ''}>2x</option>
+              <option value="3" ${sym.weight === 3 ? 'selected' : ''}>3x</option>
+            </select>
+            <button class="btn btn-outline" style="padding: 4px 6px; font-size: 11px; color: #ef4444; border-color: #fca5a5;" onclick="removeSymptom(${sym.id})" title="Remove rubric">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        rubList.appendChild(row);
+      });
+
+      if (!data.remedies || data.remedies.length === 0) {
+        remFeed.innerHTML = `<div style="padding: 16px; text-align: center; color: var(--danger); font-size: 13px; background: white; border-radius: 8px;">No remedies cover all eliminating symptoms. Try unchecking some elimination flags.</div>`;
+        return;
+      }
+
+      // 2. Render Ranked Remedy Cards
+      const totRubrics = data.total_rubrics || data.rubrics?.length || currentSymptoms.length || 1;
+
+      data.remedies.forEach((rem, index) => {
+        const abbr = rem.remedy_abbreviation || rem.remedy || rem.abbr || '';
+        const fullName = rem.remedy_full || rem.full_name || rem.name || abbr;
+        const cov = rem.rubrics_covered;
+        const totScore = rem.total_score;
+        const isLeader = index === 0;
+
+        const card = document.createElement('div');
+        card.style.cssText = `
+          background: ${isLeader ? '#f0fdf4' : 'white'};
+          border: ${isLeader ? '2px solid #16a34a' : '1px solid var(--border)'};
+          border-radius: 8px;
+          padding: 12px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+        `;
+
+        // Generate chips showing which rubrics were matched with their degree
+        let matchedChipsHtml = '<div style="display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px;">';
+        data.matrix.forEach(r => {
+          const deg = r.scores[abbr] || 0;
+          if (deg > 0) {
+            const shortName = r.rubric.split(' - ').slice(-1)[0] || r.rubric;
+            matchedChipsHtml += `
+              <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;"
+                    onclick="openSynthesisBookView(${r.symptom_id}, '${abbr}')"
+                    title="${r.rubric} (Grade ${deg})">
+                ${shortName}: <strong>Gr ${deg}</strong>
+              </span>
+            `;
+          }
+        });
+        matchedChipsHtml += '</div>';
+
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-weight: 800; font-size: 16px; color: ${isLeader ? '#15803d' : '#0f172a'};">${abbr}</span>
+                ${isLeader ? '<span style="background: #dcfce7; color: #166534; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">TOP SIMILIMUM</span>' : ''}
+              </div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">${fullName}</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 15px; font-weight: 800; color: #2563eb;">${totScore} <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">pts</span></div>
+              <div style="font-size: 11px; color: #16a34a; font-weight: 600;">${cov}/${totRubrics} rubrics</div>
+            </div>
+          </div>
+          ${matchedChipsHtml}
+          <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 6px;">
+            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px; font-weight: 600;" onclick="selectPrescriptionRemedy('${abbr}', '${escapeQuotes(fullName)}')">
+              <i class="fa-solid fa-check"></i> Prescribe
+            </button>
+          </div>
+        `;
+        remFeed.appendChild(card);
+      });
+    }
+
+    // Advanced Multi-Token Phrase & Semantic Search with SQLite BM25-Like Weighting
+    function executeAdvancedPhraseSearch(wasmDb, query, cleanQ, rawQ, isSemantic) {
+      const list = [];
+      const seenIds = new Set();
+
+      // 1. Exact or Direct Phrase Match (Highest priority)
+      for (const [phrase, targets] of Object.entries(CLIENT_PHRASE_EXPANSIONS)) {
+        if (rawQ.includes(phrase)) {
+          for (const tpath of targets) {
+            const pStmt = wasmDb.prepare(`
+              SELECT s.id, s.path, s.level,
+                (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+              FROM syntree s
+              WHERE s.path = ?
+            `);
+            pStmt.bind([tpath]);
+            if (pStmt.step()) {
+              const row = pStmt.getAsObject();
+              if (!seenIds.has(row.id)) {
+                seenIds.add(row.id);
+                list.push({
+                  id: row.id,
+                  path: row.path,
+                  level: row.level,
+                  remedy_count: row.remedy_count || 0,
+                  is_xref_alias: false,
+                  match_type: "Semantic Match"
+                });
+              }
+            }
+            pStmt.free();
+          }
+        }
+      }
+
+      // 2. Tokenize phrase and expand with medical synonyms
+      const rawTokens = rawQ.split(/[^a-zA-Z0-9]+/).filter(w => w && !CLIENT_STOPWORDS.has(w));
+      const expandedTokens = new Set(rawTokens.map(t => t.toUpperCase()));
+      for (const tok of rawTokens) {
+        if (CLIENT_SYNONYMS[tok]) {
+          CLIENT_SYNONYMS[tok].forEach(syn => expandedTokens.add(syn.toUpperCase()));
+        }
+      }
+
+      const tokenArr = Array.from(expandedTokens).slice(0, 6); // Max 6 tokens for optimal speed
+      if (tokenArr.length > 0) {
+        // Construct token-hit score query: SUM of token occurrences
+        const scoreExpr = tokenArr.map(() => "(path LIKE ?)").join(" + ");
+        const whereOr = tokenArr.map(() => "path LIKE ?").join(" OR ");
+        const binds = [];
+        tokenArr.forEach(t => binds.push(`%${t}%`)); // for scoreExpr
+        tokenArr.forEach(t => binds.push(`%${t}%`)); // for whereOr
+
+        try {
+          const sql = `
+            SELECT id, path, level, (${scoreExpr}) as match_score,
+              (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
+            FROM syntree
+            WHERE ${whereOr}
+            ORDER BY match_score DESC, rem_count DESC
+            LIMIT 15
+          `;
+          const sStmt = wasmDb.prepare(sql);
+          sStmt.bind(binds);
+          while (sStmt.step()) {
+            const row = sStmt.getAsObject();
+            if (!seenIds.has(row.id)) {
+              seenIds.add(row.id);
+              list.push({
+                id: row.id,
+                path: row.path,
+                level: row.level,
+                remedy_count: row.rem_count || 0,
+                is_xref_alias: false,
+                match_type: row.match_score >= 2 ? "Semantic Match" : "Keyword Match"
+              });
+            }
+          }
+          sStmt.free();
+        } catch(e) {
+          console.warn("Advanced phrase search error:", e);
+        }
+      }
+
+      // 3. Cross Reference Fallback
+      if (list.length < 5) {
+        const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
+        xrStmt.bind([`%${cleanQ}%`]);
+        while (xrStmt.step()) {
+          const xr = xrStmt.getAsObject();
+          if (!seenIds.has(xr.symptom_id)) {
+            seenIds.add(xr.symptom_id);
+            list.push({
+              id: xr.symptom_id,
+              path: `${xr.text} ➔ (See Target)`,
+              level: 2,
+              remedy_count: 0,
+              is_xref_alias: true,
+              match_type: "Cross Reference"
+            });
+          }
+        }
+        xrStmt.free();
+      }
+
+      return list;
     }
 
     function escapeHtml(text) {
