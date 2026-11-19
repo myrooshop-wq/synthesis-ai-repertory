@@ -23,45 +23,91 @@
       --grade2: #2563eb;
       --grade1: #334155;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    html, body { width: 100%; max-width: 100vw; overflow-x: hidden; background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
 
-    /* Mobile: hide table container by default, show cards */
-    @media (max-width: 768px) {
-      #gridTableContainer { display: none !important; }
-      #mobileCardsContainer { display: block !important; }
-      .rep-table { min-width: unset !important; width: 100% !important; }
-      .table-container { overflow-x: hidden !important; }
-      .filter-bar { flex-direction: column !important; gap: 8px !important; }
-      .filter-item { width: 100% !important; }
-      .filter-item select { width: 100% !important; }
-      .card-header { flex-wrap: wrap !important; gap: 8px !important; }
-      .search-rubrics-bar { max-width: 100% !important; }
+    /* GLOBAL RESET - STRICT ZERO HORIZONTAL OVERFLOW */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    html, body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      position: relative;
+      background-color: var(--bg);
+      color: var(--text);
+      padding-bottom: 60px;
     }
 
     /* Top Navigation */
-    header { background: #ffffff; border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 100vw;
+      box-sizing: border-box;
+    }
     .brand { display: flex; align-items: center; gap: 12px; }
-    .brand-logo { background: linear-gradient(135deg, #108a00, #047857); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
-    .brand-title { font-size: 18px; font-weight: 700; color: #0f172a; }
+    .brand-logo { background: linear-gradient(135deg, #108a00, #047857); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; flex-shrink: 0; }
+    .brand-title { font-size: 17px; font-weight: 700; color: #0f172a; line-height: 1.2; }
     .brand-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; }
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
-    /* Container */
-    .container { max-width: 1300px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 24px; }
+    /* Main Container */
+    .container {
+      width: 100%;
+      max-width: 1300px;
+      margin: 18px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
 
     /* Cards */
-    .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
     .card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
     .badge-autopilot { background: #dcfce7; color: #166534; }
     .badge-override { background: #fef3c7; color: #92400e; }
 
     /* Intake Voice & Transcript Bar */
-    .intake-box { display: flex; flex-direction: column; gap: 12px; }
-    .mic-button-row { display: flex; gap: 12px; align-items: center; }
-    .btn { padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .intake-box { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+    .mic-button-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn { padding: 9px 16px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; box-sizing: border-box; }
     .btn-primary { background: var(--primary); color: white; }
     .btn-primary:hover { background: var(--primary-dark); }
     .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
@@ -69,51 +115,86 @@
     .btn-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
     .btn-danger:hover { background: #fecaca; }
     .btn-mic-active { background: #ef4444; color: white; animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
 
-    textarea.transcript-input { width: 100%; height: 90px; border-radius: 8px; border: 1px solid var(--border); padding: 12px; font-size: 14px; resize: vertical; line-height: 1.5; outline: none; }
+    textarea.transcript-input { width: 100%; height: 90px; border-radius: 8px; border: 1px solid var(--border); padding: 12px; font-size: 14px; resize: vertical; line-height: 1.5; outline: none; box-sizing: border-box; }
     textarea.transcript-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,138,0,0.1); }
 
     /* Category Buckets for Symptoms */
-    .buckets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; }
-    .bucket { background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); padding: 14px; }
+    .buckets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; width: 100%; box-sizing: border-box; }
+    .bucket { background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); padding: 12px; width: 100%; min-width: 0; box-sizing: border-box; overflow-x: hidden; }
     .bucket-header { font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
-    .bucket-chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+    .bucket-chips { display: flex; flex-direction: column; gap: 8px; min-height: 30px; width: 100%; }
 
     /* Symptom Chip */
-    .symptom-chip { background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; display: inline-flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); min-width: 240px; transition: all 0.2s; }
+    .symptom-chip {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      transition: all 0.2s;
+    }
     .symptom-chip.selected { border-color: #94a3b8; background: #ffffff; }
     .symptom-chip.highlight-linked { border-color: #2563eb !important; background: #eff6ff !important; box-shadow: 0 0 0 3px rgba(37,99,235,0.2) !important; }
-    .chip-top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
-    .chip-symptom-title { font-weight: 600; color: #1e293b; flex: 1; }
-    .chip-rubric-link { font-size: 11px; color: #1e40af; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px; background: #e0f2fe; padding: 4px 8px; border-radius: 5px; border: 1px solid #bae6fd; max-width: 100%; transition: background 0.15s; }
+    .chip-top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; min-width: 0; }
+    .chip-symptom-title { font-weight: 600; color: #1e293b; flex: 1; min-width: 0; word-break: break-word; overflow-wrap: break-word; }
+    .chip-rubric-link { font-size: 11px; color: #1e40af; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px; background: #e0f2fe; padding: 4px 8px; border-radius: 5px; border: 1px solid #bae6fd; width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; transition: background 0.15s; }
     .chip-rubric-link:hover { background: #bae6fd; }
-    .chip-rubric-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .chip-weight { background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .chip-rubric-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+    .chip-weight { background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; flex-shrink: 0; }
     .chip-weight.w2 { background: #fef08a; color: #854d0e; }
     .chip-weight.w3 { background: #fca5a5; color: #991b1b; }
-    .chip-del { color: #94a3b8; cursor: pointer; margin-left: 4px; font-size: 12px; }
+    .chip-del { color: #94a3b8; cursor: pointer; margin-left: 4px; font-size: 12px; flex-shrink: 0; }
     .chip-del:hover { color: var(--danger); }
 
     /* Autocomplete Search Bar */
-    .search-rubrics-bar { position: relative; margin-top: 14px; max-width: 900px; }
-    .search-input-group { display: flex; align-items: center; position: relative; }
-    .search-icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 16px; }
-    .search-rubric-input { width: 100%; padding: 12px 14px 12px 42px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; }
+    .search-rubrics-bar { position: relative; margin-top: 14px; width: 100%; max-width: 100%; box-sizing: border-box; }
+    .search-input-group { display: flex; align-items: center; position: relative; width: 100%; }
+    .search-icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 16px; pointer-events: none; }
+    .search-rubric-input { width: 100%; padding: 12px 14px 12px 42px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; box-sizing: border-box; }
     .search-rubric-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
-    .autocomplete-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-width: 850px; background: white; border-radius: 8px; border: 1px solid var(--border); max-height: 420px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 25px -3px rgba(0,0,0,0.15); display: none; }
-    .dropdown-item { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: flex-start; gap: 14px; font-size: 13px; transition: background 0.15s; }
-    .dropdown-item-content { flex: 0 1 auto; max-width: 65%; min-width: 0; }
-    .dropdown-item-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 6px; }
+    .autocomplete-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; width: 100%; max-width: 100%; background: white; border-radius: 8px; border: 1px solid var(--border); max-height: 420px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 25px -3px rgba(0,0,0,0.15); display: none; box-sizing: border-box; }
+    .dropdown-item { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; transition: background 0.15s; box-sizing: border-box; }
+    .dropdown-item-content { flex: 1; min-width: 0; word-break: break-word; }
+    .dropdown-item-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .dropdown-item:hover { background: #f8fafc; }
     .dropdown-item .rem-badge { background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; white-space: nowrap; }
     .dropdown-item .xref-tag { background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
     .dropdown-item .semantic-tag { background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
 
-    /* Repertorisation Grid Table */
-    .table-container { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border); }
-    table.rep-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; background: white; }
-    table.rep-table th, table.rep-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid #f1f5f9; }
+    /* Repertorisation Grid Table - STABLE HORIZONTAL SCROLL */
+    .table-container {
+      width: 100%;
+      max-width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-sizing: border-box;
+    }
+    table.rep-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+      background: white;
+    }
+    table.rep-table th, table.rep-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      border-right: 1px solid #f1f5f9;
+      white-space: nowrap;
+    }
     table.rep-table th { background: #f8fafc; font-weight: 700; color: #334155; position: sticky; top: 0; }
     table.rep-table th.remedy-th { text-align: center; width: 68px; }
     table.rep-table td.score-cell { text-align: center; font-weight: 700; cursor: pointer; }
@@ -121,358 +202,239 @@
     table.rep-table tr.total-row { background: #f8fafc; font-weight: 800; border-top: 2px solid var(--border); }
     table.rep-table tr.total-row td { text-align: center; }
 
-    /* Degree styling */
-    .deg-4 { color: var(--grade4); font-size: 15px; font-weight: 900; }
-    .deg-3 { color: var(--grade3); font-size: 14px; font-weight: 800; }
-    .deg-2 { color: var(--grade2); font-style: italic; }
-    .deg-1 { color: var(--grade1); }
-    .deg-0 { color: #cbd5e1; font-weight: normal; }
+    /* Degree Color Badges */
+    .deg-4 { color: var(--grade4); font-weight: 800; }
+    .deg-3 { color: var(--grade3); font-weight: 800; }
+    .deg-2 { color: var(--grade2); font-style: italic; font-weight: 700; }
+    .deg-1 { color: var(--grade1); font-weight: normal; }
 
-    /* Modal for Rubric & Author Verification */
+    /* Synthesis Exact Book Typography */
     .synthesis-book-page {
-      background: #faf8f5;
-      border: 1px solid #dcd7ce;
+      background: #fdfbf7;
+      border: 1px solid #e7e5e4;
       border-radius: 8px;
-      padding: 18px;
-      font-family: Georgia, "Times New Roman", serif;
+      padding: 16px;
+      font-family: Georgia, serif;
       line-height: 1.6;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
     .book-rubric-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #1a1a1a;
+      font-size: 17px;
+      font-weight: bold;
+      color: #1c1917;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      margin-bottom: 8px;
-      border-bottom: 1px solid #e5e0d8;
-      padding-bottom: 6px;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #78716c;
+      padding-bottom: 4px;
+      word-break: break-word;
     }
     .book-remedies-flow {
       font-size: 14px;
-      word-spacing: 2px;
-      text-align: justify;
+      color: #292524;
+      line-height: 1.8;
+      word-break: break-word;
     }
-    /* Synthesis app exact styling */
-    .synth-deg-4 { color: #d00000; font-weight: 900; text-transform: uppercase; }
-    .synth-deg-3 { color: #d00000; font-weight: 800; }
-    .synth-deg-2 { color: #0022ff; font-style: italic; font-weight: 600; }
-    .synth-deg-1 { color: #111111; font-weight: normal; }
-    .synth-author { font-size: 10px; color: #777777; vertical-align: super; font-family: -apple-system, sans-serif; font-style: normal; font-weight: normal; }
-    
-    /* Breadcrumb bar in modal */
+    .synth-deg-4 { font-weight: 900; color: #000000; text-transform: uppercase; letter-spacing: 0.5px; }
+    .synth-deg-3 { font-weight: bold; font-style: italic; color: #1c1917; }
+    .synth-deg-2 { font-style: italic; color: #44403c; }
+    .synth-deg-1 { font-style: normal; color: #57534e; }
+    .synth-author { font-size: 10px; font-family: sans-serif; color: #78716c; vertical-align: super; margin-left: 1px; }
+    .synth-highlight { background-color: #fef08a !important; padding: 2px 4px; border-radius: 3px; border: 1px solid #facc15; }
+
+    /* Synthesis Hierarchy Breadcrumbs */
     .synth-breadcrumbs {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f1f5f9;
       padding: 8px 12px;
       border-radius: 6px;
       margin-bottom: 12px;
-      border: 1px solid #cbd5e1;
+      font-size: 12px;
+      font-family: sans-serif;
+      width: 100%;
+      box-sizing: border-box;
     }
     .synth-breadcrumb-item {
-      color: #2563eb;
+      color: var(--accent);
       cursor: pointer;
       font-weight: 600;
-      text-decoration: none;
-    }
-    .synth-breadcrumb-item:hover {
       text-decoration: underline;
     }
-    .synth-breadcrumb-sep {
-      color: #94a3b8;
-      font-size: 11px;
-    }
-    .synth-breadcrumb-current {
-      color: #0f172a;
-      font-weight: 700;
-    }
+    .synth-breadcrumb-item:hover { color: #1d4ed8; }
+    .synth-breadcrumb-sep { color: #94a3b8; font-size: 11px; }
+    .synth-breadcrumb-current { color: #0f172a; font-weight: 700; word-break: break-word; }
 
     /* Modal dialog */
-    .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; }
-    .modal-box { background: white; width: 92%; max-width: 720px; border-radius: 12px; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 88vh; overflow-y: auto; }
+    .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; padding: 12px; box-sizing: border-box; }
+    .modal-box { background: white; width: 100%; max-width: 720px; border-radius: 12px; padding: 18px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 88vh; overflow-y: auto; box-sizing: border-box; }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 14px; }
     .modal-title { font-size: 16px; font-weight: 700; }
     .modal-close { cursor: pointer; font-size: 18px; color: var(--text-muted); }
 
     /* Controls Bar */
-    .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); width: 100%; box-sizing: border-box; }
     .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
 
     /* Responsive Dual View Utility */
     .mobile-only { display: none; }
     .desktop-only { display: inline; }
+
+    /* =========================================================================
+       MASTER MOBILE-FIRST RESPONSIVE ARCHITECTURE (SCREENS <= 768px)
+       ========================================================================= */
     @media (max-width: 768px) {
+      /* Prevent iOS/Android auto-zoom on input focus */
+      input, select, textarea {
+        font-size: 16px !important;
+      }
+
+      /* Contain overall screen width strictly */
       html, body {
         width: 100% !important;
         max-width: 100vw !important;
         overflow-x: hidden !important;
+        position: relative !important;
       }
       .container {
         width: 100% !important;
         max-width: 100vw !important;
         padding: 0 10px !important;
-        margin: 10px 0 !important;
+        margin: 10px auto !important;
         overflow-x: hidden !important;
       }
       .card {
+        padding: 12px !important;
+        border-radius: 8px !important;
         width: 100% !important;
         max-width: 100% !important;
-        box-sizing: border-box !important;
+        overflow-x: hidden !important;
       }
-      .search-rubrics-bar {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-      .autocomplete-dropdown {
-        width: 100% !important;
-        max-width: 100% !important;
-        left: 0 !important;
-        right: 0 !important;
-      }
-      /* Ensure horizontal table doesn't blow up viewport on mobile */
-      .table-container {
-        display: block !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        overflow-x: auto !important;
-      }
-      .filter-bar {
-        display: flex !important;
+
+      /* Header on mobile */
+      header {
+        padding: 8px 12px !important;
         flex-direction: column !important;
         align-items: stretch !important;
-        width: 100% !important;
         gap: 8px !important;
-        padding: 8px !important;
       }
-      .filter-item {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: stretch !important;
+      .brand { width: 100% !important; }
+      .brand-title { font-size: 14px !important; }
+      .brand-subtitle { font-size: 10px !important; }
+      .header-actions {
         width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
         gap: 4px !important;
       }
-      .filter-item select {
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-      .filter-bar > div:last-child {
-        margin-left: 0 !important;
-        width: 100% !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        justify-content: space-between !important;
-        padding-top: 4px !important;
-        border-top: 1px dashed var(--border) !important;
-      }
-      .mobile-only { display: inline; }
-      .desktop-only { display: none; }
-    }
-    
-    /* Mobile Responsive Optimizations */
-    /* Mobile-First Responsive Styles & Touch Ergonomics */
-    @media (max-width: 768px) {
-      /* Prevent iOS/Android auto-zoom on input tap */
-      input, select, textarea, button {
-        font-size: 16px !important;
-      }
-
-      header {
-        padding: 10px 14px;
-        flex-direction: column;
-        gap: 10px;
-        align-items: stretch;
-      }
-      .brand {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
-      .brand-title {
-        font-size: 15px;
-        line-height: 1.25;
-      }
-      .brand-subtitle {
-        font-size: 10px;
-      }
-      .header-actions {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 6px;
-      }
       .header-actions .btn {
-        flex: 1 1 45%;
-        justify-content: center;
-        padding: 8px 6px;
-        font-size: 12px;
-      }
-      #dbStatusBadge {
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 2px;
-        font-size: 11px;
+        flex: 1 1 30% !important;
+        padding: 6px 4px !important;
+        font-size: 11px !important;
+        white-space: nowrap !important;
       }
 
-      .container {
-        padding: 0 8px;
-        margin: 10px auto;
-        gap: 14px;
-        width: 100%;
-        max-width: 100vw;
-        overflow-x: hidden;
-      }
-      .card {
-        padding: 12px;
-        border-radius: 8px;
-      }
-      .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-      .card-title {
-        font-size: 15px;
-      }
-
+      /* Step 1 Intake */
       .mic-button-row {
-        flex-direction: column;
-        width: 100%;
-        gap: 8px;
+        flex-direction: column !important;
+        width: 100% !important;
       }
       .mic-button-row .btn {
-        width: 100%;
-        justify-content: center;
-        padding: 10px 12px;
+        width: 100% !important;
+        justify-content: center !important;
         font-size: 13px !important;
       }
-
       .buckets-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-        margin-top: 10px;
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
       }
       .bucket {
-        padding: 10px 12px;
+        padding: 10px !important;
       }
 
-      /* Search Bar Ergonomics */
+      /* Search Bar */
       .search-rubrics-bar {
-        flex-direction: column;
-        gap: 8px;
-        width: 100%;
-      }
-      .search-input-group {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
       }
       .search-rubric-input {
-        padding: 10px 12px 10px 38px;
-        font-size: 15px !important;
-        border-radius: 8px;
+        font-size: 14px !important;
+        padding: 10px 12px 10px 36px !important;
       }
-      .search-icon {
-        left: 12px;
-        font-size: 14px;
-      }
-      .search-rubrics-bar > button {
-        width: 100%;
-        justify-content: center;
-        height: 38px;
-        font-size: 13px !important;
-      }
-
-      /* Mobile Autocomplete Dropdown - Prevents Screen Overflow */
       .autocomplete-dropdown {
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-width: 100vw;
-        max-height: 55vh;
-        border-radius: 8px;
-        box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        max-height: 50vh !important;
       }
       .dropdown-item {
-        padding: 10px 10px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding: 10px !important;
       }
       .dropdown-item-content {
+        width: 100% !important;
         max-width: 100% !important;
-        width: 100%;
-      }
-      .dropdown-item-content > div:first-child {
-        font-size: 13px;
-        white-space: normal !important;
-        word-break: break-word;
-        line-height: 1.35;
       }
       .dropdown-item-actions {
-        width: 100%;
-        justify-content: space-between;
-        margin-left: 0;
-        border-top: 1px dashed #e2e8f0;
-        padding-top: 6px;
-      }
-      .dropdown-item-actions .btn {
-        padding: 5px 10px;
-        font-size: 12px !important;
+        width: 100% !important;
+        justify-content: space-between !important;
+        border-top: 1px dashed #e2e8f0 !important;
+        padding-top: 6px !important;
       }
 
-      /* Repertorisation Grid Mobile Responsiveness */
+      /* Filter Bar */
       .filter-bar {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px !important;
       }
       .filter-item {
-        justify-content: space-between;
-        width: 100%;
-        font-size: 12px;
+        width: 100% !important;
+        justify-content: space-between !important;
       }
       .filter-item select {
-        flex: 1;
-        max-width: 60%;
-        padding: 6px 8px;
+        flex: 1 !important;
+        max-width: 60% !important;
       }
 
-      .table-container {
-        width: 100%;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-top: 10px;
+      /* BY DEFAULT ON MOBILE: TABLE IS COMPLETELY HIDDEN, CARDS ARE SHOWN */
+      #gridTableContainer {
+        display: none !important;
       }
-      table.rep-table th, table.rep-table td {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-      table.rep-table th:first-child, table.rep-table td:first-child {
-        min-width: 220px !important;
-        max-width: 240px;
-        word-break: break-word;
+      #mobileCardsContainer {
+        display: block !important;
       }
 
-      /* Modal Boxes on Mobile */
+      /* When user explicitly chooses 'Full Matrix Table' on mobile: */
+      #gridTableContainer.user-force-table {
+        display: block !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      #mobileCardsContainer.user-force-table {
+        display: none !important;
+      }
+
+      /* Modal Boxes */
       .modal-box {
         width: 95% !important;
         max-width: 95vw !important;
-        padding: 12px !important;
+        padding: 14px !important;
         max-height: 90vh !important;
       }
-      .symptom-chip {
-        width: 100%;
-        min-width: 0;
-      }
-      .synth-breadcrumbs {
-        flex-wrap: wrap;
-        font-size: 12px;
-      }
+
+      .mobile-only { display: inline !important; }
+      .desktop-only { display: none !important; }
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
@@ -850,6 +812,27 @@
     }
 
     // Step 1: AI Symptom Extraction
+    // Robust JSON extraction from Gemini (handles raw JSON, code blocks, or conversational wrapper)
+    function extractJsonFromGemini(rawText) {
+      if (!rawText) return null;
+      const clean = rawText.trim();
+      // 1. Direct parse attempt
+      try { return JSON.parse(clean); } catch(e) {}
+      // 2. Extract ```json ... ``` code fence
+      const blockMatch = clean.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+      if (blockMatch && blockMatch[1]) {
+        try { return JSON.parse(blockMatch[1].trim()); } catch(e) {}
+      }
+      // 3. Extract outermost { ... }
+      const firstBrace = clean.indexOf('{');
+      const lastBrace = clean.lastIndexOf('}');
+      if (firstBrace !== -1 && lastBrace > firstBrace) {
+        try { return JSON.parse(clean.substring(firstBrace, lastBrace + 1)); } catch(e) {}
+      }
+      return null;
+    }
+
+    // Step 1: AI Symptom Extraction
     async function runExtraction() {
       const text = document.getElementById('consultationText').value;
       if (!text.trim()) {
@@ -857,7 +840,7 @@
         return;
       }
 
-      const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+      const apiKey = (localStorage.getItem('GEMINI_API_KEY') || '').trim();
       const extractBtn = document.getElementById('aiExtractBtn');
       const originalBtnHtml = extractBtn ? extractBtn.innerHTML : '';
 
@@ -876,40 +859,24 @@
         autopilotBadge.style.color = '#1d4ed8';
       }
 
+      let lastGeminiError = '';
+
       try {
         let data = null;
 
-        // 1. Direct In-Browser Google Gemini API (Works anywhere on Android/iOS with zero backend dependency!)
+        // 1. Direct In-Browser Google Gemini API
         if (apiKey) {
           try {
-            const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n\"\"\"${text}\"\"\"\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. \"Mind & Emotion\"\n2. \"Physical Generals\" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. \"Modalities (< / >)\" (time of aggravation <, amelioration >)\n4. \"Particulars & Locations\" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR \"synthesis_query\":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. \"STOMACH APPETITE WANTING\", \"FEVER HEAT\", \"HEAD PAIN\", \"EXTREMITIES PAIN\", \"GENERALS WEAKNESS\", \"MIND RESTLESSNESS NIGHT\").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  \"symptoms\": [\n     {\n       \"category\": \"Particulars\",\n       \"name\": \"Symptom in Hindi/English\",\n       \"weight\": 2,\n       \"synthesis_query\": \"REPERTORY KEYWORDS\"\n     }\n  ]\n}`;
+            const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n"""${text}"""\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. "Mind & Emotion"\n2. "Physical Generals" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. "Modalities (< / >)" (time of aggravation <, amelioration >)\n4. "Particulars & Locations" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR "synthesis_query":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. "STOMACH APPETITE WANTING", "FEVER HEAT", "HEAD PAIN", "EXTREMITIES PAIN", "GENERALS WEAKNESS", "MIND RESTLESSNESS NIGHT").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  "symptoms": [\n     {\n       "category": "Particulars",\n       "name": "Symptom in Hindi/English",\n       "weight": 2,\n       "synthesis_query": "REPERTORY KEYWORDS"\n     }\n  ]\n}`;
 
-            // Dynamically discover supported models for this exact API key directly from Google
-            let modelsToTry = [];
-            try {
-              const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-              if (listRes.ok) {
-                const listData = await listRes.json();
-                const available = (listData.models || [])
-                  .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
-                  .map(m => m.name.replace('models/', ''));
-                console.log("Discovered Gemini models for key:", available);
-
-                // Prioritize recommended latest models
-                const priorityOrder = [
-                  'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-exp',
-                  'gemini-flash-latest', 'gemini-pro-latest', 'gemini-1.0-pro'
-                ];
-                modelsToTry = priorityOrder.filter(p => available.includes(p));
-                available.forEach(a => { if (!modelsToTry.includes(a)) modelsToTry.push(a); });
-              }
-            } catch(e) {
-              console.warn("Dynamic model discovery failed, using standard list:", e);
-            }
-
-            if (modelsToTry.length === 0) {
-              modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-exp', 'gemini-flash-latest', 'gemini-pro-latest'];
-            }
+            // Model Priority List (Gemini 1.5 & 2.0 Flash)
+            const modelsToTry = [
+              'gemini-1.5-flash',
+              'gemini-2.0-flash',
+              'gemini-1.5-flash-latest',
+              'gemini-2.0-flash-exp',
+              'gemini-1.5-pro'
+            ];
 
             let geminiRawText = null;
             let modelUsed = null;
@@ -921,9 +888,13 @@
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.2 }
+                    generationConfig: {
+                      temperature: 0.1,
+                      responseMimeType: "application/json"
+                    }
                   })
                 });
+
                 if (gRes.ok) {
                   const gData = await gRes.json();
                   geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -933,69 +904,61 @@
                     break;
                   }
                 } else {
-                  const errJson = await gRes.json();
-                  console.warn(`Model ${model} HTTP ${gRes.status}:`, errJson);
+                  const errJson = await gRes.json().catch(() => ({}));
+                  lastGeminiError = errJson?.error?.message || `HTTP ${gRes.status}: ${gRes.statusText}`;
+                  console.warn(`Model ${model} returned error:`, lastGeminiError);
                 }
               } catch(e) {
-                console.warn(`Model ${model} request error:`, e);
+                lastGeminiError = e.message || 'Network error';
+                console.warn(`Model ${model} request failed:`, e);
               }
             }
 
             if (geminiRawText) {
-              const cleanJson = geminiRawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-              const parsed = JSON.parse(cleanJson);
-              const symptoms = parsed.symptoms || [];
+              const parsed = extractJsonFromGemini(geminiRawText);
+              if (parsed && parsed.symptoms) {
+                const symptoms = parsed.symptoms;
 
-              // Resolve candidate rubrics from in-browser wasmDb
-              symptoms.forEach(s => {
-                s.candidate_rubrics = [];
-                if (isWasmDbReady && wasmDb && s.synthesis_query) {
-                  const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/).filter(t => t.length > 0);
-                  const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
-                  try {
-                    const st = wasmDb.prepare(`
-                      SELECT id, path, level,
-                        (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
-                      FROM syntree
-                      WHERE ${likes}
-                      ORDER BY rem_count DESC
-                      LIMIT 3
-                    `);
-                    st.bind(qTerms.map(t => `%${t}%`));
-                    while (st.step()) {
-                      const r = st.getAsObject();
-                      s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level, remedy_count: r.rem_count });
-                    }
-                    st.free();
-                  } catch(e) {}
-                }
-              });
+                // Resolve candidate rubrics from in-browser wasmDb
+                symptoms.forEach(s => {
+                  s.candidate_rubrics = [];
+                  if (isWasmDbReady && wasmDb && s.synthesis_query) {
+                    const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/).filter(t => t.length > 0);
+                    const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
+                    try {
+                      const st = wasmDb.prepare(`
+                        SELECT id, path, level,
+                          (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
+                        FROM syntree
+                        WHERE ${likes}
+                        ORDER BY rem_count DESC
+                        LIMIT 3
+                      `);
+                      st.bind(qTerms.map(t => `%${t}%`));
+                      while (st.step()) {
+                        const r = st.getAsObject();
+                        s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level, remedy_count: r.rem_count });
+                      }
+                      st.free();
+                    } catch(e) {}
+                  }
+                });
 
-              data = {
-                model_used: `AI: ${modelUsed} Active`,
-                symptoms: symptoms
-              };
+                data = {
+                  model_used: `AI: ${modelUsed} Active`,
+                  symptoms: symptoms
+                };
+              } else {
+                lastGeminiError = 'JSON parsing failed on AI response';
+              }
             }
           } catch(geminiErr) {
-            console.warn("Direct Gemini call failed, attempting fallback:", geminiErr);
+            lastGeminiError = geminiErr.message;
+            console.warn("Direct Gemini call failed:", geminiErr);
           }
         }
 
-        // 2. Fallback to Local/Tunnel API if direct Gemini wasn't run
-        if (!data) {
-          try {
-            const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ transcript: text, api_key: apiKey })
-            });
-            data = await res.json();
-          } catch(netErr) {
-            console.warn("Network backend not reachable, using offline NLP rule engine:", netErr);
-          }
-        }
-
-        // 3. Complete Offline Fallback if all else fails (Never crashes with 'Failed to fetch'!)
+        // 2. Offline Fallback if Gemini was not available or threw an error
         if (!data || !data.symptoms || data.symptoms.length === 0) {
           const offlineSymptoms = [];
           const lower = text.toLowerCase();
@@ -1011,6 +974,9 @@
           }
           if (lower.includes('fever') || lower.includes('bukhar') || lower.includes('chill') || lower.includes('thand')) {
             offlineSymptoms.push({ category: 'Physical Generals', name: 'Fever / Chill', weight: 2, synthesis_query: 'FEVER CONTINUED' });
+          }
+          if (lower.includes('weakness') || lower.includes('kamzori') || lower.includes('thakan') || lower.includes('tired')) {
+            offlineSymptoms.push({ category: 'Physical Generals', name: 'Weakness / Fatigue', weight: 2, synthesis_query: 'GENERALS WEAKNESS' });
           }
           if (offlineSymptoms.length === 0) {
             offlineSymptoms.push({ category: 'Particulars & Locations', name: text.substring(0, 40), weight: 2, synthesis_query: 'GENERALS WEAKNESS' });
@@ -1034,85 +1000,100 @@
             }
           });
 
-          // Log what happened to help diagnose
+          let statusMsg = 'Offline NLP Mode (Add Gemini Key above for AI)';
           if (apiKey) {
-            console.warn('[AI] Gemini API call failed - check browser console for model errors. Key prefix:', apiKey.substring(0, 8));
-            console.warn('[AI] Possible causes: 1) Invalid API key 2) Key not enabled for Gemini API 3) CORS block 4) Quota exceeded');
+            statusMsg = lastGeminiError ? `⚠️ Gemini Error: ${lastGeminiError.substring(0, 50)}...` : '⚠️ Gemini Failed - Using Offline NLP';
+            // Alert user of the exact error reason from Google
+            setTimeout(() => {
+              alert(`⚠️ Google Gemini API Error:
+
+${lastGeminiError || 'Unknown Error'}
+
+Please verify that your API key is active and has Gemini API enabled in Google AI Studio.`);
+            }, 300);
           }
+
           data = {
-            model_used: apiKey ? '⚠️ Gemini API Error (see console) - Using Offline NLP' : '📴 Offline NLP Mode (Add Gemini Key above for AI)',
+            model_used: statusMsg,
             symptoms: offlineSymptoms
           };
         }
 
-        if (data.model_used) {
-          document.getElementById('autopilotBadge').textContent = data.model_used;
-        }
-      
-      // Clear current buckets
-      document.getElementById('bucket-mind').innerHTML = '';
-      document.getElementById('bucket-generals').innerHTML = '';
-      document.getElementById('bucket-modalities').innerHTML = '';
-      document.getElementById('bucket-particulars').innerHTML = '';
-
-      // Clear current symptoms list for new extraction
-      currentSymptoms = [];
-
-      // Populate symptom chips
-      data.symptoms.forEach(sym => {
-        let bucketId = 'bucket-particulars';
-        if (sym.category.includes('Mind')) bucketId = 'bucket-mind';
-        else if (sym.category.includes('General')) bucketId = 'bucket-generals';
-        else if (sym.category.includes('Modalities')) bucketId = 'bucket-modalities';
-
-        // Auto-stage first candidate rubric if available
-        let candidateId = null;
-        let candidatePath = '';
-        if (sym.candidate_rubrics && sym.candidate_rubrics.length > 0) {
-          const r = sym.candidate_rubrics[0];
-          candidateId = r.id;
-          candidatePath = r.path;
-          if (!currentSymptoms.some(s => s.id === r.id)) {
-            currentSymptoms.push({
-              id: r.id,
-              path: r.path,
-              weight: sym.weight || 2,
-              is_eliminating: false,
-              category: sym.category,
-              clinical_symptom: sym.name
-            });
+        // Update badge with active model status
+        if (autopilotBadge) {
+          autopilotBadge.textContent = data.model_used;
+          if (data.model_used.includes('AI:')) {
+            autopilotBadge.style.background = '#dcfce7';
+            autopilotBadge.style.color = '#166534';
+          } else {
+            autopilotBadge.style.background = '#fef3c7';
+            autopilotBadge.style.color = '#92400e';
           }
         }
 
-        const chip = document.createElement('div');
-        chip.className = 'symptom-chip selected';
-        chip.id = `symptom-chip-${candidateId || Math.random().toString(36).substring(7)}`;
+        // Clear current buckets
+        document.getElementById('bucket-mind').innerHTML = '';
+        document.getElementById('bucket-generals').innerHTML = '';
+        document.getElementById('bucket-modalities').innerHTML = '';
+        document.getElementById('bucket-particulars').innerHTML = '';
 
-        let rubricLine = '';
-        if (candidateId) {
-          rubricLine = `
-            <div class="chip-rubric-link" onclick="openSynthesisBookView(${candidateId}, '', ${candidateId})" title="Click to open book view or swap this rubric in Repertorisation Grid">
-              <span class="chip-rubric-text"><i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${candidatePath}</span>
-              <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; color: #60a5fa;"></i>
+        // Clear current symptoms list for new extraction
+        currentSymptoms = [];
+
+        // Populate symptom chips
+        data.symptoms.forEach(sym => {
+          let bucketId = 'bucket-particulars';
+          if (sym.category.includes('Mind')) bucketId = 'bucket-mind';
+          else if (sym.category.includes('General')) bucketId = 'bucket-generals';
+          else if (sym.category.includes('Modalities')) bucketId = 'bucket-modalities';
+
+          let candidateId = null;
+          let candidatePath = '';
+          if (sym.candidate_rubrics && sym.candidate_rubrics.length > 0) {
+            const r = sym.candidate_rubrics[0];
+            candidateId = r.id;
+            candidatePath = r.path;
+            if (!currentSymptoms.some(s => s.id === r.id)) {
+              currentSymptoms.push({
+                id: r.id,
+                path: r.path,
+                weight: sym.weight || 2,
+                is_eliminating: false,
+                category: sym.category,
+                clinical_symptom: sym.name
+              });
+            }
+          }
+
+          const chip = document.createElement('div');
+          chip.className = 'symptom-chip selected';
+          chip.id = `symptom-chip-${candidateId || Math.random().toString(36).substring(7)}`;
+
+          let rubricLine = '';
+          if (candidateId) {
+            rubricLine = `
+              <div class="chip-rubric-link" onclick="openSynthesisBookView(${candidateId}, '', ${candidateId})" title="Click to open book view or swap this rubric in Repertorisation Grid">
+                <span class="chip-rubric-text"><i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${escapeHtml(candidatePath)}</span>
+                <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; color: #60a5fa; flex-shrink: 0;"></i>
+              </div>
+            `;
+          }
+
+          chip.innerHTML = `
+            <div class="chip-top-row">
+              <span class="chip-symptom-title">${escapeHtml(sym.name)}</span>
+              <div style="display: flex; align-items: center; gap: 4px; flex-shrink: 0;">
+                <span class="chip-weight w${sym.weight || 2}" onclick="cycleWeight(this, ${candidateId})">${sym.weight || 2}x</span>
+                <span class="chip-del" onclick="this.closest('.symptom-chip').remove(); if(${candidateId}) removeSymptom(${candidateId})"><i class="fa-solid fa-xmark"></i></span>
+              </div>
             </div>
+            ${rubricLine}
           `;
-        }
+          document.getElementById(bucketId).appendChild(chip);
+        });
 
-        chip.innerHTML = `
-          <div class="chip-top-row">
-            <span class="chip-symptom-title">${sym.name}</span>
-            <div style="display: flex; align-items: center; gap: 4px;">
-              <span class="chip-weight w${sym.weight || 2}" onclick="cycleWeight(this, ${candidateId})">${sym.weight || 2}x</span>
-              <span class="chip-del" onclick="this.closest('.symptom-chip').remove(); if(${candidateId}) removeSymptom(${candidateId})"><i class="fa-solid fa-xmark"></i></span>
-            </div>
-          </div>
-          ${rubricLine}
-        `;
-        document.getElementById(bucketId).appendChild(chip);
-      });
-
-      console.log("Staged rubrics for matrix:", currentSymptoms);
-      recalculateMatrix();
+        console.log("Staged rubrics for matrix:", currentSymptoms);
+        recalculateMatrix();
       } catch (err) {
         console.error("AI extraction error:", err);
         alert("Error during AI symptom extraction: " + err.message);
@@ -1655,6 +1636,10 @@
 
     // Recalculate Repertorisation Grid (Offline WebAssembly & Cloud Fallback)
     async function recalculateMatrix() {
+      if (typeof isMobileDevice === 'function' && isMobileDevice() && currentGridMode !== 'table') {
+        switchGridMode('cards');
+      }
+    
       // Enforce mobile cards mode at the START of every recalculation
       if (window.innerWidth <= 768) {
         currentGridMode = 'cards';
@@ -2344,51 +2329,52 @@
     }
 
     
-    let currentGridMode = window.innerWidth <= 768 ? 'cards' : 'table';
+        // Universal mobile detection (media query + touch + userAgent + innerWidth)
+    function isMobileDevice() {
+      return (window.innerWidth <= 768) || 
+             (window.matchMedia && window.matchMedia('(max-width: 768px)').matches) ||
+             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+
+    let currentGridMode = isMobileDevice() ? 'cards' : 'table';
 
     function switchGridMode(mode) {
-      // On mobile, ALWAYS use cards mode regardless of what's requested
-      if (window.innerWidth <= 768 && mode === 'table') {
-        mode = 'cards';
-      }
       currentGridMode = mode;
       const tblCont = document.getElementById('gridTableContainer');
       const crdCont = document.getElementById('mobileCardsContainer');
       const btnCards = document.getElementById('viewToggleCardsBtn');
       const btnTable = document.getElementById('viewToggleTableBtn');
 
+      if (!tblCont || !crdCont) return;
+
       if (mode === 'cards') {
+        tblCont.classList.remove('user-force-table');
         tblCont.style.setProperty('display', 'none', 'important');
-        crdCont.style.display = 'block';
+        crdCont.classList.remove('user-force-table');
+        crdCont.style.setProperty('display', 'block', 'important');
         if (btnCards) { btnCards.style.background = '#eff6ff'; btnCards.style.color = '#1d4ed8'; btnCards.style.borderColor = '#93c5fd'; }
         if (btnTable) { btnTable.style.background = 'white'; btnTable.style.color = 'var(--text)'; btnTable.style.borderColor = 'var(--border)'; }
       } else {
-        tblCont.style.display = 'block';
-        crdCont.style.display = 'none';
+        tblCont.classList.add('user-force-table');
+        tblCont.style.setProperty('display', 'block', 'important');
+        crdCont.classList.add('user-force-table');
+        crdCont.style.setProperty('display', 'none', 'important');
         if (btnTable) { btnTable.style.background = '#eff6ff'; btnTable.style.color = '#1d4ed8'; btnTable.style.borderColor = '#93c5fd'; }
         if (btnCards) { btnCards.style.background = 'white'; btnCards.style.color = 'var(--text)'; btnCards.style.borderColor = 'var(--border)'; }
       }
     }
 
-    // Auto-initialize view mode based on screen size
+    // Auto-initialize view mode based on screen size on DOM ready
     setTimeout(() => {
-      if (window.innerWidth <= 768) {
-        switchGridMode('cards');
-      } else {
-        switchGridMode('table');
-      }
-    }, 150);
+      switchGridMode(isMobileDevice() ? 'cards' : 'table');
+    }, 100);
 
-    // Maintain correct mode on orientation change / resize
     window.addEventListener('resize', () => {
-      if (window.innerWidth <= 768) {
+      if (isMobileDevice() && currentGridMode !== 'table') {
         switchGridMode('cards');
-      } else if (currentGridMode === 'table') {
-        switchGridMode('table');
       }
     });
 
-    // Mobile Cards Renderer for small screens (Portrait mode ergonomics)
     function renderMobileCards(data) {
       const rubList = document.getElementById('mobileRubricsList');
       const remFeed = document.getElementById('mobileRemedyCardsFeed');
@@ -2406,28 +2392,29 @@
         return;
       }
 
-      // 1. Render Rubric Controls (Weights, Elimination, Remove)
+      // 1. Render Rubric Controls (Weights, Interactive Elimination Toggle, Remove)
       currentSymptoms.forEach(sym => {
+        const isElim = !!sym.is_eliminating;
         const row = document.createElement('div');
-        row.style.cssText = "display: flex; justify-content: space-between; align-items: center; gap: 8px; background: white; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 12px;";
+        row.style.cssText = "display: flex; justify-content: space-between; align-items: center; gap: 8px; background: white; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 12px; width: 100%; box-sizing: border-box;";
         row.innerHTML = `
-          <div style="flex: 1; min-width: 0;">
-            <div style="font-weight: 600; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${sym.path}">
-              ${sym.path}
+          <div style="flex: 1; min-width: 0; padding-right: 6px;">
+            <div style="font-weight: 700; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(sym.path)}">
+              ${escapeHtml(sym.path)}
             </div>
-            <div style="font-size: 10px; color: var(--text-muted); display: flex; gap: 6px; margin-top: 2px;">
-              <span style="color: ${sym.is_eliminating ? '#dc2626' : '#64748b'}; font-weight: ${sym.is_eliminating ? '700' : 'normal'};">
-                <i class="fa-solid fa-filter"></i> ${sym.is_eliminating ? 'Eliminating Rubric' : 'Standard'}
-              </span>
+            <div style="font-size: 11px; margin-top: 4px; display: flex; align-items: center; gap: 6px;">
+              <button class="btn btn-outline" style="padding: 2px 8px; font-size: 10px; font-weight: 700; border-color: ${isElim ? '#ef4444' : '#cbd5e1'}; background: ${isElim ? '#fee2e2' : '#f8fafc'}; color: ${isElim ? '#b91c1c' : '#64748b'};" onclick="toggleEliminating(${sym.id}, ${!isElim})">
+                <i class="fa-solid fa-filter"></i> ${isElim ? 'Eliminating Rubric (ACTIVE)' : 'Standard (Filter OFF)'}
+              </button>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <select onchange="updateRowWeight(${sym.id}, this.value)" style="padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 12px; font-weight: 700;">
+          <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <select onchange="updateRowWeight(${sym.id}, this.value)" style="padding: 4px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 12px; font-weight: 700;">
               <option value="1" ${sym.weight === 1 ? 'selected' : ''}>1x</option>
               <option value="2" ${sym.weight === 2 ? 'selected' : ''}>2x</option>
               <option value="3" ${sym.weight === 3 ? 'selected' : ''}>3x</option>
             </select>
-            <button class="btn btn-outline" style="padding: 4px 6px; font-size: 11px; color: #ef4444; border-color: #fca5a5;" onclick="removeSymptom(${sym.id})" title="Remove rubric">
+            <button class="btn btn-outline" style="padding: 5px 8px; font-size: 11px; color: #ef4444; border-color: #fca5a5;" onclick="removeSymptom(${sym.id})" title="Remove rubric">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -2440,7 +2427,7 @@
         return;
       }
 
-      // 2. Render Ranked Remedy Cards
+      // 2. Render Ranked Remedy Cards (Zero-Overflow Guarantee)
       const totRubrics = data.total_rubrics || data.rubrics?.length || currentSymptoms.length || 1;
 
       data.remedies.forEach((rem, index) => {
@@ -2454,9 +2441,12 @@
         card.style.cssText = `
           background: ${isLeader ? '#f0fdf4' : 'white'};
           border: ${isLeader ? '2px solid #16a34a' : '1px solid var(--border)'};
-          border-radius: 8px;
-          padding: 12px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+          border-radius: 10px;
+          padding: 12px 14px;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+          width: 100%;
+          box-sizing: border-box;
+          overflow: hidden;
         `;
 
         // Generate chips showing which rubrics were matched with their degree
@@ -2466,10 +2456,10 @@
           if (deg > 0) {
             const shortName = r.rubric.split(' - ').slice(-1)[0] || r.rubric;
             matchedChipsHtml += `
-              <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer;"
+              <span style="font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; cursor: pointer; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
                     onclick="openSynthesisBookView(${r.symptom_id}, '${abbr}')"
-                    title="${r.rubric} (Grade ${deg})">
-                ${shortName}: <strong>Gr ${deg}</strong>
+                    title="${escapeHtml(r.rubric)} (Grade ${deg})">
+                ${escapeHtml(shortName)}: <strong>Gr ${deg}</strong>
               </span>
             `;
           }
@@ -2478,22 +2468,22 @@
 
         card.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
-            <div>
-              <div style="display: flex; align-items: center; gap: 6px;">
+            <div style="flex: 1; min-width: 0;">
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <span style="font-weight: 800; font-size: 16px; color: ${isLeader ? '#15803d' : '#0f172a'};">${abbr}</span>
                 ${isLeader ? '<span style="background: #dcfce7; color: #166534; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px;">TOP SIMILIMUM</span>' : ''}
               </div>
-              <div style="font-size: 12px; color: var(--text-muted); margin-top: 1px;">${fullName}</div>
+              <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHtml(fullName)}">${escapeHtml(fullName)}</div>
             </div>
-            <div style="text-align: right;">
-              <div style="font-size: 15px; font-weight: 800; color: #2563eb;">${totScore} <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">pts</span></div>
+            <div style="text-align: right; flex-shrink: 0;">
+              <div style="font-size: 16px; font-weight: 800; color: #2563eb;">${totScore} <span style="font-size: 11px; font-weight: normal; color: var(--text-muted);">pts</span></div>
               <div style="font-size: 11px; color: #16a34a; font-weight: 600;">${cov}/${totRubrics} rubrics</div>
             </div>
           </div>
           ${matchedChipsHtml}
           <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 6px;">
-            <button class="btn btn-outline" style="padding: 4px 10px; font-size: 11px; font-weight: 600;" onclick="selectPrescriptionRemedy('${abbr}', '${escapeQuotes(fullName)}')">
-              <i class="fa-solid fa-check"></i> Prescribe
+            <button class="btn btn-outline" style="padding: 5px 12px; font-size: 12px; font-weight: 700; width: 100%; justify-content: center; background: ${isLeader ? '#16a34a' : 'white'}; color: ${isLeader ? 'white' : 'var(--text)'}; border-color: ${isLeader ? '#16a34a' : 'var(--border)'};" onclick="selectPrescriptionRemedy('${abbr}', '${escapeQuotes(fullName)}')">
+              <i class="fa-solid fa-check"></i> Prescribe ${abbr}
             </button>
           </div>
         `;
