@@ -1400,6 +1400,7 @@
               breadcrumbs: breadcrumbs,
               remedies: remedies,
               cross_references: cross_references,
+              children: sub_rubrics,
               sub_rubrics: sub_rubrics
             };
           }
@@ -1512,15 +1513,16 @@
       }
 
       // 5. Child Sub-Rubrics with exact Remedy Counts!
+      const childList = data.children || data.sub_rubrics || [];
       let childrenHtml = '';
-      if (data.children && data.children.length > 0) {
+      if (childList && childList.length > 0) {
         childrenHtml = `<div style="margin-top: 14px; font-size: 13px; font-family: sans-serif;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <strong style="color: #0f172a;"><i class="fa-solid fa-folder-tree"></i> Sub-Rubric Modifications (${data.children.length}):</strong>
+            <strong style="color: #0f172a;"><i class="fa-solid fa-folder-tree"></i> Sub-Rubric Modifications (${childList.length}):</strong>
             <span style="font-size: 11px; color: #64748b;">Tap any sub-rubric to navigate deeper</span>
           </div>
-          <div style="max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; padding: 6px; border-radius: 6px; background: white;">` +
-          data.children.map(c => `
+          <div style="max-height: 260px; overflow-y: auto; border: 1px solid #e2e8f0; padding: 6px; border-radius: 6px; background: white;">` +
+          childList.map(c => `
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; border-radius: 4px; transition: background 0.15s;" 
                  onmouseover="this.style.background='#f8fafc'" 
                  onmouseout="this.style.background='white'"
