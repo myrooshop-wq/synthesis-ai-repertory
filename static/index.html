@@ -971,7 +971,7 @@
           div.className = 'dropdown-item';
           div.innerHTML = `
             <div style="flex: 1;">
-              <strong>&bull; ${ch.item}</strong>
+              <strong>&bull; ${ch.item || ch.name || "Chapter"}</strong>
               <div style="font-size: 11px; color: var(--text-muted);">${ch.path}</div>
             </div>
             <div style="display: flex; gap: 6px; align-items: center;">
@@ -1004,11 +1004,11 @@
       recalculateMatrix();
     }
 
-    // Recalculate Repertorisation Grid
+    // Recalculate Repertorisation Grid (Offline WebAssembly & Cloud Fallback)
     async function recalculateMatrix() {
       if (currentSymptoms.length === 0) {
         document.getElementById('matrixBody').innerHTML = `
-          <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">No rubrics selected yet.</td></tr>
+          <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">No rubrics selected yet. Dictate symptoms or search rubrics above.</td></tr>
         `;
         return;
       }
@@ -1020,24 +1020,141 @@
         if (s.is_eliminating) eliminating_ids.push(s.id);
       });
 
-      const minDegree = document.getElementById('minDegreeSelect').value;
-      const topN = document.getElementById('topNSelect').value;
-
+      const minDegree = parseInt(document.getElementById('minDegreeSelect').value) || 1;
+      const topN = parseInt(document.getElementById('topNSelect').value) || 12;
       const isAcute = document.getElementById('clinicalStrategySelect')?.value === 'acute';
 
-      const res = await fetch(API_BASE + '/api/repertorise', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          weights: weights,
-          eliminating_ids: eliminating_ids,
-          min_degree: minDegree,
-          top_n: topN,
-          is_acute_mode: isAcute
-        })
-      });
-      const data = await res.json();
-      renderMatrix(data);
+      // 1. If WebAssembly in-browser database is ready, calculate locally with zero network!
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const symptomIds = Object.keys(weights).map(Number);
+          const eliminatingSet = new Set(eliminating_ids.map(Number));
+
+          // Fetch rubric metadata
+          const rubrics = [];
+          for (const s of currentSymptoms) {
+            rubrics.push({
+              id: s.id,
+              path: s.path,
+              weight: s.weight,
+              is_eliminating: s.is_eliminating,
+              category: s.category
+            });
+          }
+
+          // Query remedy links from in-browser SQLite
+          const inClause = symptomIds.join(',');
+          const query = `
+            SELECT sr.symptom_id, sr.remedy_abbreviation, sr.degree, r.description as remedy_full
+            FROM symptom_remedies sr
+            LEFT JOIN remedies r ON sr.remedy_abbreviation = r.remedy_abbreviation
+            WHERE sr.symptom_id IN (${inClause}) AND sr.degree >= ?
+          `;
+          const stmt = wasmDb.prepare(query);
+          stmt.bind([minDegree]);
+
+          const remedyTotals = {}; // abbr -> { total_score, rubrics_covered, full_name, elim_hits, matrix: { sid: deg } }
+          while (stmt.step()) {
+            const row = stmt.getAsObject();
+            const sid = row.symptom_id;
+            const abbr = row.remedy_abbreviation;
+            const deg = row.degree;
+            const full = row.remedy_full || abbr;
+            const w = weights[sid] || 1;
+
+            if (!remedyTotals[abbr]) {
+              remedyTotals[abbr] = {
+                remedy: abbr,
+                full_name: full,
+                total_score: 0,
+                rubrics_covered: 0,
+                elim_hits: 0,
+                matrix: {}
+              };
+            }
+
+            remedyTotals[abbr].total_score += (deg * w);
+            remedyTotals[abbr].rubrics_covered += 1;
+            remedyTotals[abbr].matrix[sid] = deg;
+
+            if (eliminatingSet.has(sid)) {
+              remedyTotals[abbr].elim_hits += 1;
+            }
+          }
+          stmt.free();
+
+          // Acute key remedies list
+          const acuteRemedies = new Set(['ars', 'nux-v', 'verat', 'bell', 'acon', 'bry', 'phos', 'cham', 'rhus-t', 'apis', 'canth', 'crot-h', 'camph']);
+
+          // Filter by eliminating symptoms
+          let candidates = Object.values(remedyTotals);
+          if (eliminatingSet.size > 0) {
+            candidates = candidates.filter(r => r.elim_hits === eliminatingSet.size);
+          }
+
+          // Apply Acute Boost if selected
+          if (isAcute) {
+            candidates.forEach(r => {
+              if (acuteRemedies.has(r.remedy.toLowerCase())) {
+                r.total_score += 4;
+              }
+            });
+          }
+
+          // Sort by rubrics_covered DESC, then total_score DESC (Kentian standard)
+          candidates.sort((a, b) => {
+            if (b.rubrics_covered !== a.rubrics_covered) {
+              return b.rubrics_covered - a.rubrics_covered;
+            }
+            return b.total_score - a.total_score;
+          });
+
+          const topRemedies = candidates.slice(0, topN);
+
+          // Build matrix grid response
+          const matrixGrid = rubrics.map(rub => {
+            const rowScores = {};
+            topRemedies.forEach(rem => {
+              rowScores[rem.remedy] = rem.matrix[rub.id] || 0;
+            });
+            return {
+              symptom_id: rub.id,
+              rubric: rub.path,
+              weight: rub.weight,
+              is_eliminating: rub.is_eliminating,
+              scores: rowScores
+            };
+          });
+
+          renderMatrix({
+            rubrics: rubrics,
+            remedies: topRemedies,
+            matrix: matrixGrid
+          });
+          return;
+        } catch(e) {
+          console.warn("WASM recalculateMatrix error, falling back to network:", e);
+        }
+      }
+
+      // 2. Network Fallback
+      try {
+        const res = await fetch(API_BASE + '/api/repertorise', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            weights: weights,
+            eliminating_ids: eliminating_ids,
+            min_degree: minDegree,
+            top_n: topN,
+            is_acute_mode: isAcute
+          })
+        });
+        const data = await res.json();
+        renderMatrix(data);
+      } catch(e) {
+        console.error("Repertorisation error:", e);
+      }
     }
 
     function renderMatrix(data) {
@@ -1194,11 +1311,98 @@
 
     // Modal: Exact Synthesis Book View with typography, degrees, author citations & hierarchy replacement
     async function openSynthesisBookView(symptomId, highlightRemedy = '', originalTargetId = null) {
-      // Keep track of which rubric in the grid is being replaced
       const activeReplaceTargetId = originalTargetId !== null ? originalTargetId : symptomId;
+      let data = null;
 
-      const res = await fetch(`${API_BASE}/api/rubric-book-view?symptom_id=${symptomId}&remedy=${encodeURIComponent(highlightRemedy)}`);
-      const data = await res.json();
+      // 1. Try In-Browser WebAssembly SQLite
+      if (isWasmDbReady && wasmDb) {
+        try {
+          // Rubric details
+          const rStmt = wasmDb.prepare("SELECT * FROM syntree WHERE id = ?");
+          rStmt.bind([symptomId]);
+          let rubric = null;
+          if (rStmt.step()) rubric = rStmt.getAsObject();
+          rStmt.free();
+
+          if (rubric) {
+            // Breadcrumbs
+            const breadcrumbs = [];
+            let curr_id = rubric.id_father;
+            while (curr_id) {
+              const bStmt = wasmDb.prepare("SELECT id, id_father, item, path FROM syntree WHERE id = ?");
+              bStmt.bind([curr_id]);
+              if (bStmt.step()) {
+                const p = bStmt.getAsObject();
+                breadcrumbs.unshift(p);
+                curr_id = p.id_father;
+              } else {
+                bStmt.free();
+                break;
+              }
+              bStmt.free();
+            }
+
+            // Remedies
+            const remStmt = wasmDb.prepare(`
+              SELECT sr.remedy_abbreviation, sr.degree, sr.text, r.description as remedy_full
+              FROM symptom_remedies sr
+              LEFT JOIN remedies r ON sr.remedy_abbreviation = r.remedy_abbreviation
+              WHERE sr.symptom_id = ?
+              ORDER BY sr.degree DESC, sr.remedy_abbreviation ASC
+            `);
+            remStmt.bind([symptomId]);
+            const remedies = [];
+            while (remStmt.step()) {
+              remedies.push(remStmt.getAsObject());
+            }
+            remStmt.free();
+
+            // Cross references
+            const xStmt = wasmDb.prepare("SELECT DISTINCT symptom_id as target_symptom_id, text, kind FROM cross_references WHERE id = ? ORDER BY text ASC");
+            xStmt.bind([symptomId]);
+            const cross_references = [];
+            while (xStmt.step()) {
+              cross_references.push(xStmt.getAsObject());
+            }
+            xStmt.free();
+
+            // Child sub-rubrics WITH exact remedy count
+            const subStmt = wasmDb.prepare(`
+              SELECT s.id, s.item, s.path, s.level,
+                (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+              FROM syntree s
+              WHERE s.id_father = ?
+              ORDER BY s.item ASC
+            `);
+            subStmt.bind([symptomId]);
+            const sub_rubrics = [];
+            while (subStmt.step()) {
+              sub_rubrics.push(subStmt.getAsObject());
+            }
+            subStmt.free();
+
+            data = {
+              rubric: rubric,
+              breadcrumbs: breadcrumbs,
+              remedies: remedies,
+              cross_references: cross_references,
+              sub_rubrics: sub_rubrics
+            };
+          }
+        } catch(e) {
+          console.warn("WASM book view error:", e);
+        }
+      }
+
+      // 2. Network Fallback
+      if (!data) {
+        try {
+          const res = await fetch(`${API_BASE}/api/rubric-book-view?symptom_id=${symptomId}&remedy=${encodeURIComponent(highlightRemedy)}`);
+          data = await res.json();
+        } catch(e) {}
+      }
+
+      if (!data || !data.rubric) return;
       
       document.getElementById('modalTitle').innerHTML = `
         <i class="fa-solid fa-book-medical" style="color: #108a00; margin-right: 6px;"></i>
@@ -1400,7 +1604,7 @@
       if (isWasmDbReady && wasmDb) {
         try {
           const stmt = wasmDb.prepare(`
-            SELECT c.id, s.item as name, s.path
+            SELECT c.id, s.item, s.path
             FROM chapters c
             JOIN syntree s ON c.id = s.id
             ORDER BY s.item ASC
@@ -1437,7 +1641,7 @@
                onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#3b82f6'; this.style.color='#1d4ed8';"
                onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.color='#1e293b';"
                onclick="openSynthesisBookView(${ch.id}, '', ${replaceTargetId})">
-            ${ch.item}
+            ${ch.item || ch.name || "Chapter"}
           </div>
         `;
       });
@@ -1454,8 +1658,39 @@
 
     // Modal: Author Citation Proof
     async function openCitation(symptomId, remedy) {
-      const res = await fetch(`${API_BASE}/api/cell-citation?symptom_id=${symptomId}&remedy=${encodeURIComponent(remedy)}`);
-      const data = await res.json();
+      let data = null;
+
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const stmt = wasmDb.prepare(`
+            SELECT sr.degree, r.description as remedy_full
+            FROM symptom_remedies sr
+            LEFT JOIN remedies r ON sr.remedy_abbreviation = r.remedy_abbreviation
+            WHERE sr.symptom_id = ? AND sr.remedy_abbreviation = ?
+          `);
+          stmt.bind([symptomId, remedy]);
+          if (stmt.step()) {
+            const row = stmt.getAsObject();
+            data = {
+              symptom_id: symptomId,
+              remedy: remedy,
+              remedy_full: row.remedy_full || remedy,
+              degree: row.degree,
+              authors: []
+            };
+          }
+          stmt.free();
+        } catch(e) {}
+      }
+
+      if (!data) {
+        try {
+          const res = await fetch(`${API_BASE}/api/cell-citation?symptom_id=${symptomId}&remedy=${encodeURIComponent(remedy)}`);
+          data = await res.json();
+        } catch(e) {}
+      }
+
+      if (!data) return;
       document.getElementById('modalTitle').textContent = `Authority & Citation Proof`;
       
       let html = `
