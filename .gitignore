@@ -1,0 +1,30 @@
+# Python & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.env
+
+# Build artifacts & APK
+build_apk/
+temp_apk_work/
+release/
+*.apk
+*.zip
+*.jar
+
+# Brain & logs
+.system_generated/
+.user_uploaded/
+scratch/
+*.log
+
+# Heavy SQLite Databases (Should be hosted on cloud DB / Railway / mounted storage)
+*.db
+synthesis.db
+synthesis_full.db
+demo.db
+
+# Node
+node_modules/
+.vercel
