@@ -442,6 +442,15 @@
   </div>
 
   <script>
+    // Configurable API Backend (Defaults to local machine or user-saved endpoint)
+    let API_BASE = localStorage.getItem('synthesis_api_base') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'http://192.168.7.178:5055');
+    function setApiBase(url) {
+      API_BASE = url.replace(/\/$/, '');
+      localStorage.setItem('synthesis_api_base', API_BASE);
+      alert('API Backend set to: ' + API_BASE);
+      location.reload();
+    }
+
     // State
     let currentSymptoms = []; // { id, path, weight, is_eliminating, category }
     let speechRecognition = null;
@@ -546,7 +555,7 @@
 
       const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
 
-      const res = await fetch('/api/ai-extract-symptoms', {
+      const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ transcript: text, api_key: apiKey })
@@ -655,7 +664,7 @@
       const isSemantic = document.getElementById('semanticSearchToggle')?.checked || false;
 
       searchDebounce = setTimeout(async () => {
-        const url = `/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
+        const url = `${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
         const res = await fetch(url);
         const list = await res.json();
         dropdown.innerHTML = '';
@@ -707,7 +716,7 @@
 
     // Expand Sub-rubrics (e.g. MIND - ANXIETY -> Bladder, with pain in)
     async function expandSubRubrics(parentId, parentPath) {
-      const res = await fetch(`/api/rubric-children?parent_id=${parentId}`);
+      const res = await fetch(`${API_BASE}/api/rubric-children?parent_id=${parentId}`);
       const children = await res.json();
       const dropdown = document.getElementById('rubricDropdown');
       dropdown.innerHTML = '';
@@ -786,7 +795,7 @@
 
       const isAcute = document.getElementById('clinicalStrategySelect')?.value === 'acute';
 
-      const res = await fetch('/api/repertorise', {
+      const res = await fetch(API_BASE + '/api/repertorise', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -958,7 +967,7 @@
       // Keep track of which rubric in the grid is being replaced
       const activeReplaceTargetId = originalTargetId !== null ? originalTargetId : symptomId;
 
-      const res = await fetch(`/api/rubric-book-view?symptom_id=${symptomId}&remedy=${encodeURIComponent(highlightRemedy)}`);
+      const res = await fetch(`${API_BASE}/api/rubric-book-view?symptom_id=${symptomId}&remedy=${encodeURIComponent(highlightRemedy)}`);
       const data = await res.json();
       
       document.getElementById('modalTitle').innerHTML = `
@@ -1156,7 +1165,7 @@
 
     // Modal to browse all 41 top-level chapters (Mind, Vertigo, Head, etc.)
     async function openChaptersDirectory(replaceTargetId = null) {
-      const res = await fetch('/api/chapters');
+      const res = await fetch(API_BASE + '/api/chapters');
       const chapters = await res.json();
       
       document.getElementById('modalTitle').innerHTML = `
@@ -1194,7 +1203,7 @@
 
     // Modal: Author Citation Proof
     async function openCitation(symptomId, remedy) {
-      const res = await fetch(`/api/cell-citation?symptom_id=${symptomId}&remedy=${encodeURIComponent(remedy)}`);
+      const res = await fetch(`${API_BASE}/api/cell-citation?symptom_id=${symptomId}&remedy=${encodeURIComponent(remedy)}`);
       const data = await res.json();
       document.getElementById('modalTitle').textContent = `Authority & Citation Proof`;
       
@@ -1225,6 +1234,14 @@
     function generatePrescription() {
       alert("Prescription & Repertorisation Matrix generated successfully! Ready to attach to Patient PDF / WhatsApp.");
     }
-  </script>
+  
+    function promptServerUrl() {
+      const current = localStorage.getItem('synthesis_api_base') || 'http://192.168.7.178:5055';
+      const entered = prompt("Enter your Synthesis Python Backend Server URL (e.g. http://192.168.7.178:5055 or your tunnel/cloud URL):", current);
+      if (entered !== null) {
+        setApiBase(entered.trim());
+      }
+    }
+</script>
 </body>
 </html>
