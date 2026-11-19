@@ -228,6 +228,34 @@
         max-width: 100% !important;
         overflow-x: auto !important;
       }
+      .filter-bar {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 8px !important;
+        padding: 8px !important;
+      }
+      .filter-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        gap: 4px !important;
+      }
+      .filter-item select {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .filter-bar > div:last-child {
+        margin-left: 0 !important;
+        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        padding-top: 4px !important;
+        border-top: 1px dashed var(--border) !important;
+      }
       .mobile-only { display: inline; }
       .desktop-only { display: none; }
     }
@@ -827,20 +855,143 @@
       }
 
       try {
+        let data = null;
 
-      const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: text, api_key: apiKey })
-      });
-      const data = await res.json();
-      
-      if (data.model_used) {
-        document.getElementById('autopilotBadge').textContent = data.model_used;
-      }
-      if (data.gemini_error) {
-        alert("Google Gemini API Notice:\n" + data.gemini_error + "\n\n(The system automatically used the Offline Repertory NLP engine so your work is not interrupted).");
-      }
+        // 1. Direct In-Browser Google Gemini API (Works anywhere on Android/iOS with zero backend dependency!)
+        if (apiKey) {
+          try {
+            const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n\"\"\"${text}\"\"\"\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. \"Mind & Emotion\"\n2. \"Physical Generals\" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. \"Modalities (< / >)\" (time of aggravation <, amelioration >)\n4. \"Particulars & Locations\" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR \"synthesis_query\":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. \"STOMACH APPETITE WANTING\", \"FEVER HEAT\", \"HEAD PAIN\", \"EXTREMITIES PAIN\", \"GENERALS WEAKNESS\", \"MIND RESTLESSNESS NIGHT\").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  \"symptoms\": [\n     {\n       \"category\": \"Particulars\",\n       \"name\": \"Symptom in Hindi/English\",\n       \"weight\": 2,\n       \"synthesis_query\": \"REPERTORY KEYWORDS\"\n     }\n  ]\n}`;
+
+            // Try Gemini 1.5 Flash first, then 1.5 Pro
+            const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+            let geminiRawText = null;
+            let modelUsed = null;
+
+            for (const model of modelsToTry) {
+              try {
+                const gRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+                  })
+                });
+                if (gRes.ok) {
+                  const gData = await gRes.json();
+                  geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (geminiRawText) {
+                    modelUsed = model;
+                    break;
+                  }
+                }
+              } catch(e) {
+                console.warn(`Model ${model} failed, trying next:`, e);
+              }
+            }
+
+            if (geminiRawText) {
+              const cleanJson = geminiRawText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+              const parsed = JSON.parse(cleanJson);
+              const symptoms = parsed.symptoms || [];
+
+              // Resolve candidate rubrics from in-browser wasmDb
+              symptoms.forEach(s => {
+                s.candidate_rubrics = [];
+                if (isWasmDbReady && wasmDb && s.synthesis_query) {
+                  const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/).filter(t => t.length > 0);
+                  const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
+                  try {
+                    const st = wasmDb.prepare(`
+                      SELECT id, path, level,
+                        (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
+                      FROM syntree
+                      WHERE ${likes}
+                      ORDER BY rem_count DESC
+                      LIMIT 3
+                    `);
+                    st.bind(qTerms.map(t => `%${t}%`));
+                    while (st.step()) {
+                      const r = st.getAsObject();
+                      s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level, remedy_count: r.rem_count });
+                    }
+                    st.free();
+                  } catch(e) {}
+                }
+              });
+
+              data = {
+                model_used: `AI: ${modelUsed} Active`,
+                symptoms: symptoms
+              };
+            }
+          } catch(geminiErr) {
+            console.warn("Direct Gemini call failed, attempting fallback:", geminiErr);
+          }
+        }
+
+        // 2. Fallback to Local/Tunnel API if direct Gemini wasn't run
+        if (!data) {
+          try {
+            const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ transcript: text, api_key: apiKey })
+            });
+            data = await res.json();
+          } catch(netErr) {
+            console.warn("Network backend not reachable, using offline NLP rule engine:", netErr);
+          }
+        }
+
+        // 3. Complete Offline Fallback if all else fails (Never crashes with 'Failed to fetch'!)
+        if (!data || !data.symptoms || data.symptoms.length === 0) {
+          const offlineSymptoms = [];
+          const lower = text.toLowerCase();
+          
+          if (lower.includes('pain') || lower.includes('dard') || lower.includes('head') || lower.includes('sar')) {
+            offlineSymptoms.push({ category: 'Particulars & Locations', name: 'Headache / Pain', weight: 2, synthesis_query: 'HEAD PAIN' });
+          }
+          if (lower.includes('burning') || lower.includes('jalan') || lower.includes('stomach') || lower.includes('pet')) {
+            offlineSymptoms.push({ category: 'Particulars & Locations', name: 'Gastric Burning / Stomach', weight: 2, synthesis_query: 'STOMACH PAIN BURNING' });
+          }
+          if (lower.includes('fear') || lower.includes('dar') || lower.includes('anxiety') || lower.includes('ghabrahat')) {
+            offlineSymptoms.push({ category: 'Mind & Emotion', name: 'Fear / Anxiety', weight: 2, synthesis_query: 'MIND FEAR' });
+          }
+          if (lower.includes('fever') || lower.includes('bukhar') || lower.includes('chill') || lower.includes('thand')) {
+            offlineSymptoms.push({ category: 'Physical Generals', name: 'Fever / Chill', weight: 2, synthesis_query: 'FEVER CONTINUED' });
+          }
+          if (offlineSymptoms.length === 0) {
+            offlineSymptoms.push({ category: 'Particulars & Locations', name: text.substring(0, 40), weight: 2, synthesis_query: 'GENERALS WEAKNESS' });
+          }
+
+          // Match rubrics for offline symptoms
+          offlineSymptoms.forEach(s => {
+            s.candidate_rubrics = [];
+            if (isWasmDbReady && wasmDb && s.synthesis_query) {
+              const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/);
+              const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
+              try {
+                const st = wasmDb.prepare(`SELECT id, path, level FROM syntree WHERE ${likes} LIMIT 2`);
+                st.bind(qTerms.map(t => `%${t}%`));
+                while (st.step()) {
+                  const r = st.getAsObject();
+                  s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level });
+                }
+                st.free();
+              } catch(e) {}
+            }
+          });
+
+          data = {
+            model_used: apiKey ? 'Offline Rule Engine (Check API Key)' : 'Offline NLP Mode (Add Gemini Key in top bar for Full AI)',
+            symptoms: offlineSymptoms
+          };
+        }
+
+        if (data.model_used) {
+          document.getElementById('autopilotBadge').textContent = data.model_used;
+        }
       
       // Clear current buckets
       document.getElementById('bucket-mind').innerHTML = '';
