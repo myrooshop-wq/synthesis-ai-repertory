@@ -965,24 +965,71 @@
     }
 
     // Step 1: AI Symptom Extraction
-    // Robust JSON extraction from Gemini (handles raw JSON, code blocks, or conversational wrapper)
+    // Universal robust JSON extraction from Gemini (handles objects, arrays, code blocks, or relaxed JSON)
     function extractJsonFromGemini(rawText) {
       if (!rawText) return null;
       const clean = rawText.trim();
-      // 1. Direct parse attempt
+
+      // 1. Direct parse
       try { return JSON.parse(clean); } catch(e) {}
-      // 2. Extract ```json ... ``` code fence
+
+      // 2. Extract markdown code fence ```json ... ``` or ``` ... ```
       const blockMatch = clean.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
       if (blockMatch && blockMatch[1]) {
         try { return JSON.parse(blockMatch[1].trim()); } catch(e) {}
       }
-      // 3. Extract outermost { ... }
+
+      // 3. Extract outermost JSON Array [ ... ]
+      const fb = clean.indexOf('[');
+      const lb = clean.lastIndexOf(']');
+      if (fb !== -1 && lb > fb) {
+        try { return JSON.parse(clean.substring(fb, lb + 1)); } catch(e) {}
+      }
+
+      // 4. Extract outermost JSON Object { ... }
       const firstBrace = clean.indexOf('{');
       const lastBrace = clean.lastIndexOf('}');
       if (firstBrace !== -1 && lastBrace > firstBrace) {
         try { return JSON.parse(clean.substring(firstBrace, lastBrace + 1)); } catch(e) {}
       }
+
+      // 5. Relaxed cleanup (remove trailing commas before } or ])
+      try {
+        const relaxed = clean
+          .replace(/```(?:json)?/gi, '')
+          .replace(/```/g, '')
+          .replace(/,\s*([}\]])/g, '$1')
+          .trim();
+        return JSON.parse(relaxed);
+      } catch(e) {}
+
       return null;
+    }
+
+    // Helper to safely extract symptoms array regardless of schema structure
+    function extractSymptomsArray(parsed) {
+      if (!parsed) return [];
+      if (Array.isArray(parsed)) return parsed;
+      if (typeof parsed === 'object') {
+        const candidateKeys = ['symptoms', 'Symptoms', 'clinical_symptoms', 'extracted_symptoms', 'data', 'results', 'cases'];
+        for (const k of candidateKeys) {
+          if (Array.isArray(parsed[k]) && parsed[k].length > 0) return parsed[k];
+        }
+        // If object has category keys like { "Mind": [...], "Generals": [...] }
+        const aggregated = [];
+        for (const k of Object.keys(parsed)) {
+          if (Array.isArray(parsed[k])) {
+            parsed[k].forEach(item => {
+              if (item && typeof item === 'object') {
+                if (!item.category) item.category = k;
+                aggregated.push(item);
+              }
+            });
+          }
+        }
+        if (aggregated.length > 0) return aggregated;
+      }
+      return [];
     }
 
     // Step 1: AI Symptom Extraction
@@ -1117,9 +1164,11 @@
             }
 
             if (geminiRawText) {
+              console.log("[Gemini Raw Text Response]:", geminiRawText);
               const parsed = extractJsonFromGemini(geminiRawText);
-              if (parsed && parsed.symptoms && parsed.symptoms.length > 0) {
-                const symptoms = parsed.symptoms;
+              const symptoms = extractSymptomsArray(parsed);
+
+              if (symptoms && symptoms.length > 0) {
 
                 // Resolve candidate rubrics from in-browser wasmDb
                 symptoms.forEach(s => {
@@ -1245,9 +1294,10 @@ Please verify that your API key is active and has Generative Language API enable
         // Populate symptom chips
         data.symptoms.forEach(sym => {
           let bucketId = 'bucket-particulars';
-          if (sym.category.includes('Mind')) bucketId = 'bucket-mind';
-          else if (sym.category.includes('General')) bucketId = 'bucket-generals';
-          else if (sym.category.includes('Modalities')) bucketId = 'bucket-modalities';
+          const catStr = (sym.category || '').toLowerCase();
+          if (catStr.includes('mind') || catStr.includes('emotion') || catStr.includes('mental')) bucketId = 'bucket-mind';
+          else if (catStr.includes('general') || catStr.includes('thermal') || catStr.includes('physical')) bucketId = 'bucket-generals';
+          else if (catStr.includes('modalit') || catStr.includes('agg') || catStr.includes('amel')) bucketId = 'bucket-modalities';
 
           let candidateId = null;
           let candidatePath = '';
