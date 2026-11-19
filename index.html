@@ -1065,6 +1065,8 @@
             if (!remedyTotals[abbr]) {
               remedyTotals[abbr] = {
                 remedy: abbr,
+                remedy_abbreviation: abbr,
+                remedy_full: full,
                 full_name: full,
                 total_score: 0,
                 rubrics_covered: 0,
@@ -1109,13 +1111,20 @@
             return b.total_score - a.total_score;
           });
 
-          const topRemedies = candidates.slice(0, topN);
+          const topRemedies = candidates.slice(0, topN).map(r => ({
+            remedy_abbreviation: r.remedy_abbreviation || r.remedy,
+            remedy_full: r.remedy_full || r.full_name || r.remedy,
+            rubrics_covered: r.rubrics_covered,
+            total_score: r.total_score,
+            matrix: r.matrix
+          }));
 
           // Build matrix grid response
           const matrixGrid = rubrics.map(rub => {
             const rowScores = {};
             topRemedies.forEach(rem => {
-              rowScores[rem.remedy] = rem.matrix[rub.id] || 0;
+              const abbr = rem.remedy_abbreviation;
+              rowScores[abbr] = rem.matrix[rub.id] || 0;
             });
             return {
               symptom_id: rub.id,
@@ -1127,6 +1136,7 @@
           });
 
           renderMatrix({
+            total_rubrics: rubrics.length,
             rubrics: rubrics,
             remedies: topRemedies,
             matrix: matrixGrid
@@ -1175,11 +1185,13 @@
 
       // Add remedy headers
       data.remedies.forEach(rem => {
+        const abbr = rem.remedy_abbreviation || rem.remedy || rem.abbr || '';
+        const fullName = rem.remedy_full || rem.full_name || rem.name || abbr;
         const th = document.createElement('th');
         th.className = 'remedy-th';
         th.innerHTML = `
-          <div style="font-weight: 800; font-size: 14px;">${rem.remedy_abbreviation}</div>
-          <div style="font-size: 10px; color: var(--text-muted); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${rem.remedy_full}">${rem.remedy_full}</div>
+          <div style="font-weight: 800; font-size: 14px;">${abbr}</div>
+          <div style="font-size: 10px; color: var(--text-muted); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${fullName}">${fullName}</div>
         `;
         thead.appendChild(th);
       });
@@ -1230,13 +1242,14 @@
 
         // Cells for each remedy
         data.remedies.forEach(rem => {
-          const score = row.scores[rem.remedy_abbreviation] || 0;
+          const abbr = rem.remedy_abbreviation || rem.remedy || rem.abbr || '';
+          const score = row.scores[abbr] || 0;
           const tdScore = document.createElement('td');
           tdScore.className = `score-cell deg-${score}`;
           tdScore.textContent = score > 0 ? score : '-';
           if (score > 0) {
-            tdScore.onclick = () => openSynthesisBookView(row.symptom_id, rem.remedy_abbreviation);
-            tdScore.title = `Tap to open Synthesis Book Page & verify ${rem.remedy_abbreviation} (${score})`;
+            tdScore.onclick = () => openSynthesisBookView(row.symptom_id, abbr);
+            tdScore.title = `Tap to open Synthesis Book Page & verify ${abbr} (${score})`;
           }
           tr.appendChild(tdScore);
         });
@@ -1245,9 +1258,10 @@
       });
 
       // Total Coverage Row
+      const totRubrics = data.total_rubrics || data.rubrics?.length || currentSymptoms.length || 1;
       const trCov = document.createElement('tr');
       trCov.className = 'total-row';
-      trCov.innerHTML = `<td colspan="3">Total Rubrics Covered</td>` + data.remedies.map(r => `<td>${r.rubrics_covered}/${data.total_rubrics}</td>`).join('');
+      trCov.innerHTML = `<td colspan="3">Total Rubrics Covered</td>` + data.remedies.map(r => `<td>${r.rubrics_covered}/${totRubrics}</td>`).join('');
       tbody.appendChild(trCov);
 
       // Total Score Row
