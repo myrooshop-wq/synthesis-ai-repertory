@@ -862,8 +862,33 @@
           try {
             const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n\"\"\"${text}\"\"\"\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. \"Mind & Emotion\"\n2. \"Physical Generals\" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. \"Modalities (< / >)\" (time of aggravation <, amelioration >)\n4. \"Particulars & Locations\" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR \"synthesis_query\":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. \"STOMACH APPETITE WANTING\", \"FEVER HEAT\", \"HEAD PAIN\", \"EXTREMITIES PAIN\", \"GENERALS WEAKNESS\", \"MIND RESTLESSNESS NIGHT\").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  \"symptoms\": [\n     {\n       \"category\": \"Particulars\",\n       \"name\": \"Symptom in Hindi/English\",\n       \"weight\": 2,\n       \"synthesis_query\": \"REPERTORY KEYWORDS\"\n     }\n  ]\n}`;
 
-            // Try Gemini 1.5 Flash first, then 1.5 Pro
-            const modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash-exp'];
+            // Dynamically discover supported models for this exact API key directly from Google
+            let modelsToTry = [];
+            try {
+              const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+              if (listRes.ok) {
+                const listData = await listRes.json();
+                const available = (listData.models || [])
+                  .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+                  .map(m => m.name.replace('models/', ''));
+                console.log("Discovered Gemini models for key:", available);
+
+                // Prioritize recommended latest models
+                const priorityOrder = [
+                  'gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-exp',
+                  'gemini-flash-latest', 'gemini-pro-latest', 'gemini-1.0-pro'
+                ];
+                modelsToTry = priorityOrder.filter(p => available.includes(p));
+                available.forEach(a => { if (!modelsToTry.includes(a)) modelsToTry.push(a); });
+              }
+            } catch(e) {
+              console.warn("Dynamic model discovery failed, using standard list:", e);
+            }
+
+            if (modelsToTry.length === 0) {
+              modelsToTry = ['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.0-flash-exp', 'gemini-flash-latest', 'gemini-pro-latest'];
+            }
+
             let geminiRawText = null;
             let modelUsed = null;
 
@@ -874,7 +899,7 @@
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
-                    generationConfig: { temperature: 0.2, responseMimeType: "application/json" }
+                    generationConfig: { temperature: 0.2 }
                   })
                 });
                 if (gRes.ok) {
@@ -882,11 +907,15 @@
                   geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
                   if (geminiRawText) {
                     modelUsed = model;
+                    console.log(`Successfully generated symptoms using Gemini model: ${model}`);
                     break;
                   }
+                } else {
+                  const errJson = await gRes.json();
+                  console.warn(`Model ${model} HTTP ${gRes.status}:`, errJson);
                 }
               } catch(e) {
-                console.warn(`Model ${model} failed, trying next:`, e);
+                console.warn(`Model ${model} request error:`, e);
               }
             }
 
@@ -1893,6 +1922,15 @@
 
         // Set default to #1
         selectSimilimum(data.remedies[0].remedy_abbreviation, data.remedies[0].remedy_full);
+      }
+
+      // Render Mobile Touch Cards Flow
+      renderMobileCards(data);
+
+      // Enforce the active display mode (Cards vs Full Matrix)
+      if (typeof switchGridMode === 'function') {
+        const activeMode = window.innerWidth <= 768 ? 'cards' : (currentGridMode || 'table');
+        switchGridMode(activeMode);
       }
     }
 
