@@ -24,7 +24,7 @@
       --grade1: #334155;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
+    html, body { width: 100%; max-width: 100vw; overflow-x: hidden; background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
 
     /* Top Navigation */
     header { background: #ffffff; border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
@@ -98,7 +98,7 @@
     .dropdown-item .semantic-tag { background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
 
     /* Repertorisation Grid Table */
-    .table-container { overflow-x: auto; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    .table-container { width: 100%; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border); }
     table.rep-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; background: white; }
     table.rep-table th, table.rep-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid #f1f5f9; }
     table.rep-table th { background: #f8fafc; font-weight: 700; color: #334155; position: sticky; top: 0; }
@@ -194,6 +194,40 @@
     .mobile-only { display: none; }
     .desktop-only { display: inline; }
     @media (max-width: 768px) {
+      html, body {
+        width: 100% !important;
+        max-width: 100vw !important;
+        overflow-x: hidden !important;
+      }
+      .container {
+        width: 100% !important;
+        max-width: 100vw !important;
+        padding: 0 10px !important;
+        margin: 10px 0 !important;
+        overflow-x: hidden !important;
+      }
+      .card {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .search-rubrics-bar {
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .autocomplete-dropdown {
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+      }
+      /* Ensure horizontal table doesn't blow up viewport on mobile */
+      .table-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+      }
       .mobile-only { display: inline; }
       .desktop-only { display: none; }
     }
@@ -443,7 +477,7 @@
           <button class="btn btn-primary" id="micBtn" onclick="toggleSpeechRecording()">
             <i class="fa-solid fa-microphone"></i> <span id="micLabel">Start Dictation (Hindi/English)</span>
           </button>
-          <button class="btn btn-outline" onclick="runExtraction()">
+          <button class="btn btn-outline" id="aiExtractBtn" onclick="runExtraction()">
             <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> AI Extract Symptoms
           </button>
           <button class="btn btn-outline" onclick="loadSampleCase()">
@@ -562,7 +596,7 @@
         <table class="rep-table" id="matrixTable">
           <thead>
             <tr>
-              <th style="min-width: 320px;">Selected Synthesis Rubric</th>
+              <th style="min-width: 220px;">Selected Synthesis Rubric</th>
               <th style="width: 70px; text-align: center;">Weight</th>
               <th style="width: 70px; text-align: center;">Eliminate</th>
               <!-- Remedy columns will be inserted dynamically -->
@@ -741,6 +775,25 @@
       }
 
       const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+      const extractBtn = document.getElementById('aiExtractBtn');
+      const originalBtnHtml = extractBtn ? extractBtn.innerHTML : '';
+
+      // Visual AI Loading State
+      if (extractBtn) {
+        extractBtn.disabled = true;
+        extractBtn.innerHTML = `
+          <i class="fa-solid fa-spinner fa-spin" style="color: #2563eb;"></i>
+          <span>Gemini AI Analyzing Clinical Case...</span>
+        `;
+      }
+      const autopilotBadge = document.getElementById('autopilotBadge');
+      if (autopilotBadge) {
+        autopilotBadge.innerHTML = `<i class="fa-solid fa-brain fa-pulse"></i> Extracting Kentian Categories...`;
+        autopilotBadge.style.background = '#eff6ff';
+        autopilotBadge.style.color = '#1d4ed8';
+      }
+
+      try {
 
       const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
         method: 'POST',
@@ -820,6 +873,15 @@
 
       console.log("Staged rubrics for matrix:", currentSymptoms);
       recalculateMatrix();
+      } catch (err) {
+        console.error("AI extraction error:", err);
+        alert("Error during AI symptom extraction: " + err.message);
+      } finally {
+        if (extractBtn) {
+          extractBtn.disabled = false;
+          extractBtn.innerHTML = originalBtnHtml;
+        }
+      }
     }
 
     function cycleWeight(badge, id) {
@@ -1178,43 +1240,57 @@
             
             const isXref = item.is_xref_alias;
             const isSemanticMatch = item.match_type === "Semantic Match";
-            const xrefBadge = isXref ? `<span class="xref-tag"><i class="fa-solid fa-shuffle"></i> Reference</span>` : '';
+            const xrefBadge = isXref ? `<span class="xref-tag"><i class="fa-solid fa-shuffle"></i> Ref</span>` : '';
             const semanticBadge = isSemanticMatch ? `<span class="semantic-tag"><i class="fa-solid fa-brain"></i> Nearest Match</span>` : '';
             
+            const subCount = item.subrubric_count || 0;
+            const subButtonHtml = subCount > 0 ? `
+              <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; font-weight: 600; background: #f8fafc; color: #2563eb; border-color: #bfdbfe;" onclick="event.stopPropagation(); expandSubRubrics(${item.id}, '${escapeQuotes(item.path)}')">
+                <i class="fa-solid fa-folder-tree"></i> ${subCount} Sub-rubrics &rarr;
+              </button>
+            ` : `
+              <span style="font-size: 10px; color: #94a3b8; font-style: italic;">No sub-rubrics</span>
+            `;
+
             div.innerHTML = `
               <div class="dropdown-item-content">
-                <div style="font-weight: 700; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                <div style="font-weight: 700; color: #1e293b; line-height: 1.3; word-break: break-word;">
                   ${item.path} ${xrefBadge} ${semanticBadge}
                 </div>
-                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 2px;">
-                  <span>Level ${item.level}</span>
+                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 3px;">
+                  <span class="rem-badge" style="background: #e0f2fe; color: #0369a1; font-weight: 700; padding: 1px 6px; border-radius: 4px;">${item.remedy_count} remedies</span>
                   <span>&bull;</span>
-                  <span>Synthesis</span>
+                  <span style="color: #64748b;">Level ${item.level}</span>
                 </div>
               </div>
-              <div class="dropdown-item-actions">
-                <span class="rem-badge">${item.remedy_count} remedies</span>
-                <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600;" onclick="event.stopPropagation(); expandSubRubrics(${item.id}, '${escapeQuotes(item.path)}')">
-                  <i class="fa-solid fa-folder-tree"></i> Sub-rubrics &rarr;
+              <div class="dropdown-item-actions" style="display: flex; gap: 6px; align-items: center;">
+                <button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; font-weight: 700; background: #16a34a;" onclick="event.stopPropagation(); selectRubricDirectly(${item.id}, '${escapeQuotes(item.path.replace(' ➔ (See Target)', ''))}')">
+                  <i class="fa-solid fa-plus"></i> Select Rubric
                 </button>
+                ${subButtonHtml}
               </div>
             `;
+            // Clicking row also adds rubric directly!
             div.onclick = () => {
-              addSymptom({
-                id: item.id,
-                path: item.path.replace(' ➔ (See Target)', ''),
-                weight: 2,
-                is_eliminating: false,
-                category: 'Particulars'
-              });
-              dropdown.style.display = 'none';
-              document.getElementById('rubricSearchInput').value = '';
+              selectRubricDirectly(item.id, item.path.replace(' ➔ (See Target)', ''));
             };
             dropdown.appendChild(div);
           });
         }
         dropdown.style.display = 'block';
       }, 200);
+    }
+
+    function selectRubricDirectly(id, path) {
+      addSymptom({
+        id: id,
+        path: path,
+        weight: 2,
+        is_eliminating: false,
+        category: 'Particulars'
+      });
+      document.getElementById('rubricDropdown').style.display = 'none';
+      document.getElementById('rubricSearchInput').value = '';
     }
 
     function escapeQuotes(str) {
@@ -2124,65 +2200,121 @@
     }
 
     // Advanced Multi-Token Phrase & Semantic Search with SQLite BM25-Like Weighting
+    // Comprehensive Natural Language Clinical Phrase Engine
     function executeAdvancedPhraseSearch(wasmDb, query, cleanQ, rawQ, isSemantic) {
       const list = [];
       const seenIds = new Set();
 
-      // 1. Exact or Direct Phrase Match (Highest priority)
-      for (const [phrase, targets] of Object.entries(CLIENT_PHRASE_EXPANSIONS)) {
-        if (rawQ.includes(phrase)) {
-          for (const tpath of targets) {
-            const pStmt = wasmDb.prepare(`
-              SELECT s.id, s.path, s.level,
-                (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
-              FROM syntree s
-              WHERE s.path = ?
-            `);
-            pStmt.bind([tpath]);
-            if (pStmt.step()) {
-              const row = pStmt.getAsObject();
-              if (!seenIds.has(row.id)) {
-                seenIds.add(row.id);
-                list.push({
-                  id: row.id,
-                  path: row.path,
-                  level: row.level,
-                  remedy_count: row.remedy_count || 0,
-                  is_xref_alias: false,
-                  match_type: "Semantic Match"
-                });
+      // Clinical Conversational Patterns & Direct Phrase Expansions
+      const PHRASE_RULES = [
+        { patterns: ["not feeling well", "unwell", "feeling sick", "weakness", "tired", "fatigue"], targets: ["GENERALS - WEAKNESS", "GENERALS - WEAKNESS - nervous", "GENERALS - WEAKNESS - morning"] },
+        { patterns: ["nose burning", "burning nose", "mucus", "coryza", "runny nose"], targets: ["NOSE - CORYZA", "NOSE - CORYZA - discharge, with", "NOSE - DISCHARGE - burning", "NOSE - PAIN - burning pain"] },
+        { patterns: ["loose motion", "diarrhea", "watery stool"], targets: ["RECTUM - DIARRHEA", "STOOL - THIN", "STOOL - WATERY"] },
+        { patterns: ["stomach ache", "belly ache", "stomach pain"], targets: ["ABDOMEN - PAIN", "STOMACH - PAIN", "STOMACH - PAIN - burning"] },
+        { patterns: ["acidity", "sour eructation", "heartburn"], targets: ["STOMACH - ERUCTATIONS; TYPE OF - sour", "STOMACH - ACIDITY"] },
+        { patterns: ["fear of darkness", "darkness", "ghosts", "fear of dark"], targets: ["MIND - FEAR - dark; of", "MIND - FEAR", "MIND - FEAR - alone, of being - darkness; in the"] },
+        { patterns: ["headache", "migraine", "head pain"], targets: ["HEAD - PAIN", "HEAD - PAIN - Forehead", "HEAD - PAIN - Sides - one side"] },
+        { patterns: ["fever with chill", "chill and fever", "high fever"], targets: ["FEVER - CONTINUED fever", "FEVER - INTENSE heat", "CHILL - FEVER; with"] }
+      ];
+
+      // A. Check Phrase Rules first
+      for (const rule of PHRASE_RULES) {
+        if (rule.patterns.some(p => rawQ.includes(p))) {
+          for (const tpath of rule.targets) {
+            try {
+              const pStmt = wasmDb.prepare(`
+                SELECT s.id, s.path, s.level,
+                  (SELECT count(*) FROM syntree sub WHERE sub.id_father = s.id) as subrubric_count,
+                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                FROM syntree s
+                WHERE s.path = ?
+              `);
+              pStmt.bind([tpath]);
+              if (pStmt.step()) {
+                const row = pStmt.getAsObject();
+                if (!seenIds.has(row.id)) {
+                  seenIds.add(row.id);
+                  list.push({
+                    id: row.id,
+                    path: row.path,
+                    level: row.level,
+                    subrubric_count: row.subrubric_count || 0,
+                    remedy_count: row.remedy_count || 0,
+                    is_xref_alias: false,
+                    match_type: "Semantic Match"
+                  });
+                }
               }
-            }
-            pStmt.free();
+              pStmt.free();
+            } catch(e) {}
           }
         }
       }
 
-      // 2. Tokenize phrase and expand with medical synonyms
-      const rawTokens = rawQ.split(/[^a-zA-Z0-9]+/).filter(w => w && !CLIENT_STOPWORDS.has(w));
-      const expandedTokens = new Set(rawTokens.map(t => t.toUpperCase()));
+      // B. Token Extraction & Synonyms
+      const STOPWORDS = new Set(["i", "am", "not", "feeling", "due", "to", "the", "a", "an", "in", "on", "at", "with", "from", "by", "of", "and", "or", "my", "is", "have", "has", "get"]);
+      const SYNONYMS = {
+        "well": ["GENERALS", "WEAKNESS"],
+        "sick": ["GENERALS", "WEAKNESS"],
+        "unwell": ["GENERALS", "WEAKNESS"],
+        "nose": ["NOSE"],
+        "mucus": ["DISCHARGE", "CORYZA"],
+        "burning": ["BURNING", "PAIN"],
+        "loose": ["RECTUM", "DIARRHEA"],
+        "motion": ["RECTUM", "DIARRHEA"],
+        "motions": ["RECTUM", "DIARRHEA"],
+        "headache": ["HEAD", "PAIN"],
+        "migraine": ["HEAD", "PAIN"],
+        "stomach": ["STOMACH", "ABDOMEN"],
+        "acidity": ["STOMACH", "ACIDITY", "ERUCTATIONS"],
+        "cough": ["COUGH"],
+        "fever": ["FEVER"],
+        "chill": ["CHILL"],
+        "fear": ["FEVER", "MIND", "FEAR"],
+        "dark": ["DARK"],
+        "darkness": ["DARK"],
+        "ghosts": ["GHOSTS"],
+        "thirst": ["THIRST"],
+        "weakness": ["WEAKNESS"],
+        "vomiting": ["VOMITING"],
+        "nausea": ["NAUSEA"],
+        "sweat": ["PERSPIRATION"],
+        "perspiration": ["PERSPIRATION"]
+      };
+
+      const rawTokens = rawQ.split(/[^a-zA-Z0-9]+/).filter(w => w.length > 1);
+      const meaningfulTokens = rawTokens.filter(w => !STOPWORDS.has(w));
+      const searchConcepts = new Set(meaningfulTokens.map(t => t.toUpperCase()));
+
+      // Expand synonyms
       for (const tok of rawTokens) {
-        if (CLIENT_SYNONYMS[tok]) {
-          CLIENT_SYNONYMS[tok].forEach(syn => expandedTokens.add(syn.toUpperCase()));
+        if (SYNONYMS[tok]) {
+          SYNONYMS[tok].forEach(s => searchConcepts.add(s.toUpperCase()));
         }
       }
 
-      const tokenArr = Array.from(expandedTokens).slice(0, 6); // Max 6 tokens for optimal speed
-      if (tokenArr.length > 0) {
-        // Construct token-hit score query: SUM of token occurrences
-        const scoreExpr = tokenArr.map(() => "(path LIKE ?)").join(" + ");
-        const whereOr = tokenArr.map(() => "path LIKE ?").join(" OR ");
-        const binds = [];
-        tokenArr.forEach(t => binds.push(`%${t}%`)); // for scoreExpr
-        tokenArr.forEach(t => binds.push(`%${t}%`)); // for whereOr
+      // If doctor entered "not feeling well", add WEAKNESS / GENERALS
+      if (rawQ.includes("well") && (rawQ.includes("not") || rawQ.includes("unwell"))) {
+        searchConcepts.add("GENERALS");
+        searchConcepts.add("WEAKNESS");
+      }
 
+      const conceptList = Array.from(searchConcepts).slice(0, 6);
+      if (conceptList.length > 0 && list.length < 15) {
         try {
+          const scoreExpr = conceptList.map(() => "(s.path LIKE ?)").join(" + ");
+          const whereOr = conceptList.map(() => "s.path LIKE ?").join(" OR ");
+          const binds = [];
+          conceptList.forEach(c => binds.push(`%${c}%`)); // for scoreExpr
+          conceptList.forEach(c => binds.push(`%${c}%`)); // for whereOr
+
           const sql = `
-            SELECT id, path, level, (${scoreExpr}) as match_score,
-              (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
-            FROM syntree
+            SELECT s.id, s.path, s.level, (${scoreExpr}) as match_score,
+              (SELECT count(*) FROM syntree sub WHERE sub.id_father = s.id) as subrubric_count,
+              (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+            FROM syntree s
             WHERE ${whereOr}
-            ORDER BY match_score DESC, rem_count DESC
+            ORDER BY match_score DESC, remedy_count DESC
             LIMIT 15
           `;
           const sStmt = wasmDb.prepare(sql);
@@ -2195,7 +2327,8 @@
                 id: row.id,
                 path: row.path,
                 level: row.level,
-                remedy_count: row.rem_count || 0,
+                subrubric_count: row.subrubric_count || 0,
+                remedy_count: row.remedy_count || 0,
                 is_xref_alias: false,
                 match_type: row.match_score >= 2 ? "Semantic Match" : "Keyword Match"
               });
@@ -2203,29 +2336,32 @@
           }
           sStmt.free();
         } catch(e) {
-          console.warn("Advanced phrase search error:", e);
+          console.warn("Concept search error:", e);
         }
       }
 
-      // 3. Cross Reference Fallback
+      // C. Cross Reference Fallback
       if (list.length < 5) {
-        const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
-        xrStmt.bind([`%${cleanQ}%`]);
-        while (xrStmt.step()) {
-          const xr = xrStmt.getAsObject();
-          if (!seenIds.has(xr.symptom_id)) {
-            seenIds.add(xr.symptom_id);
-            list.push({
-              id: xr.symptom_id,
-              path: `${xr.text} ➔ (See Target)`,
-              level: 2,
-              remedy_count: 0,
-              is_xref_alias: true,
-              match_type: "Cross Reference"
-            });
+        try {
+          const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
+          xrStmt.bind([`%${cleanQ}%`]);
+          while (xrStmt.step()) {
+            const xr = xrStmt.getAsObject();
+            if (!seenIds.has(xr.symptom_id)) {
+              seenIds.add(xr.symptom_id);
+              list.push({
+                id: xr.symptom_id,
+                path: `${xr.text} ➔ (See Target)`,
+                level: 2,
+                subrubric_count: 0,
+                remedy_count: 0,
+                is_xref_alias: true,
+                match_type: "Cross Reference"
+              });
+            }
           }
-        }
-        xrStmt.free();
+          xrStmt.free();
+        } catch(e) {}
       }
 
       return list;
