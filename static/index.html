@@ -669,7 +669,7 @@
     let wasmDb = null;
     let isWasmDbReady = false;
     const DB_CACHE_NAME = 'synthesis_core_v2_db';
-    const GZ_DB_URL = 'https://github.com/myrooshop-wq/synthesis-ai-repertory/releases/download/v2.0-db/synthesis_core.db.gz';
+    const GZ_DB_URL = 'https://raw.githubusercontent.com/myrooshop-wq/synthesis-ai-repertory/main/synthesis_core.db.gz';
 
     async function initBrowserSqlite() {
       const dot = document.getElementById('dbStatusDot');
@@ -790,7 +790,7 @@
         let list = [];
 
         // Check if WebAssembly in-browser database is active!
-        if (isWasmDbReady && wasmDb && !isSemantic) {
+        if (isWasmDbReady && wasmDb) {
           try {
             const cleanQ = query.trim().toUpperCase();
             const terms = cleanQ.split(/\s+/).filter(t => t.length > 0);
