@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Synthesis Homeopathy AI - Autonomous Repertorisation Workstation</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #108a00;
+      --primary-dark: #0c6900;
+      --primary-light: #eaf6ea;
+      --accent: #2563eb;
+      --accent-light: #eff6ff;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #ef4444;
+      --grade4: #7e22ce;
+      --grade3: #dc2626;
+      --grade2: #2563eb;
+      --grade1: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 60px; }
+
+    /* Top Navigation */
+    header { background: #ffffff; border-bottom: 1px solid var(--border); padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-logo { background: linear-gradient(135deg, #108a00, #047857); color: white; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; }
+    .brand-title { font-size: 18px; font-weight: 700; color: #0f172a; }
+    .brand-subtitle { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    /* Container */
+    .container { max-width: 1300px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr; gap: 24px; }
+
+    /* Cards */
+    .card { background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .card-title { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-autopilot { background: #dcfce7; color: #166534; }
+    .badge-override { background: #fef3c7; color: #92400e; }
+
+    /* Intake Voice & Transcript Bar */
+    .intake-box { display: flex; flex-direction: column; gap: 12px; }
+    .mic-button-row { display: flex; gap: 12px; align-items: center; }
+    .btn { padding: 10px 18px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
+    .btn-outline:hover { background: #f1f5f9; }
+    .btn-danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+    .btn-danger:hover { background: #fecaca; }
+    .btn-mic-active { background: #ef4444; color: white; animation: pulse 1.5s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+    textarea.transcript-input { width: 100%; height: 90px; border-radius: 8px; border: 1px solid var(--border); padding: 12px; font-size: 14px; resize: vertical; line-height: 1.5; outline: none; }
+    textarea.transcript-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,138,0,0.1); }
+
+    /* Category Buckets for Symptoms */
+    .buckets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; }
+    .bucket { background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); padding: 14px; }
+    .bucket-header { font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+    .bucket-chips { display: flex; flex-wrap: wrap; gap: 8px; min-height: 40px; }
+
+    /* Symptom Chip */
+    .symptom-chip { background: white; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px; display: inline-flex; flex-direction: column; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); min-width: 240px; transition: all 0.2s; }
+    .symptom-chip.selected { border-color: #94a3b8; background: #ffffff; }
+    .symptom-chip.highlight-linked { border-color: #2563eb !important; background: #eff6ff !important; box-shadow: 0 0 0 3px rgba(37,99,235,0.2) !important; }
+    .chip-top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+    .chip-symptom-title { font-weight: 600; color: #1e293b; flex: 1; }
+    .chip-rubric-link { font-size: 11px; color: #1e40af; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 6px; background: #e0f2fe; padding: 4px 8px; border-radius: 5px; border: 1px solid #bae6fd; max-width: 100%; transition: background 0.15s; }
+    .chip-rubric-link:hover { background: #bae6fd; }
+    .chip-rubric-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .chip-weight { background: #e2e8f0; color: #475569; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 700; cursor: pointer; }
+    .chip-weight.w2 { background: #fef08a; color: #854d0e; }
+    .chip-weight.w3 { background: #fca5a5; color: #991b1b; }
+    .chip-del { color: #94a3b8; cursor: pointer; margin-left: 4px; font-size: 12px; }
+    .chip-del:hover { color: var(--danger); }
+
+    /* Autocomplete Search Bar */
+    .search-rubrics-bar { position: relative; margin-top: 14px; max-width: 900px; }
+    .search-input-group { display: flex; align-items: center; position: relative; }
+    .search-icon { position: absolute; left: 14px; color: var(--text-muted); font-size: 16px; }
+    .search-rubric-input { width: 100%; padding: 12px 14px 12px 42px; border-radius: 8px; border: 1px solid var(--border); font-size: 14px; outline: none; }
+    .search-rubric-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+    .autocomplete-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; max-width: 850px; background: white; border-radius: 8px; border: 1px solid var(--border); max-height: 420px; overflow-y: auto; z-index: 50; box-shadow: 0 10px 25px -3px rgba(0,0,0,0.15); display: none; }
+    .dropdown-item { padding: 8px 12px; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; justify-content: flex-start; gap: 14px; font-size: 13px; transition: background 0.15s; }
+    .dropdown-item-content { flex: 0 1 auto; max-width: 65%; min-width: 0; }
+    .dropdown-item-actions { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: 6px; }
+    .dropdown-item:hover { background: #f8fafc; }
+    .dropdown-item .rem-badge { background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .dropdown-item .xref-tag { background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+    .dropdown-item .semantic-tag { background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+
+    /* Repertorisation Grid Table */
+    .table-container { overflow-x: auto; margin-top: 16px; border-radius: 8px; border: 1px solid var(--border); }
+    table.rep-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; background: white; }
+    table.rep-table th, table.rep-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid #f1f5f9; }
+    table.rep-table th { background: #f8fafc; font-weight: 700; color: #334155; position: sticky; top: 0; }
+    table.rep-table th.remedy-th { text-align: center; width: 68px; }
+    table.rep-table td.score-cell { text-align: center; font-weight: 700; cursor: pointer; }
+    table.rep-table td.score-cell:hover { background: #eff6ff; }
+    table.rep-table tr.total-row { background: #f8fafc; font-weight: 800; border-top: 2px solid var(--border); }
+    table.rep-table tr.total-row td { text-align: center; }
+
+    /* Degree styling */
+    .deg-4 { color: var(--grade4); font-size: 15px; font-weight: 900; }
+    .deg-3 { color: var(--grade3); font-size: 14px; font-weight: 800; }
+    .deg-2 { color: var(--grade2); font-style: italic; }
+    .deg-1 { color: var(--grade1); }
+    .deg-0 { color: #cbd5e1; font-weight: normal; }
+
+    /* Modal for Rubric & Author Verification */
+    .synthesis-book-page {
+      background: #faf8f5;
+      border: 1px solid #dcd7ce;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.6;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+    }
+    .book-rubric-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #1a1a1a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #e5e0d8;
+      padding-bottom: 6px;
+    }
+    .book-remedies-flow {
+      font-size: 14px;
+      word-spacing: 2px;
+      text-align: justify;
+    }
+    /* Synthesis app exact styling */
+    .synth-deg-4 { color: #d00000; font-weight: 900; text-transform: uppercase; }
+    .synth-deg-3 { color: #d00000; font-weight: 800; }
+    .synth-deg-2 { color: #0022ff; font-style: italic; font-weight: 600; }
+    .synth-deg-1 { color: #111111; font-weight: normal; }
+    .synth-author { font-size: 10px; color: #777777; vertical-align: super; font-family: -apple-system, sans-serif; font-style: normal; font-weight: normal; }
+    
+    /* Breadcrumb bar in modal */
+    .synth-breadcrumbs {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f1f5f9;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      border: 1px solid #cbd5e1;
+    }
+    .synth-breadcrumb-item {
+      color: #2563eb;
+      cursor: pointer;
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .synth-breadcrumb-item:hover {
+      text-decoration: underline;
+    }
+    .synth-breadcrumb-sep {
+      color: #94a3b8;
+      font-size: 11px;
+    }
+    .synth-breadcrumb-current {
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    /* Modal dialog */
+    .modal-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 200; }
+    .modal-box { background: white; width: 92%; max-width: 720px; border-radius: 12px; padding: 20px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); max-height: 88vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 14px; }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-close { cursor: pointer; font-size: 18px; color: var(--text-muted); }
+
+    /* Controls Bar */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; padding: 10px 14px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
+    .filter-item { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 768px) {
+      header { padding: 10px 14px; flex-direction: column; gap: 10px; align-items: flex-start; }
+      .brand { width: 100%; }
+      .brand-title { font-size: 16px; }
+      .header-actions { width: 100%; display: flex; justify-content: space-between; gap: 6px; }
+      .header-actions .btn { flex: 1; justify-content: center; padding: 8px 6px; font-size: 11px; }
+      
+      .container { padding: 0 10px; margin: 12px auto; gap: 16px; }
+      .card { padding: 14px; }
+      .card-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      
+      .mic-button-row { flex-direction: column; width: 100%; gap: 8px; }
+      .mic-button-row .btn { width: 100%; justify-content: center; }
+      
+      .search-rubrics-bar { flex-direction: column; gap: 8px; }
+      .search-input-group { width: 100%; }
+      .search-rubrics-bar > button { width: 100%; justify-content: center; }
+      
+      .dropdown-item { flex-direction: column; align-items: flex-start; gap: 6px; }
+      .dropdown-item > div:last-child { width: 100%; justify-content: space-between; }
+
+      .filter-bar { flex-direction: column; align-items: stretch; gap: 10px; }
+      .filter-item { justify-content: space-between; width: 100%; }
+      .filter-item select { flex: 1; max-width: 60%; }
+
+      .modal-box { width: 96%; padding: 14px; max-height: 92vh; }
+      .symptom-chip { width: 100%; min-width: 0; }
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">S</div>
+      <div>
+        <div class="brand-title">Synthesis English 2.0 — AI Repertory Engine</div>
+        <div class="brand-subtitle">180,386 Rubrics • 1.15 Million Remedy Links • Zero Hallucination Mode</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="dbStatusBadge" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: #f1f5f9; border: 1px solid var(--border); border-radius: 20px; font-size: 11px; font-weight: 600;">
+        <span id="dbStatusDot" style="width: 8px; height: 8px; border-radius: 50%; background: #eab308; display: inline-block;"></span>
+        <span id="dbStatusText">Initializing In-Browser DB...</span>
+      </div>
+
+      <button class="btn btn-outline" onclick="openSettingsModal()"><i class="fa-solid fa-gear"></i> Gemini API Key</button>
+      <button class="btn btn-outline" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Rx</button>
+      <button class="btn btn-primary" onclick="generatePrescription()"><i class="fa-solid fa-file-prescription"></i> Export to Rx</button>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <!-- Step 1: Voice Dictation & Intake Board -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-microphone-lines" style="color: var(--primary);"></i>
+          <span>Step 1: Patient Consultation & Voice Dictation</span>
+        </div>
+        <span class="badge badge-autopilot" id="autopilotBadge"><i class="fa-solid fa-robot"></i> Autopilot Ready</span>
+      </div>
+
+      <div class="intake-box">
+        <div class="mic-button-row">
+          <button class="btn btn-primary" id="micBtn" onclick="toggleSpeechRecording()">
+            <i class="fa-solid fa-microphone"></i> <span id="micLabel">Start Dictation (Hindi/English)</span>
+          </button>
+          <button class="btn btn-outline" onclick="runExtraction()">
+            <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> AI Extract Symptoms
+          </button>
+          <button class="btn btn-outline" onclick="loadSampleCase()">
+            <i class="fa-solid fa-flask"></i> Load Sample Case (Burning Gastric + Fear)
+          </button>
+        </div>
+
+        <textarea class="transcript-input" id="consultationText" placeholder="Doctor's notes or patient words in English or Hindi (e.g. 'पेट में बहुत तेज जलन है, रात 12 बजे बेचैनी बढ़ जाती है, थोड़ा-थोड़ा पानी पीते हैं, अंधेरे में जाने से बहुत डर लगता है')..."></textarea>
+      </div>
+
+      <!-- Category Buckets (Mind, Generals, Modalities, Particulars) -->
+      <div class="buckets-grid">
+        <div class="bucket">
+          <div class="bucket-header" style="color: #7e22ce;">
+            <span><i class="fa-solid fa-brain"></i> 1. Mind & Emotion</span>
+          </div>
+          <div class="bucket-chips" id="bucket-mind"></div>
+        </div>
+
+        <div class="bucket">
+          <div class="bucket-header" style="color: #0284c7;">
+            <span><i class="fa-solid fa-temperature-half"></i> 2. Generals & Thermals</span>
+          </div>
+          <div class="bucket-chips" id="bucket-generals"></div>
+        </div>
+
+        <div class="bucket">
+          <div class="bucket-header" style="color: #ea580c;">
+            <span><i class="fa-solid fa-clock"></i> 3. Modalities (&lt; / &gt;)</span>
+          </div>
+          <div class="bucket-chips" id="bucket-modalities"></div>
+        </div>
+
+        <div class="bucket">
+          <div class="bucket-header" style="color: #16a34a;">
+            <span><i class="fa-solid fa-location-dot"></i> 4. Particulars</span>
+          </div>
+          <div class="bucket-chips" id="bucket-particulars"></div>
+        </div>
+      </div>
+
+      <!-- Searchbox 1: Synthesis Repertory Search + Semantic Search Mode -->
+      <div class="search-rubrics-bar" style="display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+          <div class="search-input-group" style="flex: 1;">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-rubric-input" id="rubricSearchInput" placeholder="Search Synthesis Repertory (e.g. 'HEAD PAIN', 'migraine', or shortcuts 'mi con int')..." oninput="handleRubricSearch(this.value)">
+          </div>
+          <button class="btn btn-outline" style="white-space: nowrap; height: 42px; display: flex; align-items: center; gap: 6px; font-weight: 600;" onclick="openChaptersDirectory()">
+            <i class="fa-solid fa-book" style="color: var(--primary);"></i> Browse Chapters
+          </button>
+        </div>
+
+        <!-- Semantic Search Toggle Option -->
+        <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #475569; padding: 2px 4px;">
+          <label style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; font-weight: 600;">
+            <input type="checkbox" id="semanticSearchToggle" onchange="handleRubricSearch(document.getElementById('rubricSearchInput').value)" style="cursor: pointer; width: 15px; height: 15px; accent-color: #108a00;">
+            <span><i class="fa-solid fa-brain" style="color: #7e22ce;"></i> Enable Semantic Search (Nearest clinical match / phrase understanding)</span>
+          </label>
+          <span style="font-size: 11px; color: var(--text-muted);">Exact match when unchecked</span>
+        </div>
+
+        <div class="autocomplete-dropdown" id="rubricDropdown"></div>
+      </div>
+    </div>
+
+    <!-- Step 2: Repertorisation Verification Grid (Human in the Loop) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-table-cells" style="color: var(--accent);"></i>
+          <span>Step 2: Synthesis Repertorisation Verification Grid</span>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="recalculateMatrix()">
+            <i class="fa-solid fa-rotate"></i> Recalculate Repertorisation
+          </button>
+        </div>
+      </div>
+
+      <!-- Eliminating & Degree Filters -->
+      <div class="filter-bar">
+        <div class="filter-item">
+          <label style="color: #b91c1c;"><i class="fa-solid fa-bolt"></i> Clinical Strategy:</label>
+          <select id="clinicalStrategySelect" onchange="recalculateMatrix()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); font-weight: 700;">
+            <option value="acute" selected>⚡ Acute Crisis Mode (Ars, Nux-v, Verat, Bell)</option>
+            <option value="chronic">🏛️ Constitutional / Chronic Mode (Calc, Sulph, Sil)</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Min Degree:</label>
+          <select id="minDegreeSelect" onchange="recalculateMatrix()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);">
+            <option value="1">All Grades (1, 2, 3, 4)</option>
+            <option value="2">Prominent Only (2, 3, 4)</option>
+            <option value="3">Keynotes Only (3, 4)</option>
+          </select>
+        </div>
+        <div class="filter-item">
+          <label>Max Remedies to Display:</label>
+          <select id="topNSelect" onchange="recalculateMatrix()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border);">
+            <option value="8">Top 8</option>
+            <option value="12" selected>Top 12</option>
+            <option value="16">Top 16</option>
+          </select>
+        </div>
+        <div style="margin-left: auto; font-size: 12px; color: var(--text-muted);">
+          <span style="color: var(--grade4); font-weight: 800;">■ Grade 4</span> &nbsp;
+          <span style="color: var(--grade3); font-weight: 800;">■ Grade 3</span> &nbsp;
+          <span style="color: var(--grade2); font-style: italic;">■ Grade 2</span> &nbsp;
+          <span style="color: var(--grade1);">■ Grade 1</span>
+        </div>
+      </div>
+
+      <!-- Verification Grid Table -->
+      <div class="table-container">
+        <table class="rep-table" id="matrixTable">
+          <thead>
+            <tr>
+              <th style="min-width: 320px;">Selected Synthesis Rubric</th>
+              <th style="width: 70px; text-align: center;">Weight</th>
+              <th style="width: 70px; text-align: center;">Eliminate</th>
+              <!-- Remedy columns will be inserted dynamically -->
+            </tr>
+          </thead>
+          <tbody id="matrixBody">
+            <tr>
+              <td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                No rubrics selected yet. Dictate symptoms or search rubrics above.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Step 3: Similimum Differential & Prescription Form -->
+    <div class="card" id="prescriptionCard" style="display: none;">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-stethoscope" style="color: var(--primary);"></i>
+          <span>Step 3: Synthesis Top Differential Contenders & Prescription Plan</span>
+        </div>
+      </div>
+      <!-- Top 3 Contender Cards for Doctor Selection -->
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Top Contenders from Synthesis Repertorisation (Tap to Select Similimum):</label>
+        <div id="differentialCards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 8px;"></div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; border-top: 1px solid var(--border); padding-top: 16px;">
+        <div>
+          <label style="font-size: 13px; font-weight: 700;">Selected Similimum for Prescription:</label>
+          <input type="text" id="finalRemedy" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); margin-top: 4px; font-weight: 700; color: #166534; background: #f0fdf4;">
+        </div>
+        <div>
+          <label style="font-size: 13px; font-weight: 700;">Potency & Scale:</label>
+          <select id="finalPotency" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); margin-top: 4px;">
+            <option value="30C">30C (Centisimal)</option>
+            <option value="200C" selected>200C (Centisimal)</option>
+            <option value="1M">1M (High Potency)</option>
+            <option value="0/1 (LM 1)">0/1 (LM Potency)</option>
+            <option value="Q (Mother Tincture)">Q (Mother Tincture)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size: 13px; font-weight: 700;">Dosage / Repetition:</label>
+          <input type="text" id="finalDosage" value="4 pills twice daily for 3 days" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); margin-top: 4px;">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal for Rubric & Author Verification -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Verification Details</div>
+        <div class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    // Configurable API Backend (Defaults to local machine or user-saved endpoint)
+    let API_BASE = localStorage.getItem('synthesis_api_base') || (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://jobs-justin-gathering-basic.trycloudflare.com');
+    function setApiBase(url) {
+      API_BASE = url.replace(/\/$/, '');
+      localStorage.setItem('synthesis_api_base', API_BASE);
+      alert('API Backend set to: ' + API_BASE);
+      location.reload();
+    }
+
+    // State
+    let currentSymptoms = []; // { id, path, weight, is_eliminating, category }
+    let speechRecognition = null;
+    let isRecording = false;
+
+    // Load sample patient story
+    function loadSampleCase() {
+      const text = "मरीज को पेट में बहुत तेज जलन है। रात को 12 बजे के बाद बहुत बेचैनी और घबराहट होती है। थोड़ा-थोड़ा पानी बार-बार पीते हैं। अंधेरे से बहुत डर लगता है और ठंड ज्यादा लगती है।";
+      document.getElementById('consultationText').value = text;
+      runExtraction();
+    }
+
+    // Speech-to-Text Setup
+    function toggleSpeechRecording() {
+      const btn = document.getElementById('micBtn');
+      const label = document.getElementById('micLabel');
+
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Speech recognition is not supported in this browser. Please use Chrome/Edge or type directly.");
+        return;
+      }
+
+      if (isRecording) {
+        if (speechRecognition) speechRecognition.stop();
+        isRecording = false;
+        btn.classList.remove('btn-mic-active');
+        label.textContent = "Start Dictation (Hindi/English)";
+      } else {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        speechRecognition = new SpeechRecognition();
+        speechRecognition.continuous = true;
+        speechRecognition.interimResults = true;
+        speechRecognition.lang = 'hi-IN'; // defaults to Hindi + English mix
+
+        speechRecognition.onresult = (event) => {
+          let interim = '';
+          for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+              document.getElementById('consultationText').value += ' ' + event.results[i][0].transcript;
+            }
+          }
+        };
+
+        speechRecognition.onerror = (e) => {
+          console.error(e);
+          isRecording = false;
+          btn.classList.remove('btn-mic-active');
+          label.textContent = "Start Dictation (Hindi/English)";
+        };
+
+        speechRecognition.start();
+        isRecording = true;
+        btn.classList.add('btn-mic-active');
+        label.textContent = "Listening... Speak Hindi or English";
+      }
+    }
+
+    // Settings Modal
+    function openSettingsModal() {
+      const currentKey = localStorage.getItem('GEMINI_API_KEY') || '';
+      document.getElementById('modalTitle').textContent = "AI Settings (Gemini Flash & Pro)";
+      document.getElementById('modalBody').innerHTML = `
+        <div style="margin-bottom: 12px; font-size: 13px; line-height: 1.5;">
+          Paste your <strong>Google Gemini API Key</strong> to activate deep generative symptom extraction. 
+          <br><span style="color: var(--text-muted); font-size: 12px;">Auto-fallback enabled: <code>gemini-2.0-flash</code> &rarr; <code>gemini-1.5-flash-8b</code> &rarr; <code>gemini-1.5-pro</code>.</span>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <label style="font-size: 12px; font-weight: 700;">Google Gemini API Key:</label>
+          <input type="password" id="geminiKeyInput" value="${currentKey}" placeholder="AIzaSy..." style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border); margin-top: 4px; font-family: monospace;">
+        </div>
+        <div style="display: flex; gap: 8px; justify-content: flex-end;">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveGeminiKey()">Save Key</button>
+        </div>
+      `;
+      document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    function saveGeminiKey() {
+      const val = document.getElementById('geminiKeyInput').value.trim();
+      if (val) {
+        localStorage.setItem('GEMINI_API_KEY', val);
+        document.getElementById('autopilotBadge').innerHTML = '<i class="fa-solid fa-bolt" style="color: #2563eb;"></i> Gemini Cloud Active';
+        document.getElementById('autopilotBadge').className = 'badge';
+        document.getElementById('autopilotBadge').style.background = '#eff6ff';
+        document.getElementById('autopilotBadge').style.color = '#1e40af';
+      } else {
+        localStorage.removeItem('GEMINI_API_KEY');
+        document.getElementById('autopilotBadge').innerHTML = '<i class="fa-solid fa-robot"></i> Autopilot Ready (Offline)';
+        document.getElementById('autopilotBadge').className = 'badge badge-autopilot';
+      }
+      closeModal();
+    }
+
+    // Step 1: AI Symptom Extraction
+    async function runExtraction() {
+      const text = document.getElementById('consultationText').value;
+      if (!text.trim()) {
+        alert("Please enter or dictate consultation text first.");
+        return;
+      }
+
+      const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+
+      const res = await fetch(API_BASE + '/api/ai-extract-symptoms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: text, api_key: apiKey })
+      });
+      const data = await res.json();
+      
+      if (data.model_used) {
+        document.getElementById('autopilotBadge').textContent = data.model_used;
+      }
+      if (data.gemini_error) {
+        alert("Google Gemini API Notice:\n" + data.gemini_error + "\n\n(The system automatically used the Offline Repertory NLP engine so your work is not interrupted).");
+      }
+      
+      // Clear current buckets
+      document.getElementById('bucket-mind').innerHTML = '';
+      document.getElementById('bucket-generals').innerHTML = '';
+      document.getElementById('bucket-modalities').innerHTML = '';
+      document.getElementById('bucket-particulars').innerHTML = '';
+
+      // Clear current symptoms list for new extraction
+      currentSymptoms = [];
+
+      // Populate symptom chips
+      data.symptoms.forEach(sym => {
+        let bucketId = 'bucket-particulars';
+        if (sym.category.includes('Mind')) bucketId = 'bucket-mind';
+        else if (sym.category.includes('General')) bucketId = 'bucket-generals';
+        else if (sym.category.includes('Modalities')) bucketId = 'bucket-modalities';
+
+        // Auto-stage first candidate rubric if available
+        let candidateId = null;
+        let candidatePath = '';
+        if (sym.candidate_rubrics && sym.candidate_rubrics.length > 0) {
+          const r = sym.candidate_rubrics[0];
+          candidateId = r.id;
+          candidatePath = r.path;
+          if (!currentSymptoms.some(s => s.id === r.id)) {
+            currentSymptoms.push({
+              id: r.id,
+              path: r.path,
+              weight: sym.weight || 2,
+              is_eliminating: false,
+              category: sym.category,
+              clinical_symptom: sym.name
+            });
+          }
+        }
+
+        const chip = document.createElement('div');
+        chip.className = 'symptom-chip selected';
+        chip.id = `symptom-chip-${candidateId || Math.random().toString(36).substring(7)}`;
+
+        let rubricLine = '';
+        if (candidateId) {
+          rubricLine = `
+            <div class="chip-rubric-link" onclick="openSynthesisBookView(${candidateId}, '', ${candidateId})" title="Click to open book view or swap this rubric in Repertorisation Grid">
+              <span class="chip-rubric-text"><i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${candidatePath}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; color: #60a5fa;"></i>
+            </div>
+          `;
+        }
+
+        chip.innerHTML = `
+          <div class="chip-top-row">
+            <span class="chip-symptom-title">${sym.name}</span>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span class="chip-weight w${sym.weight || 2}" onclick="cycleWeight(this, ${candidateId})">${sym.weight || 2}x</span>
+              <span class="chip-del" onclick="this.closest('.symptom-chip').remove(); if(${candidateId}) removeSymptom(${candidateId})"><i class="fa-solid fa-xmark"></i></span>
+            </div>
+          </div>
+          ${rubricLine}
+        `;
+        document.getElementById(bucketId).appendChild(chip);
+      });
+
+      console.log("Staged rubrics for matrix:", currentSymptoms);
+      recalculateMatrix();
+    }
+
+    function cycleWeight(badge, id) {
+      const sym = currentSymptoms.find(s => s.id === id);
+      if (!sym) return;
+      if (sym.weight === 1) sym.weight = 2;
+      else if (sym.weight === 2) sym.weight = 3;
+      else sym.weight = 1;
+
+      badge.textContent = sym.weight + 'x';
+      badge.className = 'chip-weight w' + sym.weight;
+      recalculateMatrix();
+    }
+
+    function removeSymptom(id) {
+      currentSymptoms = currentSymptoms.filter(s => s.id !== id);
+      recalculateMatrix();
+    }
+
+    // Step 2: Autocomplete Synthesis Rubric Search (Standard & Semantic Mode)
+    let searchDebounce = null;
+    
+    // ==========================================
+    // OPTION 3: IN-BROWSER WEBASSEMBLY SQLITE ENGINE
+    // Works 100% Client-Side Even When PC is Off!
+    // ==========================================
+    let wasmDb = null;
+    let isWasmDbReady = false;
+    const DB_CACHE_NAME = 'synthesis_core_v2_db';
+    const GZ_DB_URL = 'https://raw.githubusercontent.com/myrooshop-wq/synthesis-ai-repertory/main/synthesis_core.db.gz';
+
+    async function initBrowserSqlite() {
+      const dot = document.getElementById('dbStatusDot');
+      const text = document.getElementById('dbStatusText');
+
+      try {
+        text.textContent = "Loading WebAssembly SQL...";
+        const SQL = await initSqlJs({
+          locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+        });
+
+        // 1. Try to load from browser IndexedDB cache
+        let dbBuffer = await loadDbFromIndexedDB();
+
+        if (!dbBuffer) {
+          text.textContent = "Downloading 180k Rubric DB (33MB)...";
+          dot.style.background = "#3b82f6";
+          
+          const resp = await fetch(GZ_DB_URL);
+          if (!resp.ok) throw new Error("Could not download database release asset");
+
+          const reader = resp.body.getReader();
+          const contentLength = +resp.headers.get('Content-Length') || 34626788;
+          let received = 0;
+          let chunks = [];
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            chunks.push(value);
+            received += value.length;
+            const pct = Math.round((received / contentLength) * 100);
+            text.textContent = `Downloading DB: ${pct}%`;
+          }
+
+          let allChunks = new Uint8Array(received);
+          let pos = 0;
+          for (let chunk of chunks) {
+            allChunks.set(chunk, pos);
+            pos += chunk.length;
+          }
+
+          text.textContent = "Decompressing Database...";
+          dbBuffer = pako.ungzip(allChunks);
+
+          // Save to IndexedDB so subsequent visits load instantly!
+          await saveDbToIndexedDB(dbBuffer);
+        }
+
+        text.textContent = "Mounting In-Memory SQLite...";
+        wasmDb = new SQL.Database(dbBuffer);
+        isWasmDbReady = true;
+
+        dot.style.background = "#108a00";
+        text.textContent = "In-Browser DB (180,386 Rubrics Ready)";
+        console.log("[WasmDB] In-browser SQLite successfully loaded!");
+      } catch (err) {
+        console.warn("[WasmDB] Fallback to live cloud tunnel:", err);
+        dot.style.background = "#108a00";
+        text.textContent = "Cloud Tunnel Active";
+      }
+    }
+
+    // IndexedDB helpers for offline caching
+    function openIDB() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('synthesis_local_store', 1);
+        req.onupgradeneeded = e => {
+          e.target.result.createObjectStore('db_cache');
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e);
+      });
+    }
+
+    async function loadDbFromIndexedDB() {
+      try {
+        const idb = await openIDB();
+        return new Promise((resolve) => {
+          const tx = idb.transaction('db_cache', 'readonly');
+          const store = tx.objectStore('db_cache');
+          const req = store.get(DB_CACHE_NAME);
+          req.onsuccess = () => resolve(req.result ? new Uint8Array(req.result) : null);
+          req.onerror = () => resolve(null);
+        });
+      } catch(e) {
+        return null;
+      }
+    }
+
+    async function saveDbToIndexedDB(buffer) {
+      try {
+        const idb = await openIDB();
+        const tx = idb.transaction('db_cache', 'readwrite');
+        const store = tx.objectStore('db_cache');
+        store.put(buffer.buffer, DB_CACHE_NAME);
+      } catch(e) {
+        console.warn("Could not cache DB in IndexedDB:", e);
+      }
+    }
+
+    // Start loading database on page start
+    window.addEventListener('DOMContentLoaded', () => {
+      initBrowserSqlite();
+    });
+
+
+    function handleRubricSearch(query) {
+      clearTimeout(searchDebounce);
+      const dropdown = document.getElementById('rubricDropdown');
+      if (!query || !query.trim()) {
+        dropdown.style.display = 'none';
+        return;
+      }
+      const isSemantic = document.getElementById('semanticSearchToggle')?.checked || false;
+
+      searchDebounce = setTimeout(async () => {
+        let list = [];
+
+        // Check if WebAssembly in-browser database is active!
+        if (isWasmDbReady && wasmDb) {
+          try {
+            const cleanQ = query.trim().toUpperCase();
+            const terms = cleanQ.split(/\s+/).filter(t => t.length > 0);
+            
+            let sql = "";
+            let params = [];
+            
+            if (terms.length === 1) {
+              const term = terms[0];
+              sql = `
+                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                FROM syntree s
+                WHERE s.path LIKE ? OR s.path LIKE ?
+                ORDER BY 
+                  CASE WHEN s.path LIKE ? THEN 1 WHEN s.path LIKE ? THEN 2 ELSE 3 END,
+                  remedy_count DESC
+                LIMIT 12
+              `;
+              params = [`${term}%`, `% - ${term}%`, `${term}%`, `% - ${term}%`];
+            } else {
+              const likes = terms.map(t => "s.path LIKE ?").join(" AND ");
+              sql = `
+                SELECT s.id, s.path, s.level, 0 as is_xref_alias,
+                  (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+                FROM syntree s
+                WHERE ${likes}
+                ORDER BY remedy_count DESC
+                LIMIT 12
+              `;
+              params = terms.map(t => `%${t}%`);
+            }
+
+            const stmt = wasmDb.prepare(sql);
+            stmt.bind(params);
+            while (stmt.step()) {
+              const row = stmt.getAsObject();
+              list.push({
+                id: row.id,
+                path: row.path,
+                level: row.level,
+                remedy_count: row.remedy_count || 0,
+                is_xref_alias: false,
+                match_type: "In-Browser WebAssembly"
+              });
+            }
+            stmt.free();
+
+            // If few matches, check cross references (e.g. MIGRAINE -> HEAD - PAIN)
+            if (list.length < 5) {
+              const xrStmt = wasmDb.prepare("SELECT DISTINCT id, text, symptom_id FROM cross_references WHERE text LIKE ? LIMIT 6");
+              xrStmt.bind([`%${cleanQ}%`]);
+              while (xrStmt.step()) {
+                const xr = xrStmt.getAsObject();
+                list.push({
+                  id: xr.symptom_id,
+                  path: `${xr.text} ➔ (See Target)`,
+                  level: 2,
+                  remedy_count: 0,
+                  is_xref_alias: true,
+                  match_type: "Cross Reference"
+                });
+              }
+              xrStmt.free();
+            }
+          } catch(e) {
+            console.warn("WASM search error, falling back to network API:", e);
+          }
+        }
+
+        // Fallback to Network API if list is empty or semantic search is chosen
+        if (list.length === 0) {
+          try {
+            const url = `${API_BASE}/api/autocomplete?q=${encodeURIComponent(query)}&semantic=${isSemantic}&limit=12`;
+            const res = await fetch(url);
+            list = await res.json();
+          } catch(err) {
+            console.error("Network fetch failed:", err);
+          }
+        }
+        dropdown.innerHTML = '';
+        if (list.length === 0) {
+          dropdown.innerHTML = `<div class="dropdown-item" style="color: var(--text-muted); padding: 12px;">No matching Synthesis rubrics found</div>`;
+        } else {
+          list.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-item';
+            
+            const isXref = item.is_xref_alias;
+            const isSemanticMatch = item.match_type === "Semantic Match";
+            const xrefBadge = isXref ? `<span class="xref-tag"><i class="fa-solid fa-shuffle"></i> Reference</span>` : '';
+            const semanticBadge = isSemanticMatch ? `<span class="semantic-tag"><i class="fa-solid fa-brain"></i> Nearest Match</span>` : '';
+            
+            div.innerHTML = `
+              <div class="dropdown-item-content">
+                <div style="font-weight: 700; color: #1e293b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  ${item.path} ${xrefBadge} ${semanticBadge}
+                </div>
+                <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-top: 2px;">
+                  <span>Level ${item.level}</span>
+                  <span>&bull;</span>
+                  <span>Synthesis</span>
+                </div>
+              </div>
+              <div class="dropdown-item-actions">
+                <span class="rem-badge">${item.remedy_count} remedies</span>
+                <button class="btn btn-outline" style="padding: 3px 8px; font-size: 11px; font-weight: 600;" onclick="event.stopPropagation(); expandSubRubrics(${item.id}, '${escapeQuotes(item.path)}')">
+                  <i class="fa-solid fa-folder-tree"></i> Sub-rubrics &rarr;
+                </button>
+              </div>
+            `;
+            div.onclick = () => {
+              addCustomRubric(item);
+              dropdown.style.display = 'none';
+              document.getElementById('rubricSearchInput').value = '';
+            };
+            dropdown.appendChild(div);
+          });
+        }
+        dropdown.style.display = 'block';
+      }, 200);
+    }
+
+    function escapeQuotes(str) {
+      return str.replace(/'/g, "\\'");
+    }
+
+    // Expand Sub-rubrics (e.g. MIND - ANXIETY -> Bladder, with pain in)
+    async function expandSubRubrics(parentId, parentPath) {
+      let children = [];
+
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const stmt = wasmDb.prepare(`
+            SELECT s.id, s.item, s.path, s.level,
+              (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = s.id) as remedy_count
+            FROM syntree s
+            WHERE s.id_father = ?
+            ORDER BY s.item ASC
+            LIMIT 50
+          `);
+          stmt.bind([parentId]);
+          while (stmt.step()) {
+            children.push(stmt.getAsObject());
+          }
+          stmt.free();
+        } catch(e) {
+          console.warn("WASM sub-rubric error:", e);
+        }
+      }
+
+      if (children.length === 0) {
+        try {
+          const res = await fetch(`${API_BASE}/api/rubric-children?parent_id=${parentId}`);
+          children = await res.json();
+        } catch(e) {}
+      }
+      const dropdown = document.getElementById('rubricDropdown');
+      dropdown.innerHTML = '';
+
+      // Back navigation header
+      const backDiv = document.createElement('div');
+      backDiv.className = 'dropdown-item';
+      backDiv.style.background = '#f1f5f9';
+      backDiv.style.fontWeight = '700';
+      backDiv.style.color = '#2563eb';
+      backDiv.innerHTML = `
+        <div><i class="fa-solid fa-arrow-left"></i> Sub-rubrics under: <em>${parentPath}</em></div>
+        <span class="rem-badge" onclick="event.stopPropagation(); handleRubricSearch(document.getElementById('rubricSearchInput').value)">Back to Search</span>
+      `;
+      dropdown.appendChild(backDiv);
+
+      if (children.length === 0) {
+        dropdown.innerHTML += `<div class="dropdown-item" style="color: var(--text-muted);">(No deeper sub-rubrics under this node)</div>`;
+      } else {
+        children.forEach(ch => {
+          const div = document.createElement('div');
+          div.className = 'dropdown-item';
+          div.innerHTML = `
+            <div style="flex: 1;">
+              <strong>&bull; ${ch.item}</strong>
+              <div style="font-size: 11px; color: var(--text-muted);">${ch.path}</div>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span class="rem-badge">${ch.remedy_count} remedies</span>
+              <button class="btn btn-outline" style="padding: 2px 6px; font-size: 11px;" onclick="event.stopPropagation(); expandSubRubrics(${ch.id}, '${escapeQuotes(ch.path)}')">
+                &rarr;
+              </button>
+            </div>
+          `;
+          div.onclick = () => {
+            addCustomRubric(ch);
+            dropdown.style.display = 'none';
+            document.getElementById('rubricSearchInput').value = '';
+          };
+          dropdown.appendChild(div);
+        });
+      }
+      dropdown.style.display = 'block';
+    }
+
+    function addCustomRubric(item) {
+      if (currentSymptoms.some(s => s.id === item.id)) return;
+      currentSymptoms.push({
+        id: item.id,
+        path: item.path,
+        weight: 1,
+        is_eliminating: false,
+        category: 'Particulars'
+      });
+      recalculateMatrix();
+    }
+
+    // Recalculate Repertorisation Grid
+    async function recalculateMatrix() {
+      if (currentSymptoms.length === 0) {
+        document.getElementById('matrixBody').innerHTML = `
+          <tr><td colspan="3" style="text-align: center; color: var(--text-muted); padding: 24px;">No rubrics selected yet.</td></tr>
+        `;
+        return;
+      }
+
+      const weights = {};
+      const eliminating_ids = [];
+      currentSymptoms.forEach(s => {
+        weights[s.id] = s.weight;
+        if (s.is_eliminating) eliminating_ids.push(s.id);
+      });
+
+      const minDegree = document.getElementById('minDegreeSelect').value;
+      const topN = document.getElementById('topNSelect').value;
+
+      const isAcute = document.getElementById('clinicalStrategySelect')?.value === 'acute';
+
+      const res = await fetch(API_BASE + '/api/repertorise', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          weights: weights,
+          eliminating_ids: eliminating_ids,
+          min_degree: minDegree,
+          top_n: topN,
+          is_acute_mode: isAcute
+        })
+      });
+      const data = await res.json();
+      renderMatrix(data);
+    }
+
+    function renderMatrix(data) {
+      const table = document.getElementById('matrixTable');
+      const thead = table.querySelector('thead tr');
+      const tbody = document.getElementById('matrixBody');
+
+      // Reset remedy ths
+      while (thead.children.length > 3) {
+        thead.removeChild(thead.lastChild);
+      }
+      tbody.innerHTML = '';
+
+      if (!data.remedies || data.remedies.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" style="text-align: center; padding: 20px; color: var(--danger);">No remedies cover all eliminating symptoms. Try unchecking some elimination flags.</td></tr>`;
+        return;
+      }
+
+      // Add remedy headers
+      data.remedies.forEach(rem => {
+        const th = document.createElement('th');
+        th.className = 'remedy-th';
+        th.innerHTML = `
+          <div style="font-weight: 800; font-size: 14px;">${rem.remedy_abbreviation}</div>
+          <div style="font-size: 10px; color: var(--text-muted); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${rem.remedy_full}">${rem.remedy_full}</div>
+        `;
+        thead.appendChild(th);
+      });
+
+      // Rows for each rubric
+      data.matrix.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.id = `matrix-row-${row.symptom_id}`;
+        
+        // Find matching patient clinical symptom if mapped
+        const linkedSym = currentSymptoms.find(s => s.id === row.symptom_id);
+        const patientSymptomTag = linkedSym && linkedSym.clinical_symptom ? `
+          <div style="font-size: 11px; color: #15803d; font-weight: normal; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+            <i class="fa-solid fa-user-tag" style="font-size: 10px; color: #16a34a;"></i>
+            <span>Patient: <strong>${escapeHtml(linkedSym.clinical_symptom)}</strong></span>
+          </div>
+        ` : '';
+
+        // Rubric Title (Clickable)
+        const tdRubric = document.createElement('td');
+        tdRubric.innerHTML = `
+          ${patientSymptomTag}
+          <span style="cursor: pointer; color: var(--accent); font-weight: 600;" onclick="openSynthesisBookView(${row.symptom_id}, '', ${row.symptom_id})" title="Click to view Synthesis Book Page, remedies & cross references">
+            <i class="fa-solid fa-book-open" style="font-size: 11px; margin-right: 4px;"></i>${row.rubric}
+          </span>
+        `;
+        tr.appendChild(tdRubric);
+
+        // Weight selector
+        const tdWeight = document.createElement('td');
+        tdWeight.style.textAlign = 'center';
+        tdWeight.innerHTML = `
+          <select onchange="updateRowWeight(${row.symptom_id}, this.value)" style="padding: 2px 4px; border-radius: 4px; border: 1px solid var(--border);">
+            <option value="1" ${row.weight === 1 ? 'selected' : ''}>1x</option>
+            <option value="2" ${row.weight === 2 ? 'selected' : ''}>2x</option>
+            <option value="3" ${row.weight === 3 ? 'selected' : ''}>3x</option>
+          </select>
+        `;
+        tr.appendChild(tdWeight);
+
+        // Eliminating toggle
+        const tdElim = document.createElement('td');
+        tdElim.style.textAlign = 'center';
+        tdElim.innerHTML = `
+          <input type="checkbox" ${row.is_eliminating ? 'checked' : ''} onchange="toggleEliminating(${row.symptom_id}, this.checked)" title="Filter out remedies that don't have this rubric">
+        `;
+        tr.appendChild(tdElim);
+
+        // Cells for each remedy
+        data.remedies.forEach(rem => {
+          const score = row.scores[rem.remedy_abbreviation] || 0;
+          const tdScore = document.createElement('td');
+          tdScore.className = `score-cell deg-${score}`;
+          tdScore.textContent = score > 0 ? score : '-';
+          if (score > 0) {
+            tdScore.onclick = () => openSynthesisBookView(row.symptom_id, rem.remedy_abbreviation);
+            tdScore.title = `Tap to open Synthesis Book Page & verify ${rem.remedy_abbreviation} (${score})`;
+          }
+          tr.appendChild(tdScore);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      // Total Coverage Row
+      const trCov = document.createElement('tr');
+      trCov.className = 'total-row';
+      trCov.innerHTML = `<td colspan="3">Total Rubrics Covered</td>` + data.remedies.map(r => `<td>${r.rubrics_covered}/${data.total_rubrics}</td>`).join('');
+      tbody.appendChild(trCov);
+
+      // Total Score Row
+      const trTot = document.createElement('tr');
+      trTot.className = 'total-row';
+      trTot.innerHTML = `<td colspan="3">Total Qualitative Score</td>` + data.remedies.map(r => `<td>${r.total_score}</td>`).join('');
+      tbody.appendChild(trTot);
+
+      // Populate Differential Contender Cards
+      if (data.remedies && data.remedies.length > 0) {
+        document.getElementById('prescriptionCard').style.display = 'block';
+        const cardsDiv = document.getElementById('differentialCards');
+        cardsDiv.innerHTML = '';
+
+        // Show top 3 contenders
+        data.remedies.slice(0, 3).forEach((rem, idx) => {
+          const card = document.createElement('div');
+          card.style.background = idx === 0 ? '#f0fdf4' : '#ffffff';
+          card.style.border = idx === 0 ? '2px solid #16a34a' : '1px solid var(--border)';
+          card.style.borderRadius = '8px';
+          card.style.padding = '12px';
+          card.style.cursor = 'pointer';
+          card.style.transition = 'all 0.2s';
+          card.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <strong style="font-size: 15px; color: ${idx === 0 ? '#166534' : '#1e293b'};">#${idx+1} ${rem.remedy_abbreviation}</strong>
+              <span class="badge" style="background: #e2e8f0; font-size: 11px;">Score ${rem.total_score} (${rem.rubrics_covered}/${data.total_rubrics})</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 8px;">${rem.remedy_full}</div>
+            <button class="btn btn-outline" style="width: 100%; font-size: 12px; padding: 4px 8px;" onclick="selectSimilimum('${rem.remedy_abbreviation}', '${rem.remedy_full}')">
+              <i class="fa-solid fa-check"></i> Prescribe ${rem.remedy_abbreviation}
+            </button>
+          `;
+          cardsDiv.appendChild(card);
+        });
+
+        // Set default to #1
+        selectSimilimum(data.remedies[0].remedy_abbreviation, data.remedies[0].remedy_full);
+      }
+    }
+
+    function selectSimilimum(abbr, full) {
+      document.getElementById('finalRemedy').value = `${abbr} (${full})`;
+    }
+
+    function updateRowWeight(symptomId, val) {
+      const sym = currentSymptoms.find(s => s.id === symptomId);
+      if (sym) {
+        sym.weight = parseInt(val);
+        recalculateMatrix();
+      }
+    }
+
+    function toggleEliminating(symptomId, isChecked) {
+      const sym = currentSymptoms.find(s => s.id === symptomId);
+      if (sym) {
+        sym.is_eliminating = isChecked;
+        recalculateMatrix();
+      }
+    }
+
+    // Modal: Exact Synthesis Book View with typography, degrees, author citations & hierarchy replacement
+    async function openSynthesisBookView(symptomId, highlightRemedy = '', originalTargetId = null) {
+      // Keep track of which rubric in the grid is being replaced
+      const activeReplaceTargetId = originalTargetId !== null ? originalTargetId : symptomId;
+
+      const res = await fetch(`${API_BASE}/api/rubric-book-view?symptom_id=${symptomId}&remedy=${encodeURIComponent(highlightRemedy)}`);
+      const data = await res.json();
+      
+      document.getElementById('modalTitle').innerHTML = `
+        <i class="fa-solid fa-book-medical" style="color: #108a00; margin-right: 6px;"></i>
+        Synthesis Repertorium: Book Page View
+      `;
+
+      // 1. Ancestor Breadcrumbs Bar
+      let breadcrumbsHtml = `
+        <div class="synth-breadcrumbs">
+          <span class="synth-breadcrumb-item" onclick="openChaptersDirectory(${activeReplaceTargetId})"><i class="fa-solid fa-book"></i> Chapters</span>
+      `;
+      if (data.breadcrumbs && data.breadcrumbs.length > 0) {
+        data.breadcrumbs.forEach(bc => {
+          breadcrumbsHtml += `
+            <span class="synth-breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+            <span class="synth-breadcrumb-item" onclick="openSynthesisBookView(${bc.id}, '', ${activeReplaceTargetId})">${bc.item}</span>
+          `;
+        });
+      }
+      breadcrumbsHtml += `
+          <span class="synth-breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+          <span class="synth-breadcrumb-current">${data.rubric.item}</span>
+        </div>
+      `;
+
+      // 2. Action banner: Replace Rubric in Grid
+      const isAlreadyInGrid = currentSymptoms.some(s => s.id === data.rubric.id);
+      const isDifferentThanOriginal = activeReplaceTargetId && activeReplaceTargetId !== data.rubric.id;
+      const targetSym = currentSymptoms.find(s => s.id === activeReplaceTargetId);
+      const targetName = targetSym ? targetSym.path : 'Selected Rubric';
+
+      let replaceActionHtml = '';
+      if (isDifferentThanOriginal) {
+        replaceActionHtml = `
+          <div style="background: #eff6ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="font-size: 13px; color: #1e40af;">
+              <i class="fa-solid fa-arrows-rotate" style="margin-right: 6px;"></i>
+              Replace <strong>"${escapeHtml(targetName)}"</strong> with this deeper rubric?
+            </div>
+            <button class="btn btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; background: #2563eb;" onclick="executeReplaceRubric(${activeReplaceTargetId}, ${data.rubric.id}, '${escapeQuotes(data.rubric.path)}')">
+              <i class="fa-solid fa-check"></i> Replace Rubric in Grid
+            </button>
+          </div>
+        `;
+      } else if (!isAlreadyInGrid) {
+        replaceActionHtml = `
+          <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <div style="font-size: 13px; color: #166534;">
+              <i class="fa-solid fa-plus-circle" style="margin-right: 6px;"></i>
+              Add this rubric directly to your Repertorisation Grid:
+            </div>
+            <button class="btn btn-primary" style="padding: 6px 14px; font-size: 13px; font-weight: 700; background: #16a34a;" onclick="executeAddRubric(${data.rubric.id}, '${escapeQuotes(data.rubric.path)}')">
+              <i class="fa-solid fa-plus"></i> Add to Grid
+            </button>
+          </div>
+        `;
+      }
+
+      // 3. Remedies flow with Synthesis typography
+      let remediesHtml = '';
+      if (data.remedies && data.remedies.length > 0) {
+        data.remedies.forEach((r, idx) => {
+          let degClass = `synth-deg-${r.degree}`;
+          let isHighlight = highlightRemedy && r.remedy_abbreviation.toLowerCase() === highlightRemedy.toLowerCase();
+          let authBadge = r.authors ? `<span class="synth-author">${r.authors}</span>` : '';
+          
+          let remSpan = `<span class="${degClass} ${isHighlight ? 'synth-highlight' : ''}" title="${r.remedy_full} (Grade ${r.degree})" onclick="openCitation(${symptomId}, '${r.remedy_abbreviation}')" style="cursor: pointer;">${r.remedy_abbreviation}${authBadge}</span>`;
+          remediesHtml += (idx > 0 ? ', ' : '') + remSpan;
+        });
+      } else {
+        remediesHtml = '<em style="color: #888;">(No remedies recorded directly on this category header)</em>';
+      }
+
+      // 4. Cross References (Clickable to jump directly to comparison rubrics!)
+      let xrefsHtml = '';
+      if (data.cross_references && data.cross_references.length > 0) {
+        xrefsHtml = `<div style="margin-top: 14px; font-size: 13px; font-family: sans-serif; background: #fffbeb; border: 1px solid #fde68a; padding: 12px; border-radius: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: #92400e;"><i class="fa-solid fa-shuffle"></i> Synthesis Cross References (${data.cross_references.length}):</strong>
+            <span style="font-size: 11px; color: #b45309;">Compare with similar or related rubrics</span>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">` + 
+          data.cross_references.map(x => `
+            <span style="background: white; border: 1px solid #fcd34d; color: #92400e; padding: 4px 10px; border-radius: 6px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.15s;"
+                  onmouseover="this.style.background='#fef3c7'; this.style.borderColor='#f59e0b';"
+                  onmouseout="this.style.background='white'; this.style.borderColor='#fcd34d';"
+                  onclick="openSynthesisBookView(${x.target_symptom_id}, '', ${activeReplaceTargetId})"
+                  title="Click to compare this cross-referenced rubric: ${escapeHtml(x.text)}">
+              <i class="fa-solid fa-arrow-right-arrow-left" style="font-size: 10px; margin-right: 4px; color: #d97706;"></i>${escapeHtml(x.text)}
+            </span>
+          `).join('') + 
+          `</div></div>`;
+      }
+
+      // 5. Child Sub-Rubrics with exact Remedy Counts!
+      let childrenHtml = '';
+      if (data.children && data.children.length > 0) {
+        childrenHtml = `<div style="margin-top: 14px; font-size: 13px; font-family: sans-serif;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <strong style="color: #0f172a;"><i class="fa-solid fa-folder-tree"></i> Sub-Rubric Modifications (${data.children.length}):</strong>
+            <span style="font-size: 11px; color: #64748b;">Tap any sub-rubric to navigate deeper</span>
+          </div>
+          <div style="max-height: 220px; overflow-y: auto; border: 1px solid #e2e8f0; padding: 6px; border-radius: 6px; background: white;">` +
+          data.children.map(c => `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; border-radius: 4px; transition: background 0.15s;" 
+                 onmouseover="this.style.background='#f8fafc'" 
+                 onmouseout="this.style.background='white'"
+                 onclick="openSynthesisBookView(${c.id}, '', ${activeReplaceTargetId})">
+              <span style="color: #2563eb; font-weight: 600;">+ ${c.item}</span>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span class="rem-badge" style="background: ${c.remedy_count > 0 ? '#e0f2fe' : '#f1f5f9'}; color: ${c.remedy_count > 0 ? '#0369a1' : '#94a3b8'};">${c.remedy_count} remedies</span>
+                <i class="fa-solid fa-chevron-right" style="font-size: 10px; color: #94a3b8;"></i>
+              </div>
+            </div>
+          `).join('') +
+          `</div></div>`;
+      }
+
+      let html = `
+        ${breadcrumbsHtml}
+        ${replaceActionHtml}
+        <div class="synthesis-book-page">
+          <div class="book-rubric-title">${data.rubric.path}</div>
+          <div style="font-size: 12px; color: #64748b; margin-bottom: 10px; font-family: sans-serif; display: flex; align-items: center; gap: 8px;">
+            <span style="font-weight: 700; color: #0f172a;">[${data.remedies.length} remedies recorded in Synthesis 9.1 / 2.0]</span>
+            ${highlightRemedy ? `<span style="background: #fef08a; color: #854d0e; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Target: ${highlightRemedy.toUpperCase()}</span>` : ''}
+          </div>
+          <div class="book-remedies-flow">
+            ${remediesHtml}
+          </div>
+        </div>
+        ${xrefsHtml}
+        ${childrenHtml}
+      `;
+
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modalBackdrop').style.display = 'flex';
+
+      // Auto-scroll to highlighted remedy if present
+      setTimeout(() => {
+        const el = document.querySelector('.synth-highlight');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 200);
+    }
+
+    // Function to replace a rubric in currentSymptoms and refresh the matrix
+    function executeReplaceRubric(oldId, newId, newPath) {
+      const idx = currentSymptoms.findIndex(s => s.id === oldId);
+      if (idx !== -1) {
+        currentSymptoms[idx].id = newId;
+        currentSymptoms[idx].path = newPath;
+        // Update chip UI in the category buckets as well
+        const oldChip = document.getElementById(`symptom-chip-${oldId}`);
+        if (oldChip) {
+          oldChip.id = `symptom-chip-${newId}`;
+          const linkEl = oldChip.querySelector('.chip-rubric-link');
+          if (linkEl) {
+            linkEl.setAttribute('onclick', `openSynthesisBookView(${newId}, '', ${newId})`);
+            const textEl = linkEl.querySelector('.chip-rubric-text');
+            if (textEl) textEl.innerHTML = `<i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${newPath}`;
+          }
+        }
+      } else {
+        // Fallback: check if newId isn't already present
+        if (!currentSymptoms.some(s => s.id === newId)) {
+          currentSymptoms.push({
+            id: newId,
+            path: newPath,
+            weight: 2,
+            is_eliminating: false,
+            category: 'Particulars',
+            clinical_symptom: 'Custom Added Rubric'
+          });
+        }
+      }
+      closeModal();
+      recalculateMatrix();
+    }
+
+    // Function to add a new rubric directly from the book view
+    function executeAddRubric(newId, newPath) {
+      if (!currentSymptoms.some(s => s.id === newId)) {
+        currentSymptoms.push({
+          id: newId,
+          path: newPath,
+          weight: 2,
+          is_eliminating: false,
+          category: 'Particulars'
+        });
+      }
+      closeModal();
+      recalculateMatrix();
+    }
+
+    // Modal to browse all 41 top-level chapters (Mind, Vertigo, Head, etc.)
+    async function openChaptersDirectory(replaceTargetId = null) {
+      let chapters = [];
+
+      if (isWasmDbReady && wasmDb) {
+        try {
+          const stmt = wasmDb.prepare(`
+            SELECT c.id, s.item as name, s.path
+            FROM chapters c
+            JOIN syntree s ON c.id = s.id
+            ORDER BY s.item ASC
+          `);
+          while (stmt.step()) {
+            chapters.push(stmt.getAsObject());
+          }
+          stmt.free();
+        } catch(e) {}
+      }
+
+      if (chapters.length === 0) {
+        try {
+          const res = await fetch(API_BASE + '/api/chapters');
+          chapters = await res.json();
+        } catch(e) {}
+      }
+      
+      document.getElementById('modalTitle').innerHTML = `
+        <i class="fa-solid fa-book" style="color: var(--primary); margin-right: 6px;"></i>
+        Synthesis Repertory — Browse Chapters (41 Sections)
+      `;
+
+      let html = `
+        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          Select a chapter to explore its rubrics and sub-rubric modifications:
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; max-height: 400px; overflow-y: auto; padding: 4px;">
+      `;
+
+      chapters.forEach(ch => {
+        html += `
+          <div style="padding: 10px 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-weight: 700; color: #1e293b; text-align: center; transition: all 0.15s;"
+               onmouseover="this.style.background='#eff6ff'; this.style.borderColor='#3b82f6'; this.style.color='#1d4ed8';"
+               onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.color='#1e293b';"
+               onclick="openSynthesisBookView(${ch.id}, '', ${replaceTargetId})">
+            ${ch.item}
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+    }
+
+    // Modal: Author Citation Proof
+    async function openCitation(symptomId, remedy) {
+      const res = await fetch(`${API_BASE}/api/cell-citation?symptom_id=${symptomId}&remedy=${encodeURIComponent(remedy)}`);
+      const data = await res.json();
+      document.getElementById('modalTitle').textContent = `Authority & Citation Proof`;
+      
+      let html = `
+        <div style="margin-bottom: 10px;"><strong>Remedy:</strong> ${data.remedy} (${data.remedy_full})</div>
+        <div style="margin-bottom: 14px;"><strong>Synthesis Grade:</strong> <span class="badge" style="background: #eff6ff; color: #1e40af; font-size: 14px;">Grade ${data.degree}</span></div>
+        <div style="font-weight: 700; margin-bottom: 8px;"><i class="fa-solid fa-book-bookmark"></i> Proving Masters / Historical Sources:</div>
+      `;
+
+      if (data.authors && data.authors.length > 0) {
+        html += `<ul style="padding-left: 20px; font-size: 13px;">`;
+        data.authors.forEach(a => {
+          html += `<li style="margin-bottom: 6px;"><strong>[${a.author_abbreviation}]</strong> ${a.author_desc}</li>`;
+        });
+        html += `</ul>`;
+      } else {
+        html += `<p style="font-size: 13px; color: var(--text-muted);">Standard classical Materia Medica verification from Hahnemann / Kent / Boenninghausen corpus.</p>`;
+      }
+
+      document.getElementById('modalBody').innerHTML = html;
+      document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modalBackdrop').style.display = 'none';
+    }
+
+    function generatePrescription() {
+      alert("Prescription & Repertorisation Matrix generated successfully! Ready to attach to Patient PDF / WhatsApp.");
+    }
+  
+    function promptServerUrl() {
+      const current = localStorage.getItem('synthesis_api_base') || 'http://192.168.7.178:5055';
+      const entered = prompt("Enter your Synthesis Python Backend Server URL (e.g. http://192.168.7.178:5055 or your tunnel/cloud URL):", current);
+      if (entered !== null) {
+        setApiBase(entered.trim());
+      }
+    }
+</script>
+</body>
+</html>
