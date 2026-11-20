@@ -1424,6 +1424,46 @@
         return JSON.parse(relaxed);
       } catch(e) {}
 
+      // 6. Resilient Recovery: Stream-repair incomplete/truncated JSON
+      try {
+        let s = clean.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();
+        const startIdx = s.indexOf('{');
+        if (startIdx !== -1) {
+          s = s.substring(startIdx);
+          const lastCloseObj = s.lastIndexOf('}');
+          if (lastCloseObj !== -1) {
+            let repaired = s.substring(0, lastCloseObj + 1);
+            let openBraces = (repaired.match(/\{/g) || []).length;
+            let closeBraces = (repaired.match(/\}/g) || []).length;
+            let openBrackets = (repaired.match(/\[/g) || []).length;
+            let closeBrackets = (repaired.match(/\]/g) || []).length;
+
+            while (openBrackets > closeBrackets) { repaired += ']'; closeBrackets++; }
+            while (openBraces > closeBraces) { repaired += '}'; closeBraces++; }
+
+            try { return JSON.parse(repaired); } catch(e) {}
+          }
+        }
+      } catch(e) {}
+
+      // 7. Regex item recovery: Extract individual symptom objects
+      try {
+        const itemRegex = /\{\s*"category"\s*:\s*"([^"]+)"\s*,\s*"name"\s*:\s*"([^"]+)"(?:\s*,\s*"weight"\s*:\s*(\d+))?(?:\s*,\s*"synthesis_query"\s*:\s*"([^"]*)")?\s*\}/g;
+        const items = [];
+        let m;
+        while ((m = itemRegex.exec(clean)) !== null) {
+          items.push({
+            category: m[1],
+            name: m[2],
+            weight: m[3] ? parseInt(m[3], 10) : 2,
+            synthesis_query: m[4] || ''
+          });
+        }
+        if (items.length > 0) {
+          return { symptoms: items };
+        }
+      } catch(e) {}
+
       return null;
     }
 
@@ -1678,7 +1718,7 @@ Output valid JSON strictly:
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
                   temperature: 0.1,
-                  maxOutputTokens: 800,
+                  maxOutputTokens: 2048,
                   responseMimeType: "application/json"
                 }
               };
