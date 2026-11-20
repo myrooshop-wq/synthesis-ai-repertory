@@ -102,6 +102,9 @@
       gap: 10px !important;
       padding: 9px 0 !important;
       border-bottom: 1px dashed #e2e8f0 !important;
+      flex-direction: row !important;
+      width: 100% !important;
+      clear: both !important;
     }
     .mm-keynote-item:last-child {
       border-bottom: none !important;
@@ -122,6 +125,7 @@
       font-size: 13.5px !important;
       line-height: 1.6 !important;
       color: #334155 !important;
+      flex: 1 !important;
     }
 
     /* In-text Modality Badges */
@@ -138,6 +142,7 @@
       border: 1px solid #fca5a5 !important;
       vertical-align: middle !important;
       margin: 0 2px !important;
+      white-space: nowrap !important;
     }
     .mm-amel-badge {
       display: inline-flex !important;
@@ -152,6 +157,7 @@
       border: 1px solid #86efac !important;
       vertical-align: middle !important;
       margin: 0 2px !important;
+      white-space: nowrap !important;
     }
 
     /* Nash Pearls & Leaders */
@@ -220,7 +226,7 @@
       border-color: #0284c7 !important;
     }
 
-    /* Prose Paragraphs in Organ Cards */
+    /* Prose Paragraphs & Read More Controls in Organ Cards */
     .mm-prose-p {
       margin: 0 0 10px 0 !important;
       font-size: 13.5px !important;
@@ -229,4 +235,29 @@
     }
     .mm-prose-p:last-child {
       margin-bottom: 0 !important;
+    }
+    .mm-read-more-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      margin-top: 8px !important;
+      padding: 6px 12px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #1e40af !important;
+      background: #eff6ff !important;
+      border: 1px solid #bfdbfe !important;
+      border-radius: 6px !important;
+      cursor: pointer !important;
+      transition: all 0.15s ease !important;
+    }
+    .mm-read-more-btn:hover {
+      background: #dbeafe !important;
+      border-color: #93c5fd !important;
+      color: #1d4ed8 !important;
+    }
+    .mm-read-more-btn.expanded {
+      background: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #475569 !important;
     }

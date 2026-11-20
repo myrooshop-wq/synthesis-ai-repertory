@@ -1,8 +1,8 @@
-// JavaScript renderers and helpers for Materia Medica modal
+// mm_renderers.js - Enhanced with robust formatMMText, intelligent paragraph segmentation, Read More collapsible controls, and clean Allen parsing
 
 function formatMMText(raw) {
   if (!raw) return '';
-  // 1. Decode entities
+  // 1. First normalize HTML entities and non-ascii artifacts
   let s = raw
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
@@ -11,30 +11,114 @@ function formatMMText(raw) {
     .replace(/&#9472;/g, '—')
     .replace(/&ndash;/g, '–')
     .replace(/&mdash;/g, '—')
-    .replace(/&nbsp;/g, ' ');
+    .replace(/&nbsp;/g, ' ')
+    .replace(/[\u008c\u0152]/g, 'Oe')
+    .replace(/[\u009c\u0153]/g, 'oe')
+    .replace(/[\u0092\u2019]/g, "'")
+    .replace(/[\u0093\u0094\u201c\u201d]/g, '"')
+    .replace(/[\u0096\u2013]/g, '–')
+    .replace(/[\u0097\u2014]/g, '—')
+    .replace(/æ/g, 'ae')
+    .replace(/Æ/g, 'Ae');
 
-  // 2. Escape HTML safe chars
+  // 2. Escape HTML characters safely
   s = s
     .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;');
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 
-  // 3. Highlight Aggravation '<' and Amelioration '>'
-  // When followed by a letter, word, or space + letter
-  s = s.replace(/<\s*([a-zA-Z0-9])/g, '<span class="mm-agg-badge"><i class="fa-solid fa-arrow-up-right-dots"></i> Agg. (&lt;)</span> $1');
-  s = s.replace(/>\s*([a-zA-Z0-9])/g, '<span class="mm-amel-badge"><i class="fa-solid fa-arrow-down-right-dots"></i> Amel. (&gt;)</span> $1');
+  // 3. Highlight Aggravation '<' and Amelioration '>' with unique placeholders
+  s = s.replace(/<\s*([a-zA-Z0-9])/g, function(match, nextChar) {
+    return '___AGG_BADGE___ ' + nextChar;
+  });
 
-  // Any remaining bare < or >
-  s = s.replace(/<(?!\/?(?:span|i|strong|b|em|div|p)\b)/g, '&lt;').replace(/>(?![a-zA-Z0-9"\'\s=>]*>)/g, '&gt;');
-  
+  s = s.replace(/>\s*([a-zA-Z0-9])/g, function(match, nextChar) {
+    return '___AMEL_BADGE___ ' + nextChar;
+  });
+
+  // 4. Any remaining bare < or > safe escape
+  s = s.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  // 5. Expand placeholders into styled HTML badges
+  s = s.replace(/___AGG_BADGE___/g, '<span class="mm-agg-badge"><i class="fa-solid fa-arrow-up-right-dots"></i> Agg. (&lt;)</span>');
+  s = s.replace(/___AMEL_BADGE___/g, '<span class="mm-amel-badge"><i class="fa-solid fa-arrow-down-right-dots"></i> Amel. (&gt;)</span>');
+
   return s;
 }
 
+// Split continuous dense prose into readable paragraphs (~300-350 chars each)
+function splitIntoParagraphs(text, targetLength = 320) {
+  if (!text) return [];
+  if (text.includes('\n\n')) {
+    return text.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  }
+  const sentences = text.split(/(?<=[.!?])\s+(?=[A-Z])/);
+  const paras = [];
+  let current = [];
+  let currentLen = 0;
+
+  for (let s of sentences) {
+    let trimmed = s.trim();
+    if (!trimmed) continue;
+    current.push(trimmed);
+    currentLen += trimmed.length;
+
+    if (currentLen >= targetLength) {
+      paras.push(current.join(' '));
+      current = [];
+      currentLen = 0;
+    }
+  }
+
+  if (current.length > 0) {
+    paras.push(current.join(' '));
+  }
+  return paras;
+}
+
+// Helper to render collapsible paragraphs with "Read More" button
+function renderCollapsibleParas(paras, initialCount = 2) {
+  if (!paras || paras.length === 0) return '';
+  const initialParas = paras.slice(0, initialCount);
+  const remainingParas = paras.slice(initialCount);
+
+  let out = initialParas.map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('');
+
+  if (remainingParas.length > 0) {
+    const uniqueId = 'kent_more_' + Math.random().toString(36).substring(2, 9);
+    out += `
+      <div id="${uniqueId}" class="mm-collapsible-content" style="display: none;">
+        ${remainingParas.map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+      </div>
+      <button type="button" class="mm-read-more-btn" onclick="toggleKentMore('${uniqueId}', this)">
+        <i class="fa-solid fa-angles-down"></i> Read More (${remainingParas.length} more paragraph${remainingParas.length > 1 ? 's' : ''})
+      </button>
+    `;
+  }
+  return out;
+}
+
+window.toggleKentMore = function(elementId, btn) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  if (el.style.display === 'none' || !el.style.display) {
+    el.style.display = 'block';
+    btn.innerHTML = '<i class="fa-solid fa-angles-up"></i> Show Less';
+    btn.classList.add('expanded');
+  } else {
+    el.style.display = 'none';
+    const remaining = el.querySelectorAll('p').length;
+    btn.innerHTML = `<i class="fa-solid fa-angles-down"></i> Read More (${remaining} more paragraph${remaining > 1 ? 's' : ''})`;
+    btn.classList.remove('expanded');
+  }
+};
+
 function renderAllenContent(container, entry) {
   let text = entry.full_text || '';
-  // Clean leading '>' or bullets
+  // Clean leading '>' or bullets and entities
   text = text.replace(/^\s*>\s*/, '').replace(/&#9472;/g, '—');
 
-  // Extract Modalities and Relationships
+  // Extract Modalities and Relationships (support Relation or Relations)
   let aggText = '';
   let amelText = '';
   let relText = '';
@@ -45,14 +129,14 @@ function renderAllenContent(container, entry) {
   const amelMatch = text.match(/Amelioration\s*\.\s*-(.*?)(?=Relations?|Keynotes|\Z)/is);
   if (amelMatch) amelText = amelMatch[1].trim();
 
-  const relMatch = text.match(/Relation\s*\.\s*-(.*?)(?=Aggravation|Amelioration|Keynotes|\Z)/is);
+  const relMatch = text.match(/Relations?\s*\.\s*-(.*?)(?=Aggravation|Amelioration|Keynotes|\Z)/is);
   if (relMatch) relText = relMatch[1].trim();
 
   // Strip extracted sections from main keynote body
   let mainText = text
     .replace(/Aggravation\s*\.\s*-.*?(?=Amelioration|\Z)/is, '')
     .replace(/Amelioration\s*\.\s*-.*?(?=Relations?|Keynotes|\Z)/is, '')
-    .replace(/Relation\s*\.\s*-.*?(?=Aggravation|Amelioration|Keynotes|\Z)/is, '')
+    .replace(/Relations?\s*\.\s*-.*?(?=Aggravation|Amelioration|Keynotes|\Z)/is, '')
     .replace(/Keynotes\s+by\s+H\.C\.\s+Allen/gi, '')
     .trim();
 
@@ -104,7 +188,6 @@ function renderAllenContent(container, entry) {
   }
 
   // Split Keynotes into readable distinct bullet items
-  // Sentences ending with periods/semicolons followed by capital letter or paragraph
   const keynotes = mainText.split(/(?<=[;\.\n])\s+(?=[A-Z][a-z]+|Mental|Physical|Pains|Disposition|Great|Burning|Weakness|Anxiety|Restless|Thirst)/);
 
   html += `
@@ -172,14 +255,13 @@ function renderNashContent(container, entry) {
         <div class="mm-organ-body">
     `;
 
-    // Split leaders by sentences/periods
     const leaderLines = leadersPart.trim().split(/(?<=[;\.\n])\s+(?=[A-Z])/);
     leaderLines.forEach(line => {
       let cl = line.trim();
       if (!cl) return;
       html += `
         <div class="mm-nash-pearl">
-          <i class="fa-solid fa-circle-check" style="color: #9333ea; font-size: 13px; margin-top: 3px;"></i>
+          <i class="fa-solid fa-circle-check" style="color: #9333ea; font-size: 13px; margin-top: 3px; flex-shrink: 0;"></i>
           <div>${formatMMText(cl)}</div>
         </div>
       `;
@@ -199,14 +281,8 @@ function renderNashContent(container, entry) {
         <div class="mm-organ-body">
     `;
 
-    const paras = clinicalPart.trim().split(/\n\s*\n/);
-    paras.forEach(p => {
-      let cp = p.trim();
-      if (!cp) return;
-      // Highlight remedy comparisons (e.g. Aconite, Arsenic, Rhus tox, Sulphur)
-      let formattedP = formatMMText(cp);
-      html += `<p class="mm-prose-p">${formattedP}</p>`;
-    });
+    const paras = splitIntoParagraphs(clinicalPart.trim(), 300);
+    html += renderCollapsibleParas(paras, 2);
 
     html += `
         </div>
@@ -252,11 +328,12 @@ function renderKentContent(container, entry) {
     // If text exists before first match
     if (matches[0].index > 50) {
       const intro = text.substring(0, matches[0].index).trim();
+      const introParas = splitIntoParagraphs(intro, 320);
       html += `
         <div class="mm-organ-card">
           <div class="mm-organ-header"><i class="fa-solid fa-book-open"></i> Introduction & General Action</div>
           <div class="mm-organ-body">
-            ${intro.split(/\n\s*\n/).map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+            ${renderCollapsibleParas(introParas, 2)}
           </div>
         </div>
       `;
@@ -279,23 +356,25 @@ function renderKentContent(container, entry) {
       else if (titleLower.includes('heart')) icon = 'fa-heart-pulse';
       else if (titleLower.includes('fever') || titleLower.includes('mod')) icon = 'fa-temperature-high';
 
+      const sectionParas = splitIntoParagraphs(body, 320);
+
       html += `
         <div class="mm-organ-card">
           <div class="mm-organ-header"><i class="fa-solid ${icon}"></i> ${escapeHtml(cur.title.toUpperCase())}</div>
           <div class="mm-organ-body">
-            ${body.split(/\n\s*\n/).map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+            ${renderCollapsibleParas(sectionParas, 2)}
           </div>
         </div>
       `;
     }
   } else {
-    // Fallback: Format paragraphs nicely
-    const paras = text.split(/\n\s*\n/);
+    // Fallback: Format paragraphs nicely with collapsible
+    const paras = splitIntoParagraphs(text, 320);
     html += `
       <div class="mm-organ-card">
         <div class="mm-organ-header"><i class="fa-solid fa-book-open"></i> Complete Lecture Transcript</div>
         <div class="mm-organ-body">
-          ${paras.map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+          ${renderCollapsibleParas(paras, 3)}
         </div>
       </div>
     `;
@@ -339,11 +418,12 @@ function renderClarkeContent(container, entry) {
   const charMatch = text.match(/Characteristics\s*\.\s*(?:—|─|-)\s*(.*?)(?=(?:Relations|Causation|\d+\.\s+[A-Z])|\Z)/is);
   if (charMatch) {
     const charText = charMatch[1].trim();
+    const charParas = splitIntoParagraphs(charText, 320);
     html += `
       <div class="mm-organ-card">
         <div class="mm-organ-header"><i class="fa-solid fa-fingerprint"></i> Characteristics & Guiding Symptoms</div>
         <div class="mm-organ-body">
-          ${charText.split(/\n\s*\n/).map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+          ${renderCollapsibleParas(charParas, 2)}
         </div>
       </div>
     `;
@@ -375,11 +455,13 @@ function renderClarkeContent(container, entry) {
     const organBody = sMatch[2].trim();
     if (!organBody) continue;
 
+    const organParas = splitIntoParagraphs(organBody, 320);
+
     html += `
       <div class="mm-organ-card">
         <div class="mm-organ-header"><i class="fa-solid fa-circle-nodes"></i> ${escapeHtml(organName)}</div>
         <div class="mm-organ-body">
-          ${organBody.split(/\n\s*\n/).map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+          ${renderCollapsibleParas(organParas, 2)}
         </div>
       </div>
     `;
@@ -387,11 +469,12 @@ function renderClarkeContent(container, entry) {
 
   // If no schema found, render remaining text
   if (schemaCount === 0 && !charMatch && !clinMatch) {
+    const rawParas = splitIntoParagraphs(text, 320);
     html += `
       <div class="mm-organ-card">
         <div class="mm-organ-header"><i class="fa-solid fa-book"></i> Materia Medica Entry</div>
         <div class="mm-organ-body">
-          ${text.split(/\n\s*\n/).map(p => `<p class="mm-prose-p">${formatMMText(p)}</p>`).join('')}
+          ${renderCollapsibleParas(rawParas, 3)}
         </div>
       </div>
     `;
