@@ -1456,8 +1456,42 @@
             category: m[1],
             name: m[2],
             weight: m[3] ? parseInt(m[3], 10) : 2,
-            synthesis_query: m[4] || ''
+            synthesis_query: m[4] || m[2]
           });
+        }
+        if (items.length > 0) {
+          return { symptoms: items };
+        }
+      } catch(e) {}
+
+      // 8. Plain-text lines fallback (when AI returns a bulleted clinical list instead of JSON)
+      try {
+        const lines = clean.split('\n');
+        const items = [];
+        for (let rawLine of lines) {
+          let line = rawLine.trim();
+          if (!line || line.startsWith('{') || line.startsWith('}') || line.startsWith('[') || line.startsWith(']')) continue;
+          line = line.replace(/^[-*•\d\.\)]+\s*/, '').trim();
+          if (!line || line.length < 3 || /^(here is|here are|clinical symptoms|the patient|symptoms:|extraction:)/i.test(line)) continue;
+
+          let cat = 'Particulars & Locations';
+          if (/mind|emotion|anxiety|fear|restless|घबराहट|डर|बेचैनी|मन/i.test(line)) cat = 'Mind & Emotion';
+          else if (/general|thermal|chill|fever|thirst|weakness|कमजोरी|थकान|नींद|प्यास|ठंड|भूख/i.test(line)) cat = 'Physical Generals';
+          else if (/modality|agg|amel|worse|better|रात|सुबह|शाम|गर्मी|सर्दी/i.test(line)) cat = 'Modalities (< / >)';
+
+          let cleanName = line
+            .replace(/^(category|symptom|name|rubric|query)\s*:\s*/i, '')
+            .replace(/^(mind|generals|modalities|particulars)\s*:\s*/i, '')
+            .trim();
+
+          if (cleanName.length > 2) {
+            items.push({
+              category: cat,
+              name: cleanName,
+              weight: 2,
+              synthesis_query: cleanName
+            });
+          }
         }
         if (items.length > 0) {
           return { symptoms: items };
@@ -1714,7 +1748,8 @@ Output valid JSON strictly:
             let modelUsed = null;
 
             async function tryGenerate(mod, ver) {
-              const bodyPayload = {
+              // 1. Try first with application/json
+              let bodyPayload = {
                 contents: [{ parts: [{ text: prompt }] }],
                 generationConfig: {
                   temperature: 0.1,
@@ -1722,28 +1757,38 @@ Output valid JSON strictly:
                   responseMimeType: "application/json"
                 }
               };
-              // Disable thinking budget for 2.0 / 2.5 models to make response instant
               if (mod.includes('2.0') || mod.includes('2.5') || mod.includes('flash')) {
                 bodyPayload.generationConfig.thinkingConfig = { thinkingBudget: 0 };
               }
 
-              const res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
+              let res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyPayload)
               });
 
+              // If model doesn't support responseMimeType (e.g. 400), retry without it
+              if (!res.ok && res.status === 400) {
+                delete bodyPayload.generationConfig.responseMimeType;
+                res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(bodyPayload)
+                });
+              }
+
               if (res.ok) {
                 const json = await res.json();
                 const txt = json.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (txt) {
+                if (txt && txt.trim()) {
                   localStorage.setItem('gemini_fast_model', mod);
                   localStorage.setItem('gemini_fast_ver', ver);
                   return txt;
                 }
               } else {
                 const errJson = await res.json().catch(() => ({}));
-                lastGeminiError = errJson?.error?.message || `HTTP ${res.status}: ${res.statusText}`;
+                const errMsg = errJson?.error?.message || `HTTP ${res.status}: ${res.statusText}`;
+                lastGeminiError = `${errMsg} (Model: ${mod})`;
               }
               return null;
             }
@@ -1812,10 +1857,24 @@ Output valid JSON strictly:
             if (geminiRawText) {
               console.log("[Gemini Raw Text Response]:", geminiRawText);
               const parsed = extractJsonFromGemini(geminiRawText);
-              const symptoms = extractSymptomsArray(parsed);
+              let symptoms = extractSymptomsArray(parsed);
+
+              // If symptoms still empty, attempt direct regex extraction from raw text
+              if (!symptoms || symptoms.length === 0) {
+                const itemRegex = /\{\s*"category"\s*:\s*"([^"]+)"\s*,\s*"name"\s*:\s*"([^"]+)"/g;
+                let m;
+                symptoms = [];
+                while ((m = itemRegex.exec(geminiRawText)) !== null) {
+                  symptoms.push({
+                    category: m[1],
+                    name: m[2],
+                    weight: 2,
+                    synthesis_query: m[2]
+                  });
+                }
+              }
 
               if (symptoms && symptoms.length > 0) {
-
                 // Resolve candidate rubrics from in-browser wasmDb with intelligent multi-tiered matcher
                 symptoms.forEach(s => {
                   s.candidate_rubrics = resolveCandidateRubricsFromDb(wasmDb, s);
@@ -1826,7 +1885,7 @@ Output valid JSON strictly:
                   symptoms: symptoms
                 };
               } else {
-                lastGeminiError = 'JSON parsing failed on AI response';
+                lastGeminiError = `AI returned text but no symptoms matched: ${geminiRawText.substring(0, 100)}...`;
               }
             }
           } catch(geminiErr) {
@@ -1869,11 +1928,11 @@ Output valid JSON strictly:
             statusMsg = lastGeminiError ? `⚠️ Gemini Error: ${lastGeminiError.substring(0, 50)}...` : '⚠️ Gemini Failed - Using Offline NLP';
             // Alert user of the exact error reason from Google
             setTimeout(() => {
-              alert(`⚠️ Google Gemini API Error:
+              alert(`⚠️ Google Gemini API Notice:
 
 ${lastGeminiError || 'Unknown Error'}
 
-Please verify that your API key is active and has Generative Language API enabled in Google AI Studio.`);
+Falling back to high-precision In-Browser Clinical NLP so your workflow continues seamlessly.`);
             }, 300);
           }
 
