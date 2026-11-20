@@ -1003,9 +1003,16 @@
 
       <div class="intake-box">
         <div class="mic-button-row">
-          <button class="btn btn-primary" id="micBtn" onclick="toggleSpeechRecording()">
-            <i class="fa-solid fa-microphone"></i> <span id="micLabel">Start Dictation (Hindi/English)</span>
-          </button>
+          <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
+            <button class="btn btn-primary" id="micBtn" onclick="toggleSpeechRecording()" style="flex: 1;">
+              <i class="fa-solid fa-microphone"></i> <span id="micLabel">Start Dictation (Hinglish / Roman)</span>
+            </button>
+            <select id="dictationLangSelect" style="padding: 10px 8px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; background: #ffffff; color: var(--text);">
+              <option value="hinglish" selected>🇮🇳 Hinglish (Latin)</option>
+              <option value="en-IN">🇬🇧 English</option>
+              <option value="hi-IN">🇮🇳 हिन्दी (Devanagari)</option>
+            </select>
+          </div>
           <button class="btn btn-outline" id="aiExtractBtn" onclick="runExtraction()">
             <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--accent);"></i> AI Extract Symptoms
           </button>
@@ -1295,9 +1302,54 @@
     }
 
     // Speech-to-Text Setup
+
+    // Real-Time Devanagari to Hinglish (Roman English) Transliteration
+    const devanagariToHinglishMap = {
+      'अ': 'a', 'आ': 'aa', 'इ': 'i', 'ई': 'ee', 'उ': 'u', 'ऊ': 'oo', 'ए': 'e', 'ऐ': 'ai', 'ओ': 'o', 'औ': 'au',
+      'क': 'k', 'ख': 'kh', 'ग': 'g', 'घ': 'gh', 'ङ': 'ng',
+      'च': 'ch', 'छ': 'chh', 'ज': 'j', 'झ': 'jh', 'ञ': 'ny',
+      'ट': 't', 'ठ': 'th', 'ड': 'd', 'ढ': 'dh', 'ण': 'n',
+      'त': 't', 'थ': 'th', 'द': 'd', 'ध': 'dh', 'न': 'n',
+      'प': 'p', 'फ': 'ph', 'ब': 'b', 'भ': 'bh', 'म': 'm',
+      'य': 'y', 'र': 'r', 'ल': 'l', 'व': 'v', 'श': 'sh', 'ष': 'sh', 'स': 's', 'ह': 'h',
+      'ा': 'aa', 'ि': 'i', 'ी': 'ee', 'ु': 'u', 'ू': 'oo', 'े': 'e', 'ै': 'ai', 'ो': 'o', 'ौ': 'au', '्': '',
+      'ं': 'n', 'ँ': 'n', 'ः': 'h', '़': ''
+    };
+
+    function devanagariToHinglish(text) {
+      if (!text) return '';
+      if (!/[\u0900-\u097F]/.test(text)) return text;
+      let out = '';
+      const len = text.length;
+      for (let i = 0; i < len; i++) {
+        const ch = text[i];
+        const code = ch.charCodeAt(0);
+        if (code >= 0x0900 && code <= 0x097F) {
+          const translit = devanagariToHinglishMap[ch];
+          if (translit !== undefined) {
+            out += translit;
+            const isConsonant = (code >= 0x0915 && code <= 0x0939);
+            if (isConsonant && i + 1 < len) {
+              const nextCode = text.charCodeAt(i + 1);
+              const isNextMatra = (nextCode >= 0x093E && nextCode <= 0x094D);
+              if (!isNextMatra && nextCode !== 0x0020) {
+                out += 'a';
+              }
+            }
+          } else {
+            out += ch;
+          }
+        } else {
+          out += ch;
+        }
+      }
+      return out;
+    }
+
     function toggleSpeechRecording() {
       const btn = document.getElementById('micBtn');
       const label = document.getElementById('micLabel');
+      const langChoice = document.getElementById('dictationLangSelect') ? document.getElementById('dictationLangSelect').value : 'hinglish';
 
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
         alert("Speech recognition is not supported in this browser. Please use Chrome/Edge or type directly.");
@@ -1308,19 +1360,23 @@
         if (speechRecognition) speechRecognition.stop();
         isRecording = false;
         btn.classList.remove('btn-mic-active');
-        label.textContent = "Start Dictation (Hindi/English)";
+        label.textContent = "Start Dictation (Hinglish / Roman)";
       } else {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         speechRecognition = new SpeechRecognition();
         speechRecognition.continuous = true;
         speechRecognition.interimResults = true;
-        speechRecognition.lang = 'hi-IN'; // defaults to Hindi + English mix
+        speechRecognition.lang = langChoice === 'en-IN' ? 'en-IN' : 'hi-IN';
 
         speechRecognition.onresult = (event) => {
-          let interim = '';
           for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
-              document.getElementById('consultationText').value += ' ' + event.results[i][0].transcript;
+              let textChunk = event.results[i][0].transcript;
+              if (langChoice === 'hinglish') {
+                textChunk = devanagariToHinglish(textChunk);
+              }
+              const area = document.getElementById('consultationText');
+              area.value = (area.value ? area.value.trim() + ' ' : '') + textChunk.trim();
             }
           }
         };
@@ -1329,7 +1385,7 @@
           console.error(e);
           isRecording = false;
           btn.classList.remove('btn-mic-active');
-          label.textContent = "Start Dictation (Hindi/English)";
+          label.textContent = "Start Dictation (Hinglish / Roman)";
         };
 
         speechRecognition.start();
@@ -1788,7 +1844,12 @@ Output valid JSON strictly:
               } else {
                 const errJson = await res.json().catch(() => ({}));
                 const errMsg = errJson?.error?.message || `HTTP ${res.status}: ${res.statusText}`;
-                lastGeminiError = `${errMsg} (Model: ${mod})`;
+                // If quota exceeded or 429, invalidate cached model so it never tries this dead model again
+                if (res.status === 429 || errMsg.includes('quota') || errMsg.includes('Quota')) {
+                  localStorage.removeItem('gemini_fast_model');
+                  localStorage.removeItem('gemini_fast_ver');
+                }
+                lastGeminiError = errMsg;
               }
               return null;
             }
@@ -1806,6 +1867,7 @@ Output valid JSON strictly:
 
             // 1B. Fallback to alternative fast flash models if first attempt failed
             if (!geminiRawText) {
+              // Strict High-Quota Free-Tier Flash Priority (Never lock user into 0-quota Pro models)
               const fallbackCandidates = [
                 { mod: 'gemini-1.5-flash', ver: 'v1beta' },
                 { mod: 'gemini-2.0-flash', ver: 'v1beta' },
@@ -1813,7 +1875,7 @@ Output valid JSON strictly:
                 { mod: 'gemini-2.5-flash', ver: 'v1beta' },
                 { mod: 'gemini-1.5-flash', ver: 'v1' },
                 { mod: 'gemini-2.0-flash-exp', ver: 'v1beta' },
-                { mod: 'gemini-1.5-pro', ver: 'v1beta' }
+                { mod: 'gemini-2.0-flash-lite', ver: 'v1beta' }
               ];
 
               for (const cand of fallbackCandidates) {
@@ -1841,7 +1903,7 @@ Output valid JSON strictly:
                 if (listRes.ok) {
                   const listData = await listRes.json();
                   const discovered = (listData.models || [])
-                    .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+                    .filter(m => (m.supportedGenerationMethods || []).includes('generateContent') && !m.name.includes('pro'))
                     .map(m => m.name.replace(/^models\//, ''));
                   for (const m of discovered) {
                     geminiRawText = await tryGenerate(m, listVer);
@@ -1928,11 +1990,7 @@ Output valid JSON strictly:
             statusMsg = lastGeminiError ? `⚠️ Gemini Error: ${lastGeminiError.substring(0, 50)}...` : '⚠️ Gemini Failed - Using Offline NLP';
             // Alert user of the exact error reason from Google
             setTimeout(() => {
-              alert(`⚠️ Google Gemini API Notice:
-
-${lastGeminiError || 'Unknown Error'}
-
-Falling back to high-precision In-Browser Clinical NLP so your workflow continues seamlessly.`);
+              console.warn("[Gemini API Notice]", lastGeminiError);
             }, 300);
           }
 
