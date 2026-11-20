@@ -1726,11 +1726,11 @@ Example format:
 Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULARS]. No conversational intro or markdown codeblocks.`;
   }
 
-  // 2. Direct Gemini Generator
-  async callGemini(model, prompt) {
+  // 2. Direct Gemini Generator (With multi-version fallback v1beta / v1)
+  async callGemini(model, prompt, ver = 'v1beta') {
     if (!this.apiKey) return null;
 
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+    const endpoint = `https://generativelanguage.googleapis.com/${ver}/models/${model}:generateContent?key=${this.apiKey}`;
     const payload = {
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
@@ -1739,24 +1739,31 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
       }
     };
 
-    const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
 
-    if (res.ok) {
-      const data = await res.json();
-      return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
-    } else {
-      const err = await res.json().catch(() => ({}));
-      console.warn(`[Gemini ${model} Error]`, err);
-      // Throw if quota exceeded so next model is called
-      if (res.status === 429 || res.status === 403) {
-        throw new Error(err.error?.message || 'Quota exceeded');
+      if (res.ok) {
+        const data = await res.json();
+        const txt = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (txt) return txt;
+      } else {
+        const err = await res.json().catch(() => ({}));
+        const errMsg = err.error?.message || `HTTP ${res.status}`;
+        console.warn(`[Gemini ${model} (${ver}) Failed]`, errMsg);
+        this.lastError = errMsg;
+        if (res.status === 429 || res.status === 403) {
+          throw new Error(errMsg);
+        }
       }
-      return null;
+    } catch(fetchErr) {
+      if (fetchErr.message && fetchErr.message.includes('Quota')) throw fetchErr;
+      console.warn(`[Gemini Network Error]`, fetchErr);
     }
+    return null;
   }
 
   // 3. Line-by-Line Clinical Protocol Parser (0% failure rate)
@@ -1861,25 +1868,29 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
 
     let rawOutput = null;
     let modelUsed = null;
+    this.lastError = '';
 
-    // A. Try Gemini 1.5 Flash first
+    // A. Try Gemini 1.5 Flash first (v1beta then v1)
     if (this.apiKey) {
       const prompt = this.buildPrompt(text);
-      try {
-        rawOutput = await this.callGemini(this.primaryModel, prompt);
-        if (rawOutput) {
-          modelUsed = `Gemini Flash`;
-        }
-      } catch(e) {
-        // Try fallback models if primary failed quota
-        for (let fb of this.fallbackModels) {
-          try {
-            rawOutput = await this.callGemini(fb, prompt);
-            if (rawOutput) {
-              modelUsed = `Gemini (${fb})`;
-              break;
-            }
-          } catch(err) {}
+      const candidates = [
+        { mod: 'gemini-1.5-flash', ver: 'v1beta' },
+        { mod: 'gemini-1.5-flash', ver: 'v1' },
+        { mod: 'gemini-1.5-flash-8b', ver: 'v1beta' },
+        { mod: 'gemini-2.0-flash', ver: 'v1beta' },
+        { mod: 'gemini-2.0-flash-lite', ver: 'v1beta' }
+      ];
+
+      for (const cand of candidates) {
+        try {
+          rawOutput = await this.callGemini(cand.mod, prompt, cand.ver);
+          if (rawOutput) {
+            modelUsed = `Gemini Flash (${cand.mod})`;
+            break;
+          }
+        } catch(e) {
+          // If quota exceeded on this model, proceed immediately to next model
+          continue;
         }
       }
     }
@@ -1893,7 +1904,13 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
     // C. Seamless In-Browser NLP Fallback if AI wasn't available or returned empty
     if (!symptoms || symptoms.length === 0) {
       symptoms = this.offlineNLPFallback(text);
-      modelUsed = this.apiKey ? 'In-Browser Clinical NLP (Instant)' : 'In-Browser NLP (Add API Key for Flash)';
+      if (!this.apiKey) {
+        modelUsed = 'In-Browser NLP (Tap ⚙️ to add Gemini Key)';
+      } else if (this.lastError) {
+        modelUsed = `In-Browser NLP (${this.lastError.substring(0, 35)}...)`;
+      } else {
+        modelUsed = 'In-Browser Clinical NLP (Instant)';
+      }
     }
 
     return {
