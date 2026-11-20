@@ -1390,7 +1390,7 @@
       if (resultEl) resultEl.innerHTML = '<span style="color: #2563eb;">Connecting to Google...</span>';
 
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${keyVal}`, {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent?key=${keyVal}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -1746,8 +1746,8 @@ class ClinicalAIEngine {
     } else {
       this.apiKey = '';
     }
-    this.primaryModel = 'gemini-1.5-flash';
-    this.fallbackModels = ['gemini-1.5-flash-8b', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
+    this.primaryModel = 'gemini-3.5-flash-lite';
+    this.fallbackModels = ['gemini-3.1-flash-lite', 'gemini-3-flash-preview', 'gemini-1.5-flash'];
   }
 
   // 1. Core Clinical Prompt: Simple Line Protocol (10x faster, zero JSON truncation)
@@ -1918,12 +1918,13 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
     // A. Try Gemini 1.5 Flash first (v1beta then v1)
     if (this.apiKey) {
       const prompt = this.buildPrompt(text);
+      // Active Free-Tier Flash models (Verified live against Google AI Studio API)
       const candidates = [
+        { mod: 'gemini-3.5-flash-lite', ver: 'v1beta' },
+        { mod: 'gemini-3.1-flash-lite', ver: 'v1beta' },
+        { mod: 'gemini-3-flash-preview', ver: 'v1beta' },
         { mod: 'gemini-1.5-flash', ver: 'v1beta' },
-        { mod: 'gemini-1.5-flash', ver: 'v1' },
-        { mod: 'gemini-1.5-flash-8b', ver: 'v1beta' },
-        { mod: 'gemini-2.0-flash', ver: 'v1beta' },
-        { mod: 'gemini-2.0-flash-lite', ver: 'v1beta' }
+        { mod: 'gemini-1.5-flash', ver: 'v1' }
       ];
 
       for (const cand of candidates) {
