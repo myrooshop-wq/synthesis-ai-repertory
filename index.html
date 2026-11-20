@@ -1797,7 +1797,7 @@ Output valid JSON strictly:
 }`;
 
             // Fast-path Gemini execution (Zero-latency model dispatch + cached working model)
-            let cachedModel = localStorage.getItem('gemini_fast_model') || 'gemini-2.0-flash';
+            let cachedModel = localStorage.getItem('gemini_fast_model') || 'gemini-1.5-flash';
             let cachedVer = localStorage.getItem('gemini_fast_ver') || 'v1beta';
 
             let geminiRawText = null;
@@ -1813,9 +1813,6 @@ Output valid JSON strictly:
                   responseMimeType: "application/json"
                 }
               };
-              if (mod.includes('2.0') || mod.includes('2.5') || mod.includes('flash')) {
-                bodyPayload.generationConfig.thinkingConfig = { thinkingBudget: 0 };
-              }
 
               let res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
                 method: 'POST',
@@ -1823,9 +1820,10 @@ Output valid JSON strictly:
                 body: JSON.stringify(bodyPayload)
               });
 
-              // If model doesn't support responseMimeType (e.g. 400), retry without it
+              // If endpoint returns 400 (e.g. responseMimeType or other option rejected), retry with plain payload
               if (!res.ok && res.status === 400) {
                 delete bodyPayload.generationConfig.responseMimeType;
+                if (bodyPayload.generationConfig.thinkingConfig) delete bodyPayload.generationConfig.thinkingConfig;
                 res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
@@ -1867,14 +1865,12 @@ Output valid JSON strictly:
 
             // 1B. Fallback to alternative fast flash models if first attempt failed
             if (!geminiRawText) {
-              // Strict High-Quota Free-Tier Flash Priority (Never lock user into 0-quota Pro models)
+              // Rock-solid standard Free-Tier Flash endpoints (No thinkingConfig incompatibilities)
               const fallbackCandidates = [
                 { mod: 'gemini-1.5-flash', ver: 'v1beta' },
-                { mod: 'gemini-2.0-flash', ver: 'v1beta' },
-                { mod: 'gemini-1.5-flash-8b', ver: 'v1beta' },
-                { mod: 'gemini-2.5-flash', ver: 'v1beta' },
                 { mod: 'gemini-1.5-flash', ver: 'v1' },
-                { mod: 'gemini-2.0-flash-exp', ver: 'v1beta' },
+                { mod: 'gemini-1.5-flash-8b', ver: 'v1beta' },
+                { mod: 'gemini-2.0-flash', ver: 'v1beta' },
                 { mod: 'gemini-2.0-flash-lite', ver: 'v1beta' }
               ];
 
