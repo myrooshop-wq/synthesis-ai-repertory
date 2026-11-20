@@ -1068,99 +1068,131 @@
         // 1. Direct In-Browser Google Gemini API
         if (apiKey) {
           try {
-            const prompt = `You are an expert Homeopathic Physician and Repertorizer. Analyze this patient narrative:\n"""${text}"""\n\nTask:\nExtract the key symptoms into Kentian clinical categories:\n1. "Mind & Emotion"\n2. "Physical Generals" (chilly/hot thermals, thirst, appetite, sleep, sweat)\n3. "Modalities (< / >)" (time of aggravation <, amelioration >)\n4. "Particulars & Locations" (headache, body ache, fever, stomach)\n\nCRITICAL RULE FOR "synthesis_query":\nAlways provide 2 to 3 standard, classical repertory keywords found in Kent/Synthesis Repertory that have MANY remedies (e.g. "STOMACH APPETITE WANTING", "FEVER HEAT", "HEAD PAIN", "EXTREMITIES PAIN", "GENERALS WEAKNESS", "MIND RESTLESSNESS NIGHT").\n\nFormat Output as valid JSON strictly adhering to this structure:\n{\n  "symptoms": [\n     {\n       "category": "Particulars",\n       "name": "Symptom in Hindi/English",\n       "weight": 2,\n       "synthesis_query": "REPERTORY KEYWORDS"\n     }\n  ]\n}`;
+            const prompt = `Extract Kentian homeopathic symptoms from this clinical case:
+"""${text}"""
 
-            // 1A. Dynamically discover supported models directly from Google's ModelService
-            let availableModels = [];
-            let defaultApiVersion = 'v1beta';
+Categories:
+1. "Mind & Emotion"
+2. "Physical Generals" (thermals, thirst, sleep, appetite, sweat)
+3. "Modalities (< / >)" (time, agg <, amel >)
+4. "Particulars & Locations" (head, chest, stomach, extremities)
 
-            try {
-              let listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-              if (!listRes.ok) {
-                listRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
-                if (listRes.ok) defaultApiVersion = 'v1';
-              }
+Rules for "synthesis_query":
+Provide 2-3 standard Kent/Synthesis rubric keywords (e.g. "HEAD PAIN", "FEVER HEAT", "STOMACH APPETITE", "GENERALS WEAKNESS", "MIND ANXIETY").
 
-              if (listRes.ok) {
-                const listData = await listRes.json();
-                availableModels = (listData.models || [])
-                  .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
-                  .map(m => m.name.replace(/^models\//, ''));
-                console.log("[Gemini] Discovered authorized models for user key:", availableModels);
-              } else {
-                const listErr = await listRes.json().catch(() => ({}));
-                lastGeminiError = listErr?.error?.message || `API key error (HTTP ${listRes.status})`;
-                console.warn("[Gemini] ModelService.ListModels error:", lastGeminiError);
-              }
-            } catch(listNetErr) {
-              console.warn("[Gemini] ListModels fetch failed:", listNetErr);
-            }
+Output valid JSON strictly:
+{
+  "symptoms": [
+     {
+       "category": "Particulars",
+       "name": "Symptom description",
+       "weight": 2,
+       "synthesis_query": "KEYWORD1 KEYWORD2"
+     }
+  ]
+}`;
 
-            // 1B. Build the prioritized candidate models list
-            const priorityOrder = [
-              'gemini-2.0-flash',
-              'gemini-1.5-flash',
-              'gemini-1.5-flash-8b',
-              'gemini-2.0-flash-exp',
-              'gemini-2.5-flash',
-              'gemini-1.5-pro',
-              'gemini-1.0-pro'
-            ];
-
-            let modelsToTry = [];
-            if (availableModels.length > 0) {
-              priorityOrder.forEach(p => {
-                if (availableModels.includes(p)) modelsToTry.push(p);
-              });
-              availableModels.forEach(m => {
-                if (!modelsToTry.includes(m)) modelsToTry.push(m);
-              });
-            } else {
-              // Fallback list across standard identifiers
-              modelsToTry = ['gemini-1.5-flash', 'gemini-2.0-flash-exp', 'gemini-1.5-flash-8b', 'gemini-1.5-pro'];
-            }
+            // Fast-path Gemini execution (Zero-latency model dispatch + cached working model)
+            let cachedModel = localStorage.getItem('gemini_fast_model') || 'gemini-2.0-flash';
+            let cachedVer = localStorage.getItem('gemini_fast_ver') || 'v1beta';
 
             let geminiRawText = null;
             let modelUsed = null;
 
-            // 1C. Attempt generation across candidates and API versions
-            for (const model of modelsToTry) {
-              const versionsToAttempt = [defaultApiVersion, defaultApiVersion === 'v1beta' ? 'v1' : 'v1beta'];
-
-              for (const ver of versionsToAttempt) {
-                try {
-                  const gRes = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${model}:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                      contents: [{ parts: [{ text: prompt }] }],
-                      generationConfig: {
-                        temperature: 0.1,
-                        responseMimeType: "application/json"
-                      }
-                    })
-                  });
-
-                  if (gRes.ok) {
-                    const gData = await gRes.json();
-                    geminiRawText = gData.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (geminiRawText) {
-                      modelUsed = `${model}`;
-                      console.log(`[Gemini] Successfully generated symptoms using model: ${model} (${ver})`);
-                      break;
-                    }
-                  } else {
-                    const errJson = await gRes.json().catch(() => ({}));
-                    lastGeminiError = errJson?.error?.message || `HTTP ${gRes.status}: ${gRes.statusText}`;
-                    console.warn(`[Gemini] Model ${model} (${ver}) returned:`, lastGeminiError);
-                  }
-                } catch(e) {
-                  lastGeminiError = e.message || 'Network error';
-                  console.warn(`[Gemini] Model ${model} (${ver}) fetch error:`, e);
+            async function tryGenerate(mod, ver) {
+              const bodyPayload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: {
+                  temperature: 0.1,
+                  maxOutputTokens: 800,
+                  responseMimeType: "application/json"
                 }
+              };
+              // Disable thinking budget for 2.0 / 2.5 models to make response instant
+              if (mod.includes('2.0') || mod.includes('2.5') || mod.includes('flash')) {
+                bodyPayload.generationConfig.thinkingConfig = { thinkingBudget: 0 };
               }
 
-              if (geminiRawText) break; // Successful extraction
+              const res = await fetch(`https://generativelanguage.googleapis.com/${ver}/models/${mod}:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyPayload)
+              });
+
+              if (res.ok) {
+                const json = await res.json();
+                const txt = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (txt) {
+                  localStorage.setItem('gemini_fast_model', mod);
+                  localStorage.setItem('gemini_fast_ver', ver);
+                  return txt;
+                }
+              } else {
+                const errJson = await res.json().catch(() => ({}));
+                lastGeminiError = errJson?.error?.message || `HTTP ${res.status}: ${res.statusText}`;
+              }
+              return null;
+            }
+
+            // 1A. Instant attempt with cached / top flash model (zero delay)
+            try {
+              geminiRawText = await tryGenerate(cachedModel, cachedVer);
+              if (geminiRawText) {
+                modelUsed = cachedModel;
+                console.log(`[Gemini Fast-Path] Instant success with: ${cachedModel}`);
+              }
+            } catch(e) {
+              lastGeminiError = e.message || 'Fast-path network error';
+            }
+
+            // 1B. Fallback to alternative fast flash models if first attempt failed
+            if (!geminiRawText) {
+              const fallbackCandidates = [
+                { mod: 'gemini-1.5-flash', ver: 'v1beta' },
+                { mod: 'gemini-2.0-flash', ver: 'v1beta' },
+                { mod: 'gemini-1.5-flash-8b', ver: 'v1beta' },
+                { mod: 'gemini-2.5-flash', ver: 'v1beta' },
+                { mod: 'gemini-1.5-flash', ver: 'v1' },
+                { mod: 'gemini-2.0-flash-exp', ver: 'v1beta' },
+                { mod: 'gemini-1.5-pro', ver: 'v1beta' }
+              ];
+
+              for (const cand of fallbackCandidates) {
+                if (cand.mod === cachedModel && cand.ver === cachedVer) continue;
+                try {
+                  geminiRawText = await tryGenerate(cand.mod, cand.ver);
+                  if (geminiRawText) {
+                    modelUsed = cand.mod;
+                    console.log(`[Gemini] Recovered with fallback model: ${cand.mod} (${cand.ver})`);
+                    break;
+                  }
+                } catch(e) {}
+              }
+            }
+
+            // 1C. Dynamic discovery only if all standard fast candidates fail
+            if (!geminiRawText) {
+              try {
+                let listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+                let listVer = 'v1beta';
+                if (!listRes.ok) {
+                  listRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
+                  if (listRes.ok) listVer = 'v1';
+                }
+                if (listRes.ok) {
+                  const listData = await listRes.json();
+                  const discovered = (listData.models || [])
+                    .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+                    .map(m => m.name.replace(/^models\//, ''));
+                  for (const m of discovered) {
+                    geminiRawText = await tryGenerate(m, listVer);
+                    if (geminiRawText) {
+                      modelUsed = m;
+                      break;
+                    }
+                  }
+                }
+              } catch(e) {}
             }
 
             if (geminiRawText) {
@@ -1170,28 +1202,49 @@
 
               if (symptoms && symptoms.length > 0) {
 
-                // Resolve candidate rubrics from in-browser wasmDb
+                // Resolve candidate rubrics from in-browser wasmDb with ultra-fast 2-step indexed query
                 symptoms.forEach(s => {
                   s.candidate_rubrics = [];
                   if (isWasmDbReady && wasmDb && s.synthesis_query) {
                     const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/).filter(t => t.length > 0);
                     const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
                     try {
+                      // Fast step 1: fetch top 8 matching rubrics in milliseconds (< 5ms)
                       const st = wasmDb.prepare(`
-                        SELECT id, path, level,
-                          (SELECT count(*) FROM symptom_remedies sr WHERE sr.symptom_id = syntree.id) as rem_count
-                        FROM syntree
+                        SELECT id, path, level FROM syntree
                         WHERE ${likes}
-                        ORDER BY rem_count DESC
-                        LIMIT 3
+                        LIMIT 8
                       `);
                       st.bind(qTerms.map(t => `%${t}%`));
+                      const candidates = [];
                       while (st.step()) {
-                        const r = st.getAsObject();
-                        s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level, remedy_count: r.rem_count });
+                        candidates.push(st.getAsObject());
                       }
                       st.free();
-                    } catch(e) {}
+
+                      // Fast step 2: attach remedy counts only for candidate matches
+                      candidates.forEach(c => {
+                        let count = 0;
+                        try {
+                          const cStmt = wasmDb.prepare(`SELECT count(*) as c FROM symptom_remedies WHERE symptom_id = ?`);
+                          cStmt.bind([c.id]);
+                          if (cStmt.step()) count = cStmt.getAsObject().c;
+                          cStmt.free();
+                        } catch(err) {}
+                        c.rem_count = count;
+                      });
+
+                      // Step 3: prioritize higher remedy count and pick top 3
+                      candidates.sort((a, b) => (b.rem_count || 0) - (a.rem_count || 0));
+                      s.candidate_rubrics = candidates.slice(0, 3).map(r => ({
+                        id: r.id,
+                        path: r.path,
+                        level: r.level,
+                        remedy_count: r.rem_count
+                      }));
+                    } catch(e) {
+                      console.warn("Rubric lookup error:", e);
+                    }
                   }
                 });
 
