@@ -1032,6 +1032,159 @@
       return [];
     }
 
+    // High-Precision Multi-Tiered Homeopathic Rubric Matcher
+    function resolveCandidateRubricsFromDb(db, s) {
+      if (!db || !s) return [];
+
+      function queryTerms(terms, startsWithChapter) {
+        if (!terms || terms.length === 0) return [];
+        const valid = terms.map(t => t.trim().toUpperCase()).filter(t => t.length > 1);
+        if (valid.length === 0) return [];
+        
+        let whereClause = valid.map(() => "path LIKE ?").join(" AND ");
+        let bindParams = valid.map(t => `%${t}%`);
+        if (startsWithChapter) {
+          whereClause = "path LIKE ? AND " + valid.slice(1).map(() => "path LIKE ?").join(" AND ");
+          bindParams = [valid[0] + ' - %', ...valid.slice(1).map(t => `%${t}%`)];
+        }
+
+        try {
+          const st = db.prepare(`SELECT id, path, level FROM syntree WHERE ${whereClause} LIMIT 12`);
+          st.bind(bindParams);
+          const res = [];
+          while (st.step()) res.push(st.getAsObject());
+          st.free();
+          return res;
+        } catch(e) {
+          return [];
+        }
+      }
+
+      function rankCandidates(candidates) {
+        if (!candidates || candidates.length === 0) return [];
+        candidates.forEach(c => {
+          let count = 0;
+          try {
+            const cStmt = db.prepare(`SELECT count(*) as c FROM symptom_remedies WHERE symptom_id = ?`);
+            cStmt.bind([c.id]);
+            if (cStmt.step()) count = cStmt.getAsObject().c;
+            cStmt.free();
+          } catch(err) {}
+          c.rem_count = count;
+        });
+        candidates.sort((a, b) => (b.rem_count || 0) - (a.rem_count || 0));
+        return candidates.slice(0, 3).map(r => ({
+          id: r.id,
+          path: r.path,
+          level: r.level,
+          remedy_count: r.rem_count
+        }));
+      }
+
+      const stopWords = new Set(['AND', 'THE', 'FOR', 'WITH', 'FROM', 'VERY', 'MUCH', 'LITTLE', 'OF', 'IN', 'AGG', 'AMEL', 'IS', 'TO', 'AFTER', 'DURING']);
+      const rawQ = (s.synthesis_query || '').toUpperCase().replace(/[^\w\s]/g, ' ');
+      let terms = rawQ.split(/\s+/).filter(t => t.length > 1 && !stopWords.has(t));
+
+      let candidates = [];
+      const nl = ((s.name || '') + ' ' + (s.synthesis_query || '')).toLowerCase();
+
+      // Clinical Homeopathic Dictionary & Keyword Mapping
+      // 1. Thirst / Drinking / Water (पानी / प्यास)
+      if (nl.includes('पानी') || nl.includes('water') || nl.includes('thirst') || nl.includes('प्यास')) {
+        if (nl.includes('थोड़ा') || nl.includes('small') || nl.includes('little')) {
+          candidates = queryTerms(['STOMACH', 'THIRST', 'SMALL'], true);
+        }
+        if (candidates.length === 0 && (nl.includes('बार') || nl.includes('often') || nl.includes('frequent'))) {
+          candidates = queryTerms(['STOMACH', 'THIRST', 'OFTEN'], true);
+        }
+        if (candidates.length === 0) {
+          candidates = queryTerms(['STOMACH', 'THIRST'], true);
+        }
+      }
+      // 2. Restlessness / Night / Midnight / Agitation (बेचैनी / 12 बजे)
+      else if (nl.includes('बेचैनी') || nl.includes('restless')) {
+        if (nl.includes('12') || nl.includes('midnight') || nl.includes('रात') || nl.includes('night') || nl.includes('after')) {
+          candidates = queryTerms(['MIND', 'RESTLESSNESS', 'MIDNIGHT'], true);
+          if (candidates.length === 0) candidates = queryTerms(['MIND', 'RESTLESSNESS', 'NIGHT'], true);
+        }
+        if (candidates.length === 0) {
+          candidates = queryTerms(['MIND', 'RESTLESSNESS'], true);
+        }
+      }
+      // 3. Anxiety / Fear / Ghabrahat (घबराहट)
+      else if (nl.includes('घबराहट') || nl.includes('anxiety')) {
+        candidates = queryTerms(['MIND', 'ANXIETY'], true);
+      }
+      // 4. Fear / Dark / Alone (डर / अंधेरा)
+      else if (nl.includes('डर') || nl.includes('fear')) {
+        if (nl.includes('अंधेरे') || nl.includes('dark')) {
+          candidates = queryTerms(['MIND', 'FEAR', 'DARK'], true);
+        }
+        if (candidates.length === 0) candidates = queryTerms(['MIND', 'FEAR'], true);
+      }
+      // 5. Chill / Cold / Thermals (ठंड / शीतात)
+      else if (nl.includes('ठंड') || nl.includes('cold') || nl.includes('chill')) {
+        candidates = queryTerms(['CHILL'], true);
+        if (candidates.length === 0) candidates = queryTerms(['GENERALS', 'COLD'], true);
+      }
+      // 6. Burning / Stomach / Gastric (जलन / पेट)
+      else if (nl.includes('जलन') || nl.includes('burning')) {
+        if (nl.includes('पेट') || nl.includes('stomach') || nl.includes('gastric') || nl.includes('epigastrium')) {
+          candidates = queryTerms(['STOMACH', 'PAIN', 'BURNING'], true);
+          if (candidates.length === 0) candidates = queryTerms(['STOMACH', 'BURNING'], true);
+        }
+        if (candidates.length === 0) candidates = queryTerms(['BURNING'], false);
+      }
+      // 7. Headache / Body Pain (दर्द / सिर)
+      else if (nl.includes('दर्द') || nl.includes('pain') || nl.includes('headache') || nl.includes('sar')) {
+        if (nl.includes('सिर') || nl.includes('head')) {
+          candidates = queryTerms(['HEAD', 'PAIN'], true);
+        } else {
+          candidates = queryTerms(['PAIN'], false);
+        }
+      }
+      // 8. Weakness / Fatigue (कमजोरी / थकान)
+      else if (nl.includes('कमजोरी') || nl.includes('weakness') || nl.includes('thakan')) {
+        candidates = queryTerms(['GENERALS', 'WEAKNESS'], true);
+      }
+
+      if (candidates.length > 0) {
+        return rankCandidates(candidates);
+      }
+
+      // Fallback: query with terms directly
+      if (terms.length > 0) {
+        candidates = queryTerms(terms, false);
+      }
+      if (candidates.length === 0 && terms.length >= 2) {
+        candidates = queryTerms([terms[0], terms[1]], false);
+      }
+      if (candidates.length === 0 && terms.length >= 3) {
+        candidates = queryTerms([terms[0], terms[terms.length - 1]], false);
+      }
+      if (candidates.length === 0 && terms.length > 0) {
+        for (const t of terms) {
+          if (t.length >= 4) {
+            candidates = queryTerms([t], false);
+            if (candidates.length > 0) break;
+          }
+        }
+      }
+
+      return rankCandidates(candidates);
+    }
+
+    function searchRubricForSymptom(name) {
+      const searchInput = document.getElementById('searchRubric');
+      if (searchInput) {
+        const clean = (name || '').replace(/[^\w\s\u0900-\u097F]/g, ' ').trim();
+        searchInput.value = clean;
+        searchInput.focus();
+        handleRubricSearch();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
     // Step 1: AI Symptom Extraction
     // Step 1: AI Symptom Extraction with Dynamic Google Gemini Model Discovery
     async function runExtraction() {
@@ -1078,7 +1231,7 @@ Categories:
 4. "Particulars & Locations" (head, chest, stomach, extremities)
 
 Rules for "synthesis_query":
-Provide 2-3 standard Kent/Synthesis rubric keywords (e.g. "HEAD PAIN", "FEVER HEAT", "STOMACH APPETITE", "GENERALS WEAKNESS", "MIND ANXIETY").
+Provide 2-3 standard Kent/Synthesis rubric keywords in English (e.g. for thirst: "STOMACH THIRST SMALL QUANTITIES"; for restlessness/midnight: "MIND RESTLESSNESS MIDNIGHT"; for dark fear: "MIND FEAR DARK"; for chill/cold: "CHILL" or "GENERALS COLD"; for burning stomach: "STOMACH PAIN BURNING").
 
 Output valid JSON strictly:
 {
@@ -1202,50 +1355,9 @@ Output valid JSON strictly:
 
               if (symptoms && symptoms.length > 0) {
 
-                // Resolve candidate rubrics from in-browser wasmDb with ultra-fast 2-step indexed query
+                // Resolve candidate rubrics from in-browser wasmDb with intelligent multi-tiered matcher
                 symptoms.forEach(s => {
-                  s.candidate_rubrics = [];
-                  if (isWasmDbReady && wasmDb && s.synthesis_query) {
-                    const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/).filter(t => t.length > 0);
-                    const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
-                    try {
-                      // Fast step 1: fetch top 8 matching rubrics in milliseconds (< 5ms)
-                      const st = wasmDb.prepare(`
-                        SELECT id, path, level FROM syntree
-                        WHERE ${likes}
-                        LIMIT 8
-                      `);
-                      st.bind(qTerms.map(t => `%${t}%`));
-                      const candidates = [];
-                      while (st.step()) {
-                        candidates.push(st.getAsObject());
-                      }
-                      st.free();
-
-                      // Fast step 2: attach remedy counts only for candidate matches
-                      candidates.forEach(c => {
-                        let count = 0;
-                        try {
-                          const cStmt = wasmDb.prepare(`SELECT count(*) as c FROM symptom_remedies WHERE symptom_id = ?`);
-                          cStmt.bind([c.id]);
-                          if (cStmt.step()) count = cStmt.getAsObject().c;
-                          cStmt.free();
-                        } catch(err) {}
-                        c.rem_count = count;
-                      });
-
-                      // Step 3: prioritize higher remedy count and pick top 3
-                      candidates.sort((a, b) => (b.rem_count || 0) - (a.rem_count || 0));
-                      s.candidate_rubrics = candidates.slice(0, 3).map(r => ({
-                        id: r.id,
-                        path: r.path,
-                        level: r.level,
-                        remedy_count: r.rem_count
-                      }));
-                    } catch(e) {
-                      console.warn("Rubric lookup error:", e);
-                    }
-                  }
+                  s.candidate_rubrics = resolveCandidateRubricsFromDb(wasmDb, s);
                 });
 
                 data = {
@@ -1288,20 +1400,7 @@ Output valid JSON strictly:
 
           // Match rubrics for offline symptoms
           offlineSymptoms.forEach(s => {
-            s.candidate_rubrics = [];
-            if (isWasmDbReady && wasmDb && s.synthesis_query) {
-              const qTerms = s.synthesis_query.trim().toUpperCase().split(/\s+/);
-              const likes = qTerms.map(() => "path LIKE ?").join(" AND ");
-              try {
-                const st = wasmDb.prepare(`SELECT id, path, level FROM syntree WHERE ${likes} LIMIT 2`);
-                st.bind(qTerms.map(t => `%${t}%`));
-                while (st.step()) {
-                  const r = st.getAsObject();
-                  s.candidate_rubrics.push({ id: r.id, path: r.path, level: r.level });
-                }
-                st.free();
-              } catch(e) {}
-            }
+            s.candidate_rubrics = resolveCandidateRubricsFromDb(wasmDb, s);
           });
 
           let statusMsg = 'Offline NLP Mode (Add Gemini Key above for AI)';
@@ -1380,6 +1479,13 @@ Please verify that your API key is active and has Generative Language API enable
               <div class="chip-rubric-link" onclick="openSynthesisBookView(${candidateId}, '', ${candidateId})" title="Click to open book view or swap this rubric in Repertorisation Grid">
                 <span class="chip-rubric-text"><i class="fa-solid fa-book-medical" style="color: #0284c7; margin-right: 4px;"></i>${escapeHtml(candidatePath)}</span>
                 <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 10px; color: #60a5fa; flex-shrink: 0;"></i>
+              </div>
+            `;
+          } else {
+            rubricLine = `
+              <div class="chip-rubric-link" style="border: 1px dashed #f59e0b; background: #fffbeb; color: #b45309; padding: 4px 8px; border-radius: 4px; margin-top: 4px; cursor: pointer;" onclick="searchRubricForSymptom('${escapeHtml(sym.name)}')" title="Click to search rubric in repertory">
+                <span class="chip-rubric-text"><i class="fa-solid fa-magnifying-glass" style="margin-right: 4px;"></i>Click to attach Synthesis rubric...</span>
+                <i class="fa-solid fa-plus" style="font-size: 10px; flex-shrink: 0;"></i>
               </div>
             `;
           }
