@@ -365,6 +365,29 @@ Format Output as valid JSON strictly adhering to this structure:
         "gemini_error": last_err_msg
     })
 
+@app.route('/api/clarke_remedy')
+def api_clarke_remedy():
+    url = request.args.get('url')
+    if not url or not url.startswith('http://www.homeoint.org/clarke/'):
+        return jsonify({"error": "Invalid URL"}), 400
+    try:
+        import urllib.request, ssl, re
+        ctx = ssl._create_unverified_context()
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, context=ctx, timeout=12) as resp:
+            html = resp.read().decode('latin1', errors='ignore')
+            content = re.sub(r'<(?:p|br|div|blockquote|h1|h2|h3|h4)[^>]*>', '\n', html, flags=re.I)
+            clean_text = re.sub(r'<[^>]+>', ' ', content)
+            clean_text = re.sub(r'&nbsp;', ' ', clean_text)
+            clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+            return jsonify({
+                "source": "Clarke's Dictionary of Practical Materia Medica",
+                "full_url": url,
+                "text": clean_text
+            })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     # Listen on 0.0.0.0 so phone on same Wi-Fi can connect!
     app.run(host="0.0.0.0", port=5055, debug=False)

@@ -578,6 +578,124 @@
       font-weight: 600;
       color: #334155;
     }
+
+    /* Classical Materia Medica Modal Styles */
+    .mm-modal-box {
+      width: 920px !important;
+      max-width: 96vw !important;
+      height: 86vh !important;
+      max-height: 86vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      border-radius: 12px !important;
+      background: #ffffff !important;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    }
+    .mm-modal-header {
+      padding: 14px 18px !important;
+      background: #f8fafc !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      flex-shrink: 0 !important;
+    }
+    .mm-tabs-bar {
+      display: flex !important;
+      gap: 6px !important;
+      padding: 8px 14px !important;
+      background: #f1f5f9 !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      flex-shrink: 0 !important;
+    }
+    .mm-tab-btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 8px 12px !important;
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #64748b !important;
+      background: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 6px !important;
+      cursor: pointer !important;
+      white-space: nowrap !important;
+      transition: all 0.15s ease !important;
+    }
+    .mm-tab-btn:hover {
+      background: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+    .mm-tab-btn.active {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      border-color: #1d4ed8 !important;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+    }
+    .mm-tab-btn.active .mm-badge-cache {
+      background: rgba(255, 255, 255, 0.25) !important;
+      color: #ffffff !important;
+    }
+    .mm-badge-cache {
+      font-size: 9px !important;
+      padding: 1px 5px !important;
+      border-radius: 4px !important;
+      font-weight: 700 !important;
+    }
+    .mm-badge-cache.ready {
+      background: #dcfce7 !important;
+      color: #166534 !important;
+    }
+    .mm-badge-cache.ondemand {
+      background: #e2e8f0 !important;
+      color: #475569 !important;
+    }
+    .mm-content-body {
+      flex: 1 !important;
+      overflow-y: auto !important;
+      padding: 18px !important;
+      font-size: 14px !important;
+      line-height: 1.65 !important;
+      color: #1e293b !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+    .mm-organ-card {
+      margin-bottom: 12px !important;
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 8px !important;
+      overflow: hidden !important;
+    }
+    .mm-organ-header {
+      padding: 8px 12px !important;
+      background: #f1f5f9 !important;
+      font-weight: 800 !important;
+      font-size: 13px !important;
+      color: #1e3a8a !important;
+      border-bottom: 1px solid #e2e8f0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+    }
+    .mm-organ-body {
+      padding: 10px 14px !important;
+      font-size: 13px !important;
+      color: #334155 !important;
+      line-height: 1.6 !important;
+    }
+    .mm-full-text-prose {
+      font-size: 14px !important;
+      line-height: 1.75 !important;
+      color: #1e293b !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    }
     .synth-deg-stat {
       font-weight: 800;
       color: #2563eb;
@@ -848,6 +966,54 @@
         <div class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
       </div>
       <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- Classical Materia Medica Multi-Author Modal -->
+  <div class="modal-backdrop" id="mmModalBackdrop">
+    <div class="modal-box mm-modal-box">
+      <div class="modal-header mm-modal-header">
+        <div>
+          <div class="modal-title" id="mmModalTitle" style="color: #0f172a; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-book-journal-whills" style="color: #2563eb;"></i>
+            <span id="mmRemedyTitle">ARSENICUM ALBUM (ars.)</span>
+          </div>
+          <div id="mmRemedySubtitle" style="font-size: 12px; color: #64748b; font-weight: 500; margin-top: 2px;">
+            Classical Materia Medica Differential
+          </div>
+        </div>
+        <div class="modal-close" onclick="closeMateriaMedicaModal()"><i class="fa-solid fa-xmark"></i></div>
+      </div>
+      <!-- Author Navigation Tabs -->
+      <div class="mm-tabs-bar" id="mmTabsBar">
+        <button class="mm-tab-btn active" id="btn-tab-boericke" onclick="switchMMAuthorTab('boericke')">
+          <i class="fa-solid fa-book-medical"></i> Boericke
+          <span class="mm-badge-cache ready" id="badge-boericke">Ready</span>
+        </button>
+        <button class="mm-tab-btn" id="btn-tab-allen" onclick="switchMMAuthorTab('allen')">
+          <i class="fa-solid fa-bolt"></i> Allen Keynotes
+          <span class="mm-badge-cache ready" id="badge-allen">Ready</span>
+        </button>
+        <button class="mm-tab-btn" id="btn-tab-kent" onclick="switchMMAuthorTab('kent')">
+          <i class="fa-solid fa-graduation-cap"></i> Kent Lectures
+          <span class="mm-badge-cache ondemand" id="badge-kent">On Demand</span>
+        </button>
+        <button class="mm-tab-btn" id="btn-tab-nash" onclick="switchMMAuthorTab('nash')">
+          <i class="fa-solid fa-trophy"></i> Nash Leaders
+          <span class="mm-badge-cache ondemand" id="badge-nash">On Demand</span>
+        </button>
+        <button class="mm-tab-btn" id="btn-tab-clarke" onclick="switchMMAuthorTab('clarke')">
+          <i class="fa-solid fa-book-atlas"></i> Clarke Dictionary
+          <span class="mm-badge-cache ondemand" id="badge-clarke">On Demand</span>
+        </button>
+      </div>
+      <!-- Modal Content Body -->
+      <div class="mm-content-body" id="mmContentBody">
+        <div style="text-align: center; padding: 40px; color: #64748b;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #2563eb;"></i>
+          <div style="margin-top: 10px;">Loading Materia Medica...</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1647,6 +1813,10 @@ function cycleWeight(badge, id) {
     // Start loading database on page start
     window.addEventListener('DOMContentLoaded', () => {
       initBrowserSqlite();
+      // Pre-download Boericke & Allen in background for instant Materia Medica
+      setTimeout(() => {
+        if (typeof initMateriaMedicaCore === 'function') initMateriaMedicaCore();
+      }, 1200);
     });
 
 
@@ -2246,8 +2416,14 @@ function cycleWeight(badge, id) {
         const fullName = rem.remedy_full || rem.full_name || rem.name || abbr;
         const th = document.createElement('th');
         th.className = 'remedy-th';
+        th.style.cursor = 'pointer';
+        th.title = `Click to open Classical Materia Medica (${fullName})`;
+        th.onclick = () => openMateriaMedicaModal(abbr, fullName);
         th.innerHTML = `
-          <div style="font-weight: 800; font-size: 14px;">${abbr}</div>
+          <div style="font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 4px;">
+            <span>${abbr}</span>
+            <i class="fa-solid fa-book-open" style="font-size: 10px; color: #3b82f6;"></i>
+          </div>
           <div style="font-size: 10px; color: var(--text-muted); font-weight: normal; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${fullName}">${fullName}</div>
         `;
         thead.appendChild(th);
@@ -2387,6 +2563,465 @@ function cycleWeight(badge, id) {
         sym.is_eliminating = isChecked;
         recalculateMatrix();
       }
+    }
+
+    // ==========================================
+    // CLASSICAL MATERIA MEDICA MULTI-AUTHOR SYSTEM
+    // ==========================================
+    let mmCurrentRemedy = null; // { abbr, fullName, info }
+    let mmCurrentAuthor = 'boericke';
+    let mmIndexCache = null;
+    let boerickeFullCache = null;
+    let allenFullCache = null;
+
+    // IndexedDB helper for permanent browser-side storage
+    function openMMIndexedDB() {
+      return new Promise((resolve) => {
+        if (!('indexedDB' in window)) return resolve(null);
+        try {
+          const req = indexedDB.open('SynthesisMateriaMedicaDB', 1);
+          req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('mm_store')) {
+              db.createObjectStore('mm_store');
+            }
+          };
+          req.onsuccess = (e) => resolve(e.target.result);
+          req.onerror = () => resolve(null);
+        } catch(e) { resolve(null); }
+      });
+    }
+
+    async function getMMFromStore(key) {
+      try {
+        const db = await openMMIndexedDB();
+        if (!db) return null;
+        return new Promise((resolve) => {
+          const tx = db.transaction('mm_store', 'readonly');
+          const store = tx.objectStore('mm_store');
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        });
+      } catch(e) { return null; }
+    }
+
+    async function saveMMToStore(key, data) {
+      try {
+        const db = await openMMIndexedDB();
+        if (!db) return;
+        const tx = db.transaction('mm_store', 'readwrite');
+        const store = tx.objectStore('mm_store');
+        store.put(data, key);
+      } catch(e) {}
+    }
+
+    // Pre-download and cache Boericke and Allen in background
+    async function initMateriaMedicaCore() {
+      // 1. Master index
+      if (!mmIndexCache) {
+        mmIndexCache = await getMMFromStore('remedy_index');
+        if (!mmIndexCache) {
+          try {
+            const res = await fetch('/static/mm/remedy_index.json');
+            if (res.ok) {
+              mmIndexCache = await res.json();
+              await saveMMToStore('remedy_index', mmIndexCache);
+            }
+          } catch(e) {}
+        }
+      }
+
+      // 2. Boericke Full Download & Cache
+      if (!boerickeFullCache) {
+        boerickeFullCache = await getMMFromStore('boericke_full');
+        if (!boerickeFullCache) {
+          try {
+            const res = await fetch('/static/mm/boericke.json');
+            if (res.ok) {
+              boerickeFullCache = await res.json();
+              await saveMMToStore('boericke_full', boerickeFullCache);
+            }
+          } catch(e) {}
+        }
+      }
+
+      // 3. Allen Full Download & Cache
+      if (!allenFullCache) {
+        allenFullCache = await getMMFromStore('allen_full');
+        if (!allenFullCache) {
+          try {
+            const res = await fetch('/static/mm/allen_keynotes.json');
+            if (res.ok) {
+              allenFullCache = await res.json();
+              await saveMMToStore('allen_full', allenFullCache);
+            }
+          } catch(e) {}
+        }
+      }
+    }
+
+    // Open Modal
+    async function openMateriaMedicaModal(rawAbbr, rawFullName) {
+      const abbr = (rawAbbr || '').replace(/\.$/, '').trim().toLowerCase();
+      const cleanAbbr = abbr.replace(/[^a-z0-9]/g, '');
+      const fullName = rawFullName || abbr;
+
+      // Start background cache if not already done
+      initMateriaMedicaCore();
+
+      // Show modal immediately
+      const modal = document.getElementById('mmModalBackdrop');
+      if (modal) modal.style.display = 'flex';
+
+      document.getElementById('mmRemedyTitle').textContent = `${fullName.toUpperCase()} (${abbr}.)`;
+      document.getElementById('mmRemedySubtitle').textContent = `Classical Materia Medica Differential`;
+
+      // Find in index
+      if (!mmIndexCache) {
+        mmIndexCache = await getMMFromStore('remedy_index');
+        if (!mmIndexCache) {
+          try {
+            const res = await fetch('/static/mm/remedy_index.json');
+            if (res.ok) {
+              mmIndexCache = await res.json();
+              saveMMToStore('remedy_index', mmIndexCache);
+            }
+          } catch(e) {}
+        }
+      }
+
+      const info = (mmIndexCache && (mmIndexCache[abbr] || mmIndexCache[cleanAbbr])) || {
+        abbr: abbr,
+        full_name: fullName,
+        boericke_idx: null,
+        allen_key: abbr.toUpperCase(),
+        kent_slug: cleanAbbr,
+        nash_slug: cleanAbbr,
+        clarke: null
+      };
+
+      mmCurrentRemedy = {
+        abbr: abbr,
+        cleanAbbr: cleanAbbr,
+        fullName: fullName,
+        info: info
+      };
+
+      // Default to Boericke tab
+      switchMMAuthorTab('boericke');
+    }
+
+    function closeMateriaMedicaModal() {
+      const modal = document.getElementById('mmModalBackdrop');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Tab Switcher
+    async function switchMMAuthorTab(author) {
+      mmCurrentAuthor = author;
+
+      // Update active tab buttons
+      document.querySelectorAll('.mm-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-author') === author || btn.id === `btn-tab-${author}`);
+      });
+
+      const body = document.getElementById('mmContentBody');
+      if (!body) return;
+
+      body.innerHTML = `
+        <div style="text-align: center; padding: 40px; color: #64748b;">
+          <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #2563eb;"></i>
+          <div style="margin-top: 10px;">Loading ${author.toUpperCase()} Materia Medica...</div>
+        </div>
+      `;
+
+      if (!mmCurrentRemedy) return;
+
+      const { abbr, cleanAbbr, fullName, info } = mmCurrentRemedy;
+
+      // 1. BOERICKE
+      if (author === 'boericke') {
+        if (!boerickeFullCache) {
+          boerickeFullCache = await getMMFromStore('boericke_full');
+          if (!boerickeFullCache) {
+            try {
+              const res = await fetch('/static/mm/boericke.json');
+              if (res.ok) boerickeFullCache = await res.json();
+            } catch(e) {}
+          }
+        }
+
+        let entry = null;
+        if (boerickeFullCache) {
+          if (info.boericke_idx !== undefined && info.boericke_idx !== null) {
+            entry = boerickeFullCache[info.boericke_idx];
+          }
+          if (!entry) {
+            entry = boerickeFullCache.find(b => {
+              const ba = (b.abbreviation || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+              const bf = (b.full_name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+              return ba === cleanAbbr || bf === cleanAbbr || bf.includes(cleanAbbr) || cleanAbbr.includes(ba);
+            });
+          }
+        }
+
+        if (entry) {
+          renderBoerickeContent(body, entry);
+        } else {
+          body.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748b;">No Boericke entry found for <strong>${escapeHtml(fullName)}</strong>. Try Allen or Kent tab above.</div>`;
+        }
+      }
+
+      // 2. ALLEN KEYNOTES
+      else if (author === 'allen') {
+        if (!allenFullCache) {
+          allenFullCache = await getMMFromStore('allen_full');
+          if (!allenFullCache) {
+            try {
+              const res = await fetch('/static/mm/allen_keynotes.json');
+              if (res.ok) allenFullCache = await res.json();
+            } catch(e) {}
+          }
+        }
+
+        let entry = null;
+        if (allenFullCache) {
+          if (info.allen_key && allenFullCache[info.allen_key]) {
+            entry = allenFullCache[info.allen_key];
+          }
+          if (!entry) {
+            const keyMatch = Object.keys(allenFullCache).find(k => {
+              const kc = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+              const nm = (allenFullCache[k].remedy_name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+              return kc === cleanAbbr || nm === cleanAbbr || nm.includes(cleanAbbr);
+            });
+            if (keyMatch) entry = allenFullCache[keyMatch];
+          }
+        }
+
+        if (entry) {
+          renderAllenContent(body, entry);
+        } else {
+          body.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748b;">No Allen Keynotes entry found for <strong>${escapeHtml(fullName)}</strong>.</div>`;
+        }
+      }
+
+      // 3. KENT LECTURES (On-Demand Download + Cache)
+      else if (author === 'kent') {
+        const slug = info.kent_slug || cleanAbbr;
+        const cacheKey = `kent_${slug}`;
+
+        let entry = await getMMFromStore(cacheKey);
+        const badge = document.getElementById('badge-kent');
+
+        if (!entry) {
+          try {
+            const res = await fetch(`/static/mm/kent/${slug}.json`);
+            if (res.ok) {
+              entry = await res.json();
+              await saveMMToStore(cacheKey, entry);
+              if (badge) {
+                badge.className = 'mm-badge-cache ready';
+                badge.textContent = 'Cached';
+              }
+            }
+          } catch(e) {}
+        } else {
+          if (badge) {
+            badge.className = 'mm-badge-cache ready';
+            badge.textContent = 'Cached';
+          }
+        }
+
+        if (entry) {
+          renderKentContent(body, entry);
+        } else {
+          body.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748b;">Kent's Lecture not available for <strong>${escapeHtml(fullName)}</strong>.</div>`;
+        }
+      }
+
+      // 4. NASH LEADERS (On-Demand Download + Cache)
+      else if (author === 'nash') {
+        const slug = info.nash_slug || cleanAbbr;
+        const cacheKey = `nash_${slug}`;
+
+        let entry = await getMMFromStore(cacheKey);
+        const badge = document.getElementById('badge-nash');
+
+        if (!entry) {
+          try {
+            const res = await fetch(`/static/mm/nash/${slug}.json`);
+            if (res.ok) {
+              entry = await res.json();
+              await saveMMToStore(cacheKey, entry);
+              if (badge) {
+                badge.className = 'mm-badge-cache ready';
+                badge.textContent = 'Cached';
+              }
+            }
+          } catch(e) {}
+        } else {
+          if (badge) {
+            badge.className = 'mm-badge-cache ready';
+            badge.textContent = 'Cached';
+          }
+        }
+
+        if (entry) {
+          renderNashContent(body, entry);
+        } else {
+          body.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748b;">Nash's Leaders entry not available for <strong>${escapeHtml(fullName)}</strong>.</div>`;
+        }
+      }
+
+      // 5. CLARKE DICTIONARY (On-Demand Download + Cache)
+      else if (author === 'clarke') {
+        const slug = cleanAbbr;
+        const cacheKey = `clarke_${slug}`;
+
+        let entry = await getMMFromStore(cacheKey);
+        const badge = document.getElementById('badge-clarke');
+
+        if (!entry) {
+          // Check static pre-cached first
+          try {
+            const res = await fetch(`/static/mm/clarke/${slug}.json`);
+            if (res.ok) {
+              entry = await res.json();
+              await saveMMToStore(cacheKey, entry);
+            }
+          } catch(e) {}
+
+          // If still not found, try proxy
+          if (!entry && info.clarke && info.clarke.full_url) {
+            try {
+              const res = await fetch(`/api/clarke_remedy?url=${encodeURIComponent(info.clarke.full_url)}`);
+              if (res.ok) {
+                entry = await res.json();
+                await saveMMToStore(cacheKey, entry);
+              }
+            } catch(e) {}
+          }
+
+          if (entry && badge) {
+            badge.className = 'mm-badge-cache ready';
+            badge.textContent = 'Cached';
+          }
+        } else {
+          if (badge) {
+            badge.className = 'mm-badge-cache ready';
+            badge.textContent = 'Cached';
+          }
+        }
+
+        if (entry) {
+          renderClarkeContent(body, entry);
+        } else {
+          body.innerHTML = `<div style="padding: 24px; text-align: center; color: #64748b;">Clarke's Dictionary entry not available for <strong>${escapeHtml(fullName)}</strong>.</div>`;
+        }
+      }
+    }
+
+    // Author-Specific Renderers
+    function renderBoerickeContent(container, entry) {
+      let html = `
+        <div style="margin-bottom: 16px; padding: 12px 14px; background: #eff6ff; border-radius: 8px; border-left: 4px solid #2563eb;">
+          <div style="font-weight: 800; font-size: 16px; color: #1e3a8a;">${escapeHtml(entry.full_name || '')}</div>
+          ${entry.common_name ? `<div style="font-size: 13px; color: #475569; font-weight: 600; margin-top: 2px;">Common Name: ${escapeHtml(entry.common_name)}</div>` : ''}
+        </div>
+      `;
+
+      if (entry.general) {
+        html += `
+          <div class="mm-organ-card" style="border-left: 4px solid #3b82f6;">
+            <div class="mm-organ-header"><i class="fa-solid fa-circle-info"></i> General Action & Sphere</div>
+            <div class="mm-organ-body">${escapeHtml(entry.general)}</div>
+          </div>
+        `;
+      }
+
+      if (entry.sections && typeof entry.sections === 'object') {
+        const priorityKeys = ['Mind', 'Head', 'Eyes', 'Nose', 'Face', 'Mouth', 'Stomach', 'Abdomen', 'Stool', 'Urine', 'Respiratory', 'Heart', 'Extremities', 'Sleep', 'Fever', 'Skin', 'Modalities', 'Relationships', 'Dose'];
+        const rendered = new Set();
+
+        priorityKeys.forEach(sec => {
+          if (entry.sections[sec]) {
+            rendered.add(sec);
+            html += `
+              <div class="mm-organ-card">
+                <div class="mm-organ-header"><i class="fa-solid fa-notes-medical"></i> ${escapeHtml(sec)}</div>
+                <div class="mm-organ-body">${escapeHtml(entry.sections[sec])}</div>
+              </div>
+            `;
+          }
+        });
+
+        Object.keys(entry.sections).forEach(sec => {
+          if (!rendered.has(sec)) {
+            html += `
+              <div class="mm-organ-card">
+                <div class="mm-organ-header"><i class="fa-solid fa-notes-medical"></i> ${escapeHtml(sec)}</div>
+                <div class="mm-organ-body">${escapeHtml(entry.sections[sec])}</div>
+              </div>
+            `;
+          }
+        });
+      }
+
+      container.innerHTML = html;
+    }
+
+    function renderAllenContent(container, entry) {
+      let html = `
+        <div style="margin-bottom: 16px; padding: 12px 14px; background: #fff7ed; border-radius: 8px; border-left: 4px solid #ea580c;">
+          <div style="font-weight: 800; font-size: 16px; color: #9a3412;">⚡ Allen's Keynotes & Characteristics</div>
+          <div style="font-size: 13px; color: #7c2d12; font-weight: 600; margin-top: 2px;">${escapeHtml(entry.remedy_name || '')}</div>
+        </div>
+        <div class="mm-organ-card">
+          <div class="mm-organ-body mm-full-text-prose">${escapeHtml(entry.full_text || '')}</div>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function renderKentContent(container, entry) {
+      let html = `
+        <div style="margin-bottom: 16px; padding: 12px 14px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #16a34a;">
+          <div style="font-weight: 800; font-size: 16px; color: #166534;">🎓 J.T. Kent — Lectures on Homoeopathic Materia Medica</div>
+          <div style="font-size: 13px; color: #15803d; font-weight: 600; margin-top: 2px;">${escapeHtml(entry.remedy_name || '')}</div>
+        </div>
+        <div class="mm-organ-card">
+          <div class="mm-organ-body mm-full-text-prose">${escapeHtml(entry.lecture_text || '')}</div>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function renderNashContent(container, entry) {
+      let html = `
+        <div style="margin-bottom: 16px; padding: 12px 14px; background: #faf5ff; border-radius: 8px; border-left: 4px solid #9333ea;">
+          <div style="font-weight: 800; font-size: 16px; color: #581c87;">🏆 E.B. Nash — Leaders in Homoeopathic Therapeutics</div>
+          <div style="font-size: 13px; color: #6b21a8; font-weight: 600; margin-top: 2px;">${escapeHtml(entry.remedy_name || '')}</div>
+        </div>
+        <div class="mm-organ-card">
+          <div class="mm-organ-body mm-full-text-prose">${escapeHtml(entry.therapeutics_text || '')}</div>
+        </div>
+      `;
+      container.innerHTML = html;
+    }
+
+    function renderClarkeContent(container, entry) {
+      let html = `
+        <div style="margin-bottom: 16px; padding: 12px 14px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #0284c7;">
+          <div style="font-weight: 800; font-size: 16px; color: #0369a1;">📖 J.H. Clarke — Dictionary of Practical Materia Medica</div>
+          <div style="font-size: 13px; color: #0284c7; font-weight: 600; margin-top: 2px;">${escapeHtml(entry.remedy_name || '')}</div>
+        </div>
+        <div class="mm-organ-card">
+          <div class="mm-organ-body mm-full-text-prose">${escapeHtml(entry.text || '')}</div>
+        </div>
+      `;
+      container.innerHTML = html;
     }
 
     // Modal: Exact Synthesis Book View with typography, degrees, author citations & hierarchy replacement
@@ -2883,14 +3518,14 @@ function cycleWeight(badge, id) {
         const symptomsStr = coveredNums.length > 0 ? coveredNums.join(', ') : '-';
 
         tableRowsHtml += `
-          <tr class="${isTop ? 'top-similimum-row' : ''}" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">
-            <td>
-              <div class="synth-rem-abbr">${abbr}.${isTop ? ' <span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 1px 4px; border-radius: 3px; vertical-align: middle;">TOP</span>' : ''}</div>
+          <tr class="${isTop ? 'top-similimum-row' : ''}">
+            <td onclick="openMateriaMedicaModal('${abbr}', '${escapeQuotes(fullName)}')" style="cursor: pointer;" title="Tap to open Classical Materia Medica (${escapeHtml(fullName)})">
+              <div class="synth-rem-abbr">${abbr}.${isTop ? ' <span style="font-size: 9px; background: #dcfce7; color: #166534; padding: 1px 4px; border-radius: 3px; vertical-align: middle;">TOP</span>' : ''} <i class="fa-solid fa-book-open" style="font-size: 10px; color: #3b82f6; margin-left: 2px;"></i></div>
               <div class="synth-rem-full" title="${escapeHtml(fullName)}">${escapeHtml(fullName)}</div>
             </td>
-            <td class="synth-stat-cell">${symCount}</td>
-            <td class="synth-stat-cell synth-deg-stat">${degSum}</td>
-            <td class="synth-sym-nums">${symptomsStr}</td>
+            <td class="synth-stat-cell" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${symCount}</td>
+            <td class="synth-stat-cell synth-deg-stat" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${degSum}</td>
+            <td class="synth-sym-nums" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${symptomsStr}</td>
           </tr>
         `;
       });

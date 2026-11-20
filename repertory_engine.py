@@ -18,10 +18,16 @@ class RepertoryServer:
     def _ensure_indexes(self):
         """Create helpful search indexes if missing."""
         c = self.conn.cursor()
-        c.execute("CREATE INDEX IF NOT EXISTS idx_syntree_path ON syntree(path);")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_syntree_search_path ON syntree(search_path);")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_symp_rem_sid ON symptom_remedies(symptom_id);")
-        c.execute("CREATE INDEX IF NOT EXISTS idx_rem_auth_sid ON remedy_authors(symptom_id);")
+        for stmt in [
+            "CREATE INDEX IF NOT EXISTS idx_syntree_path ON syntree(path);",
+            "CREATE INDEX IF NOT EXISTS idx_syntree_search_path ON syntree(search_path);",
+            "CREATE INDEX IF NOT EXISTS idx_symp_rem_sid ON symptom_remedies(symptom_id);",
+            "CREATE INDEX IF NOT EXISTS idx_rem_auth_sid ON remedy_authors(symptom_id);"
+        ]:
+            try:
+                c.execute(stmt)
+            except Exception:
+                pass
         self.conn.commit()
 
     def autocomplete_rubrics(self, query: str, limit: int = 20, require_remedies: bool = False) -> List[Dict[str, Any]]:
