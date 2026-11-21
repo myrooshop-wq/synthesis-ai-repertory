@@ -1432,8 +1432,8 @@
         <div class="filter-item">
           <label style="color: #b91c1c;"><i class="fa-solid fa-bolt"></i> Clinical Strategy:</label>
           <select id="clinicalStrategySelect" onchange="recalculateMatrix()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); font-weight: 700;">
-            <option value="acute" selected>⚡ Acute Crisis Mode (Ars, Nux-v, Verat, Bell)</option>
-            <option value="chronic">🏛️ Constitutional / Chronic Mode (Calc, Sulph, Sil)</option>
+            <option value="chronic" selected>🏛️ Constitutional / Chronic Mode (Calc, Sulph, Sil)</option>
+            <option value="acute">⚡ Acute Crisis Mode (Ars, Nux-v, Verat, Bell)</option>
           </select>
         </div>
         <div class="filter-item">
@@ -2183,6 +2183,12 @@ class ClinicalAIEngine {
 Extract symptoms from this clinical consultation into 4 Kentian categories:
 MIND, GENERALS, MODALITIES, PARTICULARS.
 
+CRITICAL KENTIAN CATEGORIZATION RULES:
+- GENERALS (Physical Generals): Thirst (e.g. thoda-thoda paani, thirstless), Appetite, Thermals (chilly/hot, thand lagti hai), Weakness, Sleep, Sweat.
+- MODALITIES: Strictly factors that make complaints WORSE (< aggravation) or BETTER (> amelioration), such as time (< midnight, < morning), weather/temperature (< cold air), movement, position, or after eating. Thirst or drinking water itself is NEVER a modality!
+- MIND: Mental & emotional symptoms (fear, restlessness, anxiety, weeping).
+- PARTICULARS: Specific organ locations & sensations (head pain, stomach burning, cough).
+
 Consultation Text:
 """${clinicalText}"""
 
@@ -2276,8 +2282,8 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
       if (line.length > 3 && !/^(here is|here are|clinical symptoms|symptoms:)/i.test(line)) {
         let cat = 'Particulars & Locations';
         if (/mind|dar|ghabrahat|fear|anxiety|bechaini|restless/i.test(line)) cat = 'Mind & Emotion';
-        else if (/general|thand|pyas|weakness|kamzori|sleep|neend|thakan/i.test(line)) cat = 'Physical Generals';
-        else if (/modality|agg|amel|subah|raat|better|worse/i.test(line)) cat = 'Modalities (< / >)';
+        else if (/general|thand|pyas|water|paani|thirst|appetite|bhookh|weakness|kamzori|sleep|neend|thakan/i.test(line)) cat = 'Physical Generals';
+        else if (/(modality|agg|amel|<|>|better|worse|badhti|ghatti)/i.test(line) && !/paani|water|pyas/i.test(line)) cat = 'Modalities (< / >)';
 
         symptoms.push({
           category: cat,
@@ -2298,14 +2304,14 @@ Output ONLY lines starting with [MIND], [GENERALS], [MODALITIES], or [PARTICULAR
     // Clinical Dictionary Mapping for Indian Practice (Hinglish + English)
     const patterns = [
       { terms: ['sar dard', 'headache', 'sir dard', 'head pain'], cat: 'Particulars & Locations', name: 'Headache / Pain', query: 'HEAD PAIN' },
-      { terms: ['jalan', 'burning', 'acid', 'gastric', 'pet me jalan'], cat: 'Particulars & Locations', name: 'Gastric Burning / Stomach', query: 'STOMACH PAIN BURNING' },
+      { terms: ['jalan', 'burning', 'acid', 'gastric', 'pet me jalan', 'pet me bahut tez jalan'], cat: 'Particulars & Locations', name: 'Gastric Burning / Stomach', query: 'STOMACH PAIN BURNING' },
       { terms: ['bechaini', 'restless', 'restlessness', 'tossing'], cat: 'Mind & Emotion', name: 'Restlessness / Anxiety', query: 'MIND RESTLESSNESS' },
       { terms: ['darr', 'dar', 'fear', 'dark', 'andhere', 'alone', 'akele'], cat: 'Mind & Emotion', name: 'Fear of Dark / Being Alone', query: 'MIND FEAR DARK' },
-      { terms: ['thand', 'chill', 'chilly', 'cold sensitive'], cat: 'Physical Generals', name: 'Chilly / Sensitive to Cold', query: 'GENERALS COLD' },
-      { terms: ['pyas', 'thirst', 'water', 'thirstless'], cat: 'Physical Generals', name: 'Thirst Peculiarity', query: 'STOMACH THIRST' },
-      { terms: ['neend', 'sleep', 'subah uthne', 'weakness', 'kamzori', 'thakan', 'tired'], cat: 'Physical Generals', name: 'Weakness / Fatigue on Waking', query: 'GENERALS WEAKNESS MORNING' },
-      { terms: ['raat', 'midnight', 'night', '12 baje', 'after midnight'], cat: 'Modalities (< / >)', name: 'Worse at Night / Midnight (< night)', query: 'GENERALS NIGHT AGG' },
-      { terms: ['subah', 'morning', 'waking'], cat: 'Modalities (< / >)', name: 'Worse in Morning on Waking (< morning)', query: 'GENERALS MORNING WAKING' }
+      { terms: ['thoda-thoda paani', 'thoda thoda paani', 'baar-baar peete', 'paani', 'pyas', 'thirst', 'water', 'thirstless'], cat: 'Physical Generals', name: 'Thirst: Small quantities frequently (thoda-thoda paani)', query: 'STOMACH THIRST SMALL' },
+      { terms: ['thand jyada', 'thand', 'chill', 'chilly', 'cold sensitive'], cat: 'Physical Generals', name: 'Chilly / Sensitive to Cold', query: 'GENERALS COLD' },
+      { terms: ['neend', 'sleep', 'weakness', 'kamzori', 'thakan', 'tired'], cat: 'Physical Generals', name: 'Weakness / Fatigue', query: 'GENERALS WEAKNESS' },
+      { terms: ['raat ko 12 baje ke baad', '12 baje ke baad takleef', 'midnight', 'after midnight'], cat: 'Modalities (< / >)', name: 'Worse after Midnight (< midnight)', query: 'GENERALS NIGHT AGG' },
+      { terms: ['subah uthne par takleef', 'worse morning'], cat: 'Modalities (< / >)', name: 'Worse in Morning on Waking (< morning)', query: 'GENERALS MORNING WAKING' }
     ];
 
     patterns.forEach(p => {
@@ -3054,6 +3060,8 @@ function cycleWeight(badge, id) {
     }
 
     // Recalculate Repertorisation Grid (Offline WebAssembly & Cloud Fallback)
+    let currentMatrixData = null;
+
     async function recalculateMatrix() {
       if (typeof isMobileDevice === 'function' && isMobileDevice() && currentGridMode !== 'table') {
         switchGridMode('cards');
@@ -3234,6 +3242,7 @@ function cycleWeight(badge, id) {
     }
 
     function renderMatrix(data) {
+      currentMatrixData = data;
       const table = document.getElementById('matrixTable');
       const thead = table.querySelector('thead tr');
       const tbody = document.getElementById('matrixBody');
@@ -3339,7 +3348,11 @@ function cycleWeight(badge, id) {
       // Total Score Row
       const trTot = document.createElement('tr');
       trTot.className = 'total-row';
-      trTot.innerHTML = `<td colspan="3">Total Qualitative Score</td>` + data.remedies.map(r => `<td>${r.total_score}</td>`).join('');
+      trTot.innerHTML = `<td colspan="3">Total Qualitative Score (Click score to verify math)</td>` + data.remedies.map(r => {
+        const a = r.remedy_abbreviation || r.remedy || r.abbr || '';
+        const fn = r.remedy_full || r.full_name || r.name || a;
+        return `<td style="cursor: pointer; text-decoration: underline dotted #d97706; font-weight: 800; color: #b45309;" onclick="showRemedyMathBreakdown('${a}', '${escapeQuotes(fn)}')" title="Click to verify exact calculation steps for ${a}">${r.total_score}</td>`;
+      }).join('');
       tbody.appendChild(trTot);
 
       // Populate Differential Contender Cards
@@ -5014,7 +5027,7 @@ function renderClarkeContent(container, entry) {
               <strong>Step-by-step Math Example:</strong><br>
               If Nat-m is Grade 3 in Rubric 1 (3 pts), Grade 1 in Rubric 2 (1 pt), Grade 1 in Rubric 4 (1 pt), and Grade 2 in Rubric 5 (2 pts):<br>
               <code>ΣDeg = 3 + 1 + 1 + 2 = 7 points (at 1x weight)</code><br>
-              <em>(If Rubrics are weighted 2x, each point is multiplied by 2 $ightarrow$ $7 	imes 2 = 14$).</em>
+              <em>(If rubrics are weighted 2x, each point is multiplied by 2 → 7 × 2 = 14 points).</em>
             </div>
           </div>
         `;
@@ -5045,6 +5058,136 @@ function renderClarkeContent(container, entry) {
 
       modal.style.display = 'flex';
     }
+
+    // Interactive Step-by-Step Mathematical Breakdown for ΣDeg Verification
+    function showRemedyMathBreakdown(abbr, fullName) {
+      const modal = document.getElementById('modalBackdrop');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+      if (!modal || !body) return;
+
+      if (!currentMatrixData || !currentMatrixData.remedies) {
+        alert("Please calculate repertorisation grid first.");
+        return;
+      }
+
+      const targetRemedy = currentMatrixData.remedies.find(r => 
+        (r.remedy_abbreviation || r.remedy || r.abbr || '').toLowerCase() === (abbr || '').toLowerCase()
+      );
+
+      const isAcuteMode = document.getElementById('clinicalStrategySelect')?.value === 'acute';
+      const acuteSet = new Set(['ars', 'nux-v', 'verat', 'bell', 'acon', 'bry', 'phos', 'cham', 'rhus-t', 'apis', 'canth', 'crot-h', 'camph']);
+      const isAcuteBoosted = isAcuteMode && acuteSet.has((abbr || '').toLowerCase());
+
+      title.innerHTML = `<i class="fa-solid fa-calculator" style="color: #d97706;"></i> Math Breakdown: ${escapeHtml(abbr.toUpperCase())} <span style="font-size: 13px; font-weight: normal; color: #64748b;">(${escapeHtml(fullName)})</span>`;
+
+      // Build breakdown table from currentMatrixData.matrix
+      let rowsHtml = '';
+      let baseDegreeSum = 0;
+      let coveredRubricCount = 0;
+
+      if (currentMatrixData.matrix && Array.isArray(currentMatrixData.matrix)) {
+        currentMatrixData.matrix.forEach((row, idx) => {
+          const num = idx + 1;
+          const score = row.scores ? (row.scores[abbr] || 0) : 0;
+          const weight = row.weight || 1;
+          const rubricTotal = score * weight;
+
+          if (score > 0) {
+            coveredRubricCount++;
+            baseDegreeSum += rubricTotal;
+
+            const degColor = score >= 4 ? '#b91c1c' : (score === 3 ? '#ea580c' : (score === 2 ? '#2563eb' : '#64748b'));
+            const degName = score >= 4 ? 'Grade 4 (Bold Underline)' : (score === 3 ? 'Grade 3 (Bold)' : (score === 2 ? 'Grade 2 (Italics)' : 'Grade 1 (Plain)'));
+
+            rowsHtml += `
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 8px 10px; font-weight: 700; color: #1e293b; font-size: 12px;">
+                  <span style="display: inline-block; width: 22px; height: 22px; line-height: 22px; text-align: center; border-radius: 50%; background: #eff6ff; color: #2563eb; font-size: 11px; margin-right: 6px;">${num}</span>
+                  ${escapeHtml(row.rubric)}
+                </td>
+                <td style="padding: 8px 10px; text-align: center; font-size: 12px;">
+                  <span style="color: ${degColor}; font-weight: 800;">${score} pts</span>
+                  <div style="font-size: 10px; color: #94a3b8;">${degName}</div>
+                </td>
+                <td style="padding: 8px 10px; text-align: center; font-size: 12px; color: #64748b; font-weight: 600;">
+                  ${weight}x
+                </td>
+                <td style="padding: 8px 10px; text-align: right; font-size: 13px; font-weight: 800; color: #0f172a;">
+                  ${score} × ${weight} = <span style="color: #2563eb;">${rubricTotal}</span>
+                </td>
+              </tr>
+            `;
+          }
+        });
+      }
+
+      if (coveredRubricCount === 0) {
+        rowsHtml = `<tr><td colspan="4" style="text-align: center; padding: 18px; color: #94a3b8;">This remedy does not cover any of the currently selected rubrics.</td></tr>`;
+      }
+
+      const totalQualScore = targetRemedy ? targetRemedy.total_score : (baseDegreeSum + (isAcuteBoosted ? 4 : 0));
+
+      body.innerHTML = `
+        <div style="font-family: sans-serif; font-size: 13px; line-height: 1.5; color: #1e293b; padding: 4px;">
+          <!-- Summary Header -->
+          <div style="background: #fffbeb; border: 1px solid #fef3c7; border-radius: 8px; padding: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 15px; font-weight: 800; color: #92400e;">${escapeHtml(fullName.toUpperCase())} (${escapeHtml(abbr)}.)</div>
+              <div style="font-size: 12px; color: #b45309; margin-top: 2px;">
+                Covers <strong>${coveredRubricCount}</strong> of ${currentMatrixData.matrix.length} rubrics (ΣSym = ${coveredRubricCount})
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #92400e; font-weight: 700;">Final ΣDeg Score</div>
+              <div style="font-size: 24px; font-weight: 900; color: #b45309;">${totalQualScore} <span style="font-size: 13px; font-weight: 600;">pts</span></div>
+            </div>
+          </div>
+
+          <!-- Calculation Steps Table -->
+          <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 14px;">
+            <table style="width: 100%; border-collapse: collapse;">
+              <thead>
+                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 11.5px; color: #64748b;">
+                  <th style="padding: 8px 10px; text-align: left;">Covered Rubric</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 120px;">Proving Grade</th>
+                  <th style="padding: 8px 10px; text-align: center; width: 60px;">Weight</th>
+                  <th style="padding: 8px 10px; text-align: right; width: 100px;">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Math Formula Box -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; font-size: 12.5px;">
+            <div style="font-weight: 700; color: #334155; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-square-root-variable" style="color: #2563eb;"></i> Mathematical Step Calculation:
+            </div>
+            <div style="background: white; border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px 12px; font-family: monospace; font-size: 12.5px; color: #0f172a; margin-bottom: 8px;">
+              Base Proving Sum = ${baseDegreeSum} points
+              ${isAcuteBoosted ? `\n+ Acute Crisis Priority Boost = 4 points\n=====================================\nTotal ΣDeg = ${baseDegreeSum} + 4 = ${totalQualScore} points` : `\n(Strategy: Classical Constitutional Mode — No Artificial Boost)\n=====================================\nTotal ΣDeg = ${baseDegreeSum} points`}
+            </div>
+            ${isAcuteBoosted ? `
+              <div style="font-size: 11.5px; color: #b91c1c; display: flex; align-items: flex-start; gap: 6px;">
+                <i class="fa-solid fa-bolt" style="margin-top: 2px;"></i>
+                <span><strong>Acute Crisis Mode Active:</strong> A +4 priority weight was added because <em>${escapeHtml(abbr)}</em> is recognized as a key acute polycrest for fast-acting crises. Switch Clinical Strategy to <strong>Constitutional Mode</strong> if you wish to see pure unweighted Kentian degree sums.</span>
+              </div>
+            ` : `
+              <div style="font-size: 11.5px; color: #15803d; display: flex; align-items: flex-start; gap: 6px;">
+                <i class="fa-solid fa-check-double" style="margin-top: 2px;"></i>
+                <span><strong>Pure Classical Repertorisation:</strong> Exactly matches Synthesis Repertorium and Kent's Repertory rules (Degree × Rubric Weight).</span>
+              </div>
+            `}
+          </div>
+        </div>
+      `;
+
+      modal.style.display = 'flex';
+    }
+
 
 
     /* ========================================================
@@ -5271,7 +5414,7 @@ function renderClarkeContent(container, entry) {
               <div class="synth-rem-full" title="${escapeHtml(fullName)}">${escapeHtml(fullName)}</div>
             </td>
             <td class="synth-stat-cell" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${symCount}</td>
-            <td class="synth-stat-cell synth-deg-stat" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${degSum}</td>
+            <td class="synth-stat-cell synth-deg-stat" onclick="showRemedyMathBreakdown('${abbr}', '${escapeQuotes(fullName)}')" style="cursor: pointer; text-decoration: underline dotted #d97706; font-weight: 800; color: #b45309;" title="Tap to verify exact calculation steps for ${abbr}">${degSum}</td>
             <td class="synth-sym-nums" onclick="selectSimilimum('${abbr}', '${escapeQuotes(fullName)}')">${symptomsStr}</td>
           </tr>
         `;
