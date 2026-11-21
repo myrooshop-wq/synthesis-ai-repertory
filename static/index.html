@@ -1516,13 +1516,13 @@
             <i class="fa-solid fa-bolt"></i> Allen Keynotes <span class="badge">179</span>
           </button>
           <button class="mm-lib-tab" data-book="kent" onclick="filterMMLibraryBook('kent')">
-            <i class="fa-solid fa-graduation-cap"></i> Kent Lectures <span class="badge">110</span>
+            <i class="fa-solid fa-graduation-cap"></i> Kent Lectures <span class="badge">127</span>
           </button>
           <button class="mm-lib-tab" data-book="nash" onclick="filterMMLibraryBook('nash')">
-            <i class="fa-solid fa-trophy"></i> Nash Leaders <span class="badge">146</span>
+            <i class="fa-solid fa-trophy"></i> Nash Leaders <span class="badge">185</span>
           </button>
           <button class="mm-lib-tab" data-book="clarke" onclick="filterMMLibraryBook('clarke')">
-            <i class="fa-solid fa-book-atlas"></i> Clarke Dictionary <span class="badge">311</span>
+            <i class="fa-solid fa-book-atlas"></i> Clarke Dictionary <span class="badge">310</span>
           </button>
         </div>
 
@@ -1595,15 +1595,15 @@
         </button>
         <button class="mm-tab-btn" id="btn-tab-kent" onclick="switchMMAuthorTab('kent')">
           <i class="fa-solid fa-graduation-cap"></i> Kent Lectures
-          <span class="mm-badge-cache ondemand" id="badge-kent">On Demand</span>
+          <span class="mm-badge-cache ready" id="badge-kent">Ready</span>
         </button>
         <button class="mm-tab-btn" id="btn-tab-nash" onclick="switchMMAuthorTab('nash')">
           <i class="fa-solid fa-trophy"></i> Nash Leaders
-          <span class="mm-badge-cache ondemand" id="badge-nash">On Demand</span>
+          <span class="mm-badge-cache ready" id="badge-nash">Ready</span>
         </button>
         <button class="mm-tab-btn" id="btn-tab-clarke" onclick="switchMMAuthorTab('clarke')">
           <i class="fa-solid fa-book-atlas"></i> Clarke Dictionary
-          <span class="mm-badge-cache ondemand" id="badge-clarke">On Demand</span>
+          <span class="mm-badge-cache ready" id="badge-clarke">Ready</span>
         </button>
       </div>
       <!-- Modal Content Body -->
@@ -3414,7 +3414,7 @@ function cycleWeight(badge, id) {
     }
 
     // Open Modal
-    async function openMateriaMedicaModal(rawAbbr, rawFullName) {
+    async function openMateriaMedicaModal(rawAbbr, rawFullName, preferredAuthor) {
       const abbr = (rawAbbr || '').replace(/\.$/, '').trim().toLowerCase();
       const cleanAbbr = abbr.replace(/[^a-z0-9]/g, '');
       const fullName = rawFullName || abbr;
@@ -3460,8 +3460,44 @@ function cycleWeight(badge, id) {
         info: info
       };
 
-      // Default to Boericke tab
-      switchMMAuthorTab('boericke');
+      // Update tab availability badges for this specific remedy
+      const bBoericke = document.getElementById('badge-boericke');
+      const bAllen = document.getElementById('badge-allen');
+      const bKent = document.getElementById('badge-kent');
+      const bNash = document.getElementById('badge-nash');
+      const bClarke = document.getElementById('badge-clarke');
+
+      const hasBoericke = info.boericke_idx !== null && info.boericke_idx !== undefined;
+      const hasAllen = !!info.allen_key;
+      const hasKent = !!info.kent_slug;
+      const hasNash = !!info.nash_slug;
+      const hasClarke = !!(info.clarke || info.clarke_available);
+
+      if (bBoericke) { bBoericke.textContent = hasBoericke ? 'Ready' : 'N/A'; bBoericke.className = hasBoericke ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand'; }
+      if (bAllen) { bAllen.textContent = hasAllen ? 'Ready' : 'N/A'; bAllen.className = hasAllen ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand'; }
+      if (bKent) { bKent.textContent = hasKent ? 'Ready' : 'N/A'; bKent.className = hasKent ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand'; }
+      if (bNash) { bNash.textContent = hasNash ? 'Ready' : 'N/A'; bNash.className = hasNash ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand'; }
+      if (bClarke) { bClarke.textContent = hasClarke ? 'Ready' : 'N/A'; bClarke.className = hasClarke ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand'; }
+
+      // Pick best author tab:
+      // If target author specified and available, use it. Otherwise find first available book.
+      let targetAuthor = preferredAuthor || 'boericke';
+      if (targetAuthor === 'boericke' && !hasBoericke) {
+        if (hasClarke) targetAuthor = 'clarke';
+        else if (hasAllen) targetAuthor = 'allen';
+        else if (hasKent) targetAuthor = 'kent';
+        else if (hasNash) targetAuthor = 'nash';
+      } else if (targetAuthor === 'allen' && !hasAllen) {
+        targetAuthor = hasBoericke ? 'boericke' : (hasClarke ? 'clarke' : (hasKent ? 'kent' : 'nash'));
+      } else if (targetAuthor === 'kent' && !hasKent) {
+        targetAuthor = hasBoericke ? 'boericke' : (hasClarke ? 'clarke' : (hasAllen ? 'allen' : 'nash'));
+      } else if (targetAuthor === 'nash' && !hasNash) {
+        targetAuthor = hasBoericke ? 'boericke' : (hasClarke ? 'clarke' : (hasAllen ? 'allen' : 'kent'));
+      } else if (targetAuthor === 'clarke' && !hasClarke) {
+        targetAuthor = hasBoericke ? 'boericke' : (hasAllen ? 'allen' : (hasKent ? 'kent' : 'nash'));
+      }
+
+      switchMMAuthorTab(targetAuthor);
     }
 
     /* ========================================================
@@ -3497,7 +3533,7 @@ function cycleWeight(badge, id) {
           allen: !!r.allen_key,
           kent: !!r.kent_slug,
           nash: !!r.nash_slug,
-          clarke: !!r.clarke
+          clarke: !!(r.clarke || r.clarke_available)
         }));
         // Sort alphabetically by full name
         mmLibIndexList.sort((a, b) => a.fullName.localeCompare(b.fullName));
@@ -3667,11 +3703,8 @@ function cycleWeight(badge, id) {
       const backBtn = document.getElementById('mmBackToLibBtn');
       if (backBtn) backBtn.style.display = 'inline-flex';
 
-      // Open the reader modal directly on top of the library
-      await openMateriaMedicaModal(abbr, fullName);
-      if (author) {
-        switchMMAuthorTab(author);
-      }
+      // Open the reader modal directly on top of the library with the target book
+      await openMateriaMedicaModal(abbr, fullName, author);
     }
 
     function backToMMLibrary() {
@@ -3853,25 +3886,34 @@ function cycleWeight(badge, id) {
         }
       }
 
-      // 5. CLARKE DICTIONARY (On-Demand Download + Cache)
+      // 5. CLARKE DICTIONARY (Pre-cached & Static)
       else if (author === 'clarke') {
-        const slug = cleanAbbr;
-        const cacheKey = `clarke_${slug}`;
+        const slug1 = cleanAbbr;
+        const slug2 = abbr.replace(/[^a-z0-9_-]/g, '');
+        const cacheKey = `clarke_${slug1}`;
 
         let entry = await getMMFromStore(cacheKey);
         const badge = document.getElementById('badge-clarke');
 
         if (!entry) {
-          // Check static pre-cached first
-          try {
-            const res = await fetch(`/static/mm/clarke/${slug}.json`);
-            if (res.ok) {
-              entry = await res.json();
-              await saveMMToStore(cacheKey, entry);
-            }
-          } catch(e) {}
+          // Check static files (cleanAbbr first, then slug2 with hyphen)
+          const candidates = [slug1, slug2];
+          if (info.clarke && info.clarke.name) {
+            candidates.push(info.clarke.name.toLowerCase().replace(/[^a-z0-9]/g, ''));
+          }
+          for (const cand of candidates) {
+            if (entry) break;
+            try {
+              const res = await fetch(`/static/mm/clarke/${cand}.json`);
+              if (res.ok) {
+                entry = await res.json();
+                await saveMMToStore(cacheKey, entry);
+                break;
+              }
+            } catch(e) {}
+          }
 
-          // If still not found, try proxy
+          // If still not found, try proxy if full_url exists
           if (!entry && info.clarke && info.clarke.full_url) {
             try {
               const res = await fetch(`/api/clarke_remedy?url=${encodeURIComponent(info.clarke.full_url)}`);
@@ -3881,16 +3923,11 @@ function cycleWeight(badge, id) {
               }
             } catch(e) {}
           }
+        }
 
-          if (entry && badge) {
-            badge.className = 'mm-badge-cache ready';
-            badge.textContent = 'Cached';
-          }
-        } else {
-          if (badge) {
-            badge.className = 'mm-badge-cache ready';
-            badge.textContent = 'Cached';
-          }
+        if (badge) {
+          badge.className = entry ? 'mm-badge-cache ready' : 'mm-badge-cache ondemand';
+          badge.textContent = entry ? 'Ready' : 'N/A';
         }
 
         if (entry) {

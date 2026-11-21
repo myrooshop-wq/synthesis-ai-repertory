@@ -38,7 +38,8 @@
       "rel_path": "a/abrot.htm",
       "full_url": "http://www.homeoint.org/clarke/a/abrot.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "absin": {
     "abbr": "absin",
@@ -61,7 +62,8 @@
       "rel_path": "a/acal.htm",
       "full_url": "http://www.homeoint.org/clarke/a/acal.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "acet-ac": {
     "abbr": "acet-ac",
@@ -75,7 +77,8 @@
       "rel_path": "a/acet_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/a/acet_ac.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "acetan": {
     "abbr": "acetan",
@@ -92,13 +95,14 @@
     "boericke_idx": 9,
     "allen_key": "ACO",
     "kent_slug": "acon",
-    "nash_slug": "aconitum_napellus",
+    "nash_slug": "aconitumnapellus",
     "clarke": {
       "name": "Acon",
       "rel_path": "a/acon.htm",
       "full_url": "http://www.homeoint.org/clarke/a/acon.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "act-sp": {
     "abbr": "act-sp",
@@ -112,7 +116,8 @@
       "rel_path": "a/act_sp.htm",
       "full_url": "http://www.homeoint.org/clarke/a/act_sp.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "adon": {
     "abbr": "adon",
@@ -155,7 +160,7 @@
     "full_name": "Aethusa Cynapium",
     "boericke_idx": 14,
     "allen_key": "AETH",
-    "kent_slug": null,
+    "kent_slug": "aethus",
     "nash_slug": null,
     "clarke": null
   },
@@ -165,13 +170,14 @@
     "boericke_idx": 16,
     "allen_key": "AGAR",
     "kent_slug": "agar",
-    "nash_slug": null,
+    "nash_slug": "agaricus",
     "clarke": {
       "name": "Agar",
       "rel_path": "a/agar.htm",
       "full_url": "http://www.homeoint.org/clarke/a/agar.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "agav-a": {
     "abbr": "agav-a",
@@ -205,7 +211,7 @@
     "full_name": "Ailanthus Glandulosa",
     "boericke_idx": 20,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ailanth",
     "nash_slug": null,
     "clarke": null
   },
@@ -260,13 +266,14 @@
     "boericke_idx": 26,
     "allen_key": "ALOE",
     "kent_slug": "aloe",
-    "nash_slug": "aloesocotrana",
+    "nash_slug": "aloesocotrina",
     "clarke": {
       "name": "Aloe",
       "rel_path": "a/aloe.htm",
       "full_url": "http://www.homeoint.org/clarke/a/aloe.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "alst-s": {
     "abbr": "alst-s",
@@ -289,7 +296,8 @@
       "rel_path": "a/alum.htm",
       "full_url": "http://www.homeoint.org/clarke/a/alum.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "alum-sil": {
     "abbr": "alum-sil",
@@ -297,7 +305,7 @@
     "boericke_idx": 29,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "alumina",
     "clarke": null
   },
   "alumn": {
@@ -332,7 +340,7 @@
     "full_name": "Ammonium Carbonicum",
     "boericke_idx": 33,
     "allen_key": "AMMC",
-    "kent_slug": null,
+    "kent_slug": "ammcarb",
     "nash_slug": "ammoniumcarbonicum",
     "clarke": null
   },
@@ -395,7 +403,7 @@
     "full_name": "Ambra Grisea",
     "boericke_idx": 40,
     "allen_key": "AMBR",
-    "kent_slug": null,
+    "kent_slug": "ambra",
     "nash_slug": null,
     "clarke": null
   },
@@ -411,7 +419,8 @@
       "rel_path": "a/ambro.htm",
       "full_url": "http://www.homeoint.org/clarke/a/ambro.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "aml-ns": {
     "abbr": "aml-ns",
@@ -461,7 +470,8 @@
       "rel_path": "a/amph.htm",
       "full_url": "http://www.homeoint.org/clarke/a/amph.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "amyg": {
     "abbr": "amyg",
@@ -475,7 +485,8 @@
       "rel_path": "a/amyg.htm",
       "full_url": "http://www.homeoint.org/clarke/a/amyg.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "amyg-p": {
     "abbr": "amyg-p",
@@ -498,7 +509,8 @@
       "rel_path": "a/anac.htm",
       "full_url": "http://www.homeoint.org/clarke/a/anac.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "anag": {
     "abbr": "anag",
@@ -512,7 +524,8 @@
       "rel_path": "a/anag.htm",
       "full_url": "http://www.homeoint.org/clarke/a/anag.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "anan": {
     "abbr": "anan",
@@ -562,7 +575,8 @@
       "rel_path": "a/anil.htm",
       "full_url": "http://www.homeoint.org/clarke/a/anil.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "anis": {
     "abbr": "anis",
@@ -587,7 +601,7 @@
     "full_name": "Antimonium Crudum",
     "boericke_idx": 55,
     "allen_key": "ANTC",
-    "kent_slug": "antc",
+    "kent_slug": "antimcrud",
     "nash_slug": "antimoniumcrudum",
     "clarke": null
   },
@@ -605,7 +619,7 @@
     "full_name": "Antimonium Tartaricum",
     "boericke_idx": 57,
     "allen_key": "ANTT",
-    "kent_slug": "antt",
+    "kent_slug": "antimtart",
     "nash_slug": "antimoniumtartaricum",
     "clarke": null
   },
@@ -650,8 +664,8 @@
     "full_name": "Apium Graveolens",
     "boericke_idx": 62,
     "allen_key": "APIS",
-    "kent_slug": "apis",
-    "nash_slug": "apismellifica",
+    "kent_slug": null,
+    "nash_slug": null,
     "clarke": null
   },
   "aphis": {
@@ -666,7 +680,8 @@
       "rel_path": "a/aphis.htm",
       "full_url": "http://www.homeoint.org/clarke/a/aphis.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "apis": {
     "abbr": "apis",
@@ -680,7 +695,8 @@
       "rel_path": "a/apis.htm",
       "full_url": "http://www.homeoint.org/clarke/a/apis.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "apoc-a": {
     "abbr": "apoc-a",
@@ -697,7 +713,7 @@
     "boericke_idx": 65,
     "allen_key": "APOC",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "apocynumcann",
     "clarke": null
   },
   "apom": {
@@ -721,7 +737,8 @@
       "rel_path": "a/aq_mar.htm",
       "full_url": "http://www.homeoint.org/clarke/a/aq_mar.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "aqui": {
     "abbr": "aqui",
@@ -747,7 +764,7 @@
     "boericke_idx": 70,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "aralia",
     "clarke": null
   },
   "aran": {
@@ -789,7 +806,8 @@
       "rel_path": "a/arg_cy.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arg_cy.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "arg-met": {
     "abbr": "arg-met",
@@ -812,7 +830,8 @@
       "rel_path": "a/arg_n.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arg_n.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "arge": {
     "abbr": "arge",
@@ -835,7 +854,8 @@
       "rel_path": "a/arist_m.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arist_m.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "arn": {
     "abbr": "arn",
@@ -849,7 +869,8 @@
       "rel_path": "a/arn.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arn.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "ars": {
     "abbr": "ars",
@@ -863,7 +884,8 @@
       "rel_path": "a/ars.htm",
       "full_url": "http://www.homeoint.org/clarke/a/ars.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "ars-br": {
     "abbr": "ars-br",
@@ -913,7 +935,8 @@
       "rel_path": "a/ars_s_f.htm",
       "full_url": "http://www.homeoint.org/clarke/a/ars_s_f.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "ars-s-r": {
     "abbr": "ars-s-r",
@@ -927,7 +950,8 @@
       "rel_path": "a/ars_s_r.htm",
       "full_url": "http://www.homeoint.org/clarke/a/ars_s_r.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "art-v": {
     "abbr": "art-v",
@@ -959,7 +983,8 @@
       "rel_path": "a/arum_i.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arum_i.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "arum-m": {
     "abbr": "arum-m",
@@ -973,14 +998,15 @@
       "rel_path": "a/arum_m.htm",
       "full_url": "http://www.homeoint.org/clarke/a/arum_m.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "arum-t": {
     "abbr": "arum-t",
     "full_name": "Arum Triphyllum",
     "boericke_idx": 87,
     "allen_key": "ARUM",
-    "kent_slug": null,
+    "kent_slug": "arumtri",
     "nash_slug": "arumtriphyllum",
     "clarke": null
   },
@@ -1005,7 +1031,8 @@
       "rel_path": "a/asaf.htm",
       "full_url": "http://www.homeoint.org/clarke/a/asaf.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "asar": {
     "abbr": "asar",
@@ -1013,13 +1040,14 @@
     "boericke_idx": 90,
     "allen_key": "ASAR",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "asarumeurop",
     "clarke": {
       "name": "Asar",
       "rel_path": "a/asar.htm",
       "full_url": "http://www.homeoint.org/clarke/a/asar.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "asc-c": {
     "abbr": "asc-c",
@@ -1060,7 +1088,8 @@
       "rel_path": "a/aspar.htm",
       "full_url": "http://www.homeoint.org/clarke/a/aspar.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "astac": {
     "abbr": "astac",
@@ -1092,7 +1121,8 @@
       "rel_path": "a/aur.htm",
       "full_url": "http://www.homeoint.org/clarke/a/aur.htm",
       "letter": "A"
-    }
+    },
+    "clarke_available": true
   },
   "aur-m-n": {
     "abbr": "aur-m-n",
@@ -1133,7 +1163,8 @@
       "rel_path": "b/bac.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bac.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bad": {
     "abbr": "bad",
@@ -1147,7 +1178,8 @@
       "rel_path": "b/bad.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bad.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bals-p": {
     "abbr": "bals-p",
@@ -1170,7 +1202,8 @@
       "rel_path": "b/bapt.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bapt.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bar-act": {
     "abbr": "bar-act",
@@ -1186,7 +1219,7 @@
     "full_name": "Baryta Carbonica",
     "boericke_idx": 107,
     "allen_key": "BARYT",
-    "kent_slug": null,
+    "kent_slug": "barcarb",
     "nash_slug": "barytacarbonica",
     "clarke": null
   },
@@ -1229,7 +1262,8 @@
       "rel_path": "b/bell.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bell.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bell-p": {
     "abbr": "bell-p",
@@ -1252,7 +1286,8 @@
       "rel_path": "b/benz_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/b/benz_ac.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "benzol": {
     "abbr": "benzol",
@@ -1296,13 +1331,14 @@
     "boericke_idx": null,
     "allen_key": "BISM",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "bismuth",
     "clarke": {
       "name": "Bism",
       "rel_path": "b/bism.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bism.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bism-sn": {
     "abbr": "bism-sn",
@@ -1310,7 +1346,7 @@
     "boericke_idx": 118,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "bismuth",
     "clarke": null
   },
   "blatta-a": {
@@ -1352,14 +1388,15 @@
       "rel_path": "b/bor_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bor_ac.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "borx": {
     "abbr": "borx",
     "full_name": "Borax Veneta",
     "boericke_idx": 123,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "borax",
     "nash_slug": "boraxveneta",
     "clarke": null
   },
@@ -1393,7 +1430,8 @@
       "rel_path": "b/bov.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bov.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "brach": {
     "abbr": "brach",
@@ -1407,7 +1445,8 @@
       "rel_path": "b/brach.htm",
       "full_url": "http://www.homeoint.org/clarke/b/brach.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "brom": {
     "abbr": "brom",
@@ -1421,7 +1460,8 @@
       "rel_path": "b/brom.htm",
       "full_url": "http://www.homeoint.org/clarke/b/brom.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "brucin": {
     "abbr": "brucin",
@@ -1435,7 +1475,8 @@
       "rel_path": "b/brucinum.htm",
       "full_url": "http://www.homeoint.org/clarke/b/brucinum.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bry": {
     "abbr": "bry",
@@ -1449,7 +1490,8 @@
       "rel_path": "b/bry.htm",
       "full_url": "http://www.homeoint.org/clarke/b/bry.htm",
       "letter": "B"
-    }
+    },
+    "clarke_available": true
   },
   "bufo": {
     "abbr": "bufo",
@@ -1481,7 +1523,8 @@
       "rel_path": "c/cact.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cact.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cadm-s": {
     "abbr": "cadm-s",
@@ -1504,7 +1547,8 @@
       "rel_path": "c/cainca.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cainca.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "caj": {
     "abbr": "caj",
@@ -1518,7 +1562,8 @@
       "rel_path": "c/caj.htm",
       "full_url": "http://www.homeoint.org/clarke/c/caj.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calad": {
     "abbr": "calad",
@@ -1532,7 +1577,8 @@
       "rel_path": "c/calad.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calad.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc": {
     "abbr": "calc",
@@ -1540,13 +1586,14 @@
     "boericke_idx": 137,
     "allen_key": "CALC",
     "kent_slug": "calc",
-    "nash_slug": "calcareacarbonica",
+    "nash_slug": "calcareaostrearum",
     "clarke": {
       "name": "Calc",
       "rel_path": "c/calc.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calc.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc-act": {
     "abbr": "calc-act",
@@ -1578,7 +1625,8 @@
       "rel_path": "c/calc_caust.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calc_caust.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc-f": {
     "abbr": "calc-f",
@@ -1586,7 +1634,7 @@
     "boericke_idx": 140,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "calcareafluor",
     "clarke": null
   },
   "calc-i": {
@@ -1610,7 +1658,8 @@
       "rel_path": "c/calc_ox.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calc_ox.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc-o": {
     "abbr": "calc-o",
@@ -1633,7 +1682,8 @@
       "rel_path": "c/calc_pic.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calc_pic.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc-p": {
     "abbr": "calc-p",
@@ -1656,7 +1706,8 @@
       "rel_path": "c/calc_sil.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calc_sil.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calc-s": {
     "abbr": "calc-s",
@@ -1679,7 +1730,8 @@
       "rel_path": "c/calen.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calen.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calo": {
     "abbr": "calo",
@@ -1693,7 +1745,8 @@
       "rel_path": "c/calo.htm",
       "full_url": "http://www.homeoint.org/clarke/c/calo.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "calth": {
     "abbr": "calth",
@@ -1710,21 +1763,22 @@
     "boericke_idx": 148,
     "allen_key": "CAMPH",
     "kent_slug": "camph",
-    "nash_slug": null,
+    "nash_slug": "camphor",
     "clarke": {
       "name": "Camph",
       "rel_path": "c/camph.htm",
       "full_url": "http://www.homeoint.org/clarke/c/camph.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "camph-br": {
     "abbr": "camph-br",
     "full_name": "Camphora Bromata",
     "boericke_idx": 149,
     "allen_key": null,
-    "kent_slug": null,
-    "nash_slug": null,
+    "kent_slug": "camph",
+    "nash_slug": "camphor",
     "clarke": null
   },
   "canch": {
@@ -1739,7 +1793,8 @@
       "rel_path": "c/canch.htm",
       "full_url": "http://www.homeoint.org/clarke/c/canch.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cann-i": {
     "abbr": "cann-i",
@@ -1765,13 +1820,14 @@
     "boericke_idx": 153,
     "allen_key": "CANTH",
     "kent_slug": "canth",
-    "nash_slug": "cantharis",
+    "nash_slug": "cantharisvesicatoria",
     "clarke": {
       "name": "Canth",
       "rel_path": "c/canth.htm",
       "full_url": "http://www.homeoint.org/clarke/c/canth.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "caps": {
     "abbr": "caps",
@@ -1779,13 +1835,14 @@
     "boericke_idx": 154,
     "allen_key": "CAPS",
     "kent_slug": "caps",
-    "nash_slug": null,
+    "nash_slug": "capsicum",
     "clarke": {
       "name": "Caps",
       "rel_path": "c/caps.htm",
       "full_url": "http://www.homeoint.org/clarke/c/caps.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "carb-ac": {
     "abbr": "carb-ac",
@@ -1808,15 +1865,16 @@
       "rel_path": "c/carb_an.htm",
       "full_url": "http://www.homeoint.org/clarke/c/carb_an.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "carb-v": {
     "abbr": "carb-v",
     "full_name": "Carbo Vegetabilis",
     "boericke_idx": 157,
     "allen_key": "CARBV",
-    "kent_slug": "carbv",
-    "nash_slug": "carbo_vegetabilis",
+    "kent_slug": "carbveg",
+    "nash_slug": "carbovegetabilis",
     "clarke": null
   },
   "carbn-h": {
@@ -1867,7 +1925,8 @@
       "rel_path": "c/card_m.htm",
       "full_url": "http://www.homeoint.org/clarke/c/card_m.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "carl": {
     "abbr": "carl",
@@ -1962,7 +2021,8 @@
       "rel_path": "c/caust.htm",
       "full_url": "http://www.homeoint.org/clarke/c/caust.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cean": {
     "abbr": "cean",
@@ -1976,7 +2036,8 @@
       "rel_path": "c/cean.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cean.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cedr": {
     "abbr": "cedr",
@@ -1990,7 +2051,8 @@
       "rel_path": "c/cedr.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cedr.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cench": {
     "abbr": "cench",
@@ -2004,7 +2066,8 @@
       "rel_path": "c/cench.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cench.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cer-ox": {
     "abbr": "cer-ox",
@@ -2018,7 +2081,8 @@
       "rel_path": "c/cer_ox.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cer_ox.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cer-s": {
     "abbr": "cer-s",
@@ -2032,7 +2096,8 @@
       "rel_path": "c/cer_s.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cer_s.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cere-b": {
     "abbr": "cere-b",
@@ -2049,13 +2114,14 @@
     "boericke_idx": 177,
     "allen_key": "CHAM",
     "kent_slug": "cham",
-    "nash_slug": "chamomilla",
+    "nash_slug": null,
     "clarke": {
       "name": "Cham",
       "rel_path": "c/cham.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cham.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "chap": {
     "abbr": "chap",
@@ -2078,7 +2144,8 @@
       "rel_path": "c/chel.htm",
       "full_url": "http://www.homeoint.org/clarke/c/chel.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "chelo": {
     "abbr": "chelo",
@@ -2095,7 +2162,7 @@
     "boericke_idx": 181,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "chenopodium",
     "clarke": null
   },
   "chen-v": {
@@ -2104,13 +2171,14 @@
     "boericke_idx": null,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "chenopodium",
     "clarke": {
       "name": "Chen. v",
       "rel_path": "c/chen_v.htm",
       "full_url": "http://www.homeoint.org/clarke/c/chen_v.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "chim": {
     "abbr": "chim",
@@ -2126,8 +2194,8 @@
     "full_name": "China Officinalis",
     "boericke_idx": 183,
     "allen_key": "CHIN",
-    "kent_slug": "chin",
-    "nash_slug": "cinchona_officinalis",
+    "kent_slug": "china",
+    "nash_slug": null,
     "clarke": null
   },
   "chinin-ar": {
@@ -2160,7 +2228,8 @@
       "rel_path": "c/chion.htm",
       "full_url": "http://www.homeoint.org/clarke/c/chion.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "chlf": {
     "abbr": "chlf",
@@ -2192,7 +2261,8 @@
       "rel_path": "c/chlorum.htm",
       "full_url": "http://www.homeoint.org/clarke/c/chlorum.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "chol": {
     "abbr": "chol",
@@ -2242,7 +2312,8 @@
       "rel_path": "c/cic_m.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cic_m.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cich": {
     "abbr": "cich",
@@ -2256,7 +2327,8 @@
       "rel_path": "c/cich.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cich.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cimic": {
     "abbr": "cimic",
@@ -2288,7 +2360,8 @@
       "rel_path": "c/cina.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cina.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cinch": {
     "abbr": "cinch",
@@ -2313,7 +2386,7 @@
     "full_name": "Cinnabaris",
     "boericke_idx": 198,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "cinnab",
     "nash_slug": null,
     "clarke": null
   },
@@ -2331,7 +2404,7 @@
     "full_name": "Cistus Canadensis",
     "boericke_idx": 200,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "cistus",
     "nash_slug": null,
     "clarke": null
   },
@@ -2356,7 +2429,8 @@
       "rel_path": "c/clem.htm",
       "full_url": "http://www.homeoint.org/clarke/c/clem.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cob": {
     "abbr": "cob",
@@ -2379,7 +2453,8 @@
       "rel_path": "c/coc_c.htm",
       "full_url": "http://www.homeoint.org/clarke/c/coc_c.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "coca": {
     "abbr": "coca",
@@ -2393,7 +2468,8 @@
       "rel_path": "c/coca.htm",
       "full_url": "http://www.homeoint.org/clarke/c/coca.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cocain": {
     "abbr": "cocain",
@@ -2416,7 +2492,8 @@
       "rel_path": "c/coc_c.htm",
       "full_url": "http://www.homeoint.org/clarke/c/coc_c.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cocc-s": {
     "abbr": "cocc-s",
@@ -2466,7 +2543,8 @@
       "rel_path": "c/coff_t.htm",
       "full_url": "http://www.homeoint.org/clarke/c/coff_t.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "colch": {
     "abbr": "colch",
@@ -2480,7 +2558,8 @@
       "rel_path": "c/colch.htm",
       "full_url": "http://www.homeoint.org/clarke/c/colch.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "coll": {
     "abbr": "coll",
@@ -2503,7 +2582,8 @@
       "rel_path": "c/coloc.htm",
       "full_url": "http://www.homeoint.org/clarke/c/coloc.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "com": {
     "abbr": "com",
@@ -2526,14 +2606,15 @@
       "rel_path": "c/conch.htm",
       "full_url": "http://www.homeoint.org/clarke/c/conch.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "con": {
     "abbr": "con",
     "full_name": "Conium Maculatum",
     "boericke_idx": 215,
     "allen_key": "CON",
-    "kent_slug": "con",
+    "kent_slug": "conium",
     "nash_slug": "coniummaculatum",
     "clarke": null
   },
@@ -2552,7 +2633,7 @@
     "boericke_idx": 218,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "copaiva",
     "clarke": null
   },
   "cor-r": {
@@ -2594,7 +2675,8 @@
       "rel_path": "c/corn_a.htm",
       "full_url": "http://www.homeoint.org/clarke/c/corn_a.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "corn-f": {
     "abbr": "corn-f",
@@ -2608,7 +2690,8 @@
       "rel_path": "c/corn_f.htm",
       "full_url": "http://www.homeoint.org/clarke/c/corn_f.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cory": {
     "abbr": "cory",
@@ -2649,7 +2732,8 @@
       "rel_path": "c/croc.htm",
       "full_url": "http://www.homeoint.org/clarke/c/croc.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "crot-c": {
     "abbr": "crot-c",
@@ -2663,7 +2747,8 @@
       "rel_path": "c/crot_c.htm",
       "full_url": "http://www.homeoint.org/clarke/c/crot_c.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "crot-h": {
     "abbr": "crot-h",
@@ -2677,14 +2762,15 @@
       "rel_path": "c/crot_h.htm",
       "full_url": "http://www.homeoint.org/clarke/c/crot_h.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "crot-t": {
     "abbr": "crot-t",
     "full_name": "Croton Tiglium",
     "boericke_idx": 227,
     "allen_key": "CROT",
-    "kent_slug": null,
+    "kent_slug": "crotontig",
     "nash_slug": "crotontiglium",
     "clarke": null
   },
@@ -2694,7 +2780,7 @@
     "boericke_idx": 228,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "cubeba",
     "clarke": null
   },
   "cuc-c": {
@@ -2745,7 +2831,8 @@
       "rel_path": "c/cupr.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cupr.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cupr-act": {
     "abbr": "cupr-act",
@@ -2777,7 +2864,8 @@
       "rel_path": "c/cur.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cur.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cycl": {
     "abbr": "cycl",
@@ -2785,13 +2873,14 @@
     "boericke_idx": 237,
     "allen_key": "CYCL",
     "kent_slug": "cycl",
-    "nash_slug": null,
+    "nash_slug": "cyclamen",
     "clarke": {
       "name": "Cycl",
       "rel_path": "c/cycl.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cycl.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cypr": {
     "abbr": "cypr",
@@ -2805,7 +2894,8 @@
       "rel_path": "c/cypr.htm",
       "full_url": "http://www.homeoint.org/clarke/c/cypr.htm",
       "letter": "C"
-    }
+    },
+    "clarke_available": true
   },
   "cyt-l": {
     "abbr": "cyt-l",
@@ -2846,7 +2936,8 @@
       "rel_path": "d/der.htm",
       "full_url": "http://www.homeoint.org/clarke/d/der.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dict": {
     "abbr": "dict",
@@ -2860,14 +2951,15 @@
       "rel_path": "d/dict.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dict.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dig": {
     "abbr": "dig",
     "full_name": "Digitalis Purpurea",
     "boericke_idx": 242,
     "allen_key": "DIGIT",
-    "kent_slug": null,
+    "kent_slug": "digital",
     "nash_slug": "digitalispurpurea",
     "clarke": null
   },
@@ -2886,7 +2978,7 @@
     "boericke_idx": 243,
     "allen_key": "DIOS",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "dioscoreavill",
     "clarke": null
   },
   "diph": {
@@ -2901,7 +2993,8 @@
       "rel_path": "d/diph.htm",
       "full_url": "http://www.homeoint.org/clarke/d/diph.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dol": {
     "abbr": "dol",
@@ -2909,13 +3002,14 @@
     "boericke_idx": 246,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "dolichosprur",
     "clarke": {
       "name": "Dol",
       "rel_path": "d/dol.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dol.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dor": {
     "abbr": "dor",
@@ -2929,7 +3023,8 @@
       "rel_path": "d/dor.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dor.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dros": {
     "abbr": "dros",
@@ -2937,13 +3032,14 @@
     "boericke_idx": 248,
     "allen_key": "DROS",
     "kent_slug": "dros",
-    "nash_slug": "droserarotundifolia",
+    "nash_slug": null,
     "clarke": {
       "name": "Dros",
       "rel_path": "d/dros.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dros.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dub": {
     "abbr": "dub",
@@ -2957,7 +3053,8 @@
       "rel_path": "d/dub.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dub.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "dubo-m": {
     "abbr": "dubo-m",
@@ -2980,7 +3077,8 @@
       "rel_path": "d/dulc.htm",
       "full_url": "http://www.homeoint.org/clarke/d/dulc.htm",
       "letter": "D"
-    }
+    },
+    "clarke_available": true
   },
   "echi": {
     "abbr": "echi",
@@ -3003,7 +3101,8 @@
       "rel_path": "e/elaps.htm",
       "full_url": "http://www.homeoint.org/clarke/e/elaps.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "elat": {
     "abbr": "elat",
@@ -3017,7 +3116,8 @@
       "rel_path": "e/elat.htm",
       "full_url": "http://www.homeoint.org/clarke/e/elat.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "eos": {
     "abbr": "eos",
@@ -3049,7 +3149,8 @@
       "rel_path": "e/epih.htm",
       "full_url": "http://www.homeoint.org/clarke/e/epih.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "epiph": {
     "abbr": "epiph",
@@ -3057,13 +3158,14 @@
     "boericke_idx": 256,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "epiphegus",
     "clarke": {
       "name": "Epiph",
       "rel_path": "e/epiph.htm",
       "full_url": "http://www.homeoint.org/clarke/e/epiph.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "equis-h": {
     "abbr": "equis-h",
@@ -3086,7 +3188,8 @@
       "rel_path": "e/erech.htm",
       "full_url": "http://www.homeoint.org/clarke/e/erech.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "erig": {
     "abbr": "erig",
@@ -3100,7 +3203,8 @@
       "rel_path": "e/erig.htm",
       "full_url": "http://www.homeoint.org/clarke/e/erig.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "erio": {
     "abbr": "erio",
@@ -3150,7 +3254,8 @@
       "rel_path": "e/eug.htm",
       "full_url": "http://www.homeoint.org/clarke/e/eug.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "euon-a": {
     "abbr": "euon-a",
@@ -3221,13 +3326,14 @@
     "boericke_idx": 272,
     "allen_key": "EUPHR",
     "kent_slug": "euphr",
-    "nash_slug": null,
+    "nash_slug": "euphrasia",
     "clarke": {
       "name": "Euphr",
       "rel_path": "e/euphr.htm",
       "full_url": "http://www.homeoint.org/clarke/e/euphr.htm",
       "letter": "E"
-    }
+    },
+    "clarke_available": true
   },
   "eupi": {
     "abbr": "eupi",
@@ -3259,7 +3365,8 @@
       "rel_path": "f/fago.htm",
       "full_url": "http://www.homeoint.org/clarke/f/fago.htm",
       "letter": "F"
-    }
+    },
+    "clarke_available": true
   },
   "fel": {
     "abbr": "fel",
@@ -3275,7 +3382,7 @@
     "full_name": "Ferrum Metallicum",
     "boericke_idx": 277,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ferrum",
     "nash_slug": "ferrummetallicum",
     "clarke": null
   },
@@ -3284,7 +3391,7 @@
     "full_name": "Ferrum Iodatum",
     "boericke_idx": 278,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ferrum",
     "nash_slug": null,
     "clarke": null
   },
@@ -3293,7 +3400,7 @@
     "full_name": "Ferrum Magneticum",
     "boericke_idx": 279,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ferrum",
     "nash_slug": null,
     "clarke": null
   },
@@ -3302,7 +3409,7 @@
     "full_name": "Ferrum Phosphoricum",
     "boericke_idx": 280,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ferrum",
     "nash_slug": "ferrumphosphoricum",
     "clarke": null
   },
@@ -3311,7 +3418,7 @@
     "full_name": "Ferrum Picricum",
     "boericke_idx": 281,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "ferrum",
     "nash_slug": null,
     "clarke": null
   },
@@ -3354,7 +3461,8 @@
       "rel_path": "f/form.htm",
       "full_url": "http://www.homeoint.org/clarke/f/form.htm",
       "letter": "F"
-    }
+    },
+    "clarke_available": true
   },
   "formal": {
     "abbr": "formal",
@@ -3395,7 +3503,8 @@
       "rel_path": "f/franz.htm",
       "full_url": "http://www.homeoint.org/clarke/f/franz.htm",
       "letter": "F"
-    }
+    },
+    "clarke_available": true
   },
   "frax": {
     "abbr": "frax",
@@ -3472,7 +3581,8 @@
       "rel_path": "g/gamb.htm",
       "full_url": "http://www.homeoint.org/clarke/g/gamb.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "gaul": {
     "abbr": "gaul",
@@ -3489,13 +3599,14 @@
     "boericke_idx": 298,
     "allen_key": "GELS",
     "kent_slug": "gels",
-    "nash_slug": "gelsemium",
+    "nash_slug": null,
     "clarke": {
       "name": "Gels",
       "rel_path": "g/gels.htm",
       "full_url": "http://www.homeoint.org/clarke/g/gels.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "gent-l": {
     "abbr": "gent-l",
@@ -3536,7 +3647,8 @@
       "rel_path": "g/geum.htm",
       "full_url": "http://www.homeoint.org/clarke/g/geum.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "gins": {
     "abbr": "gins",
@@ -3559,7 +3671,8 @@
       "rel_path": "g/glon.htm",
       "full_url": "http://www.homeoint.org/clarke/g/glon.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "glyc": {
     "abbr": "glyc",
@@ -3582,7 +3695,8 @@
       "rel_path": "g/gnaph.htm",
       "full_url": "http://www.homeoint.org/clarke/g/gnaph.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "goss": {
     "abbr": "goss",
@@ -3614,7 +3728,8 @@
       "rel_path": "g/graph.htm",
       "full_url": "http://www.homeoint.org/clarke/g/graph.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "grat": {
     "abbr": "grat",
@@ -3628,7 +3743,8 @@
       "rel_path": "g/grat.htm",
       "full_url": "http://www.homeoint.org/clarke/g/grat.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "grin": {
     "abbr": "grin",
@@ -3636,7 +3752,7 @@
     "boericke_idx": 310,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "grindeliarob",
     "clarke": null
   },
   "guaj": {
@@ -3669,7 +3785,8 @@
       "rel_path": "g/guaco.htm",
       "full_url": "http://www.homeoint.org/clarke/g/guaco.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "guar": {
     "abbr": "guar",
@@ -3683,7 +3800,8 @@
       "rel_path": "g/guarana.htm",
       "full_url": "http://www.homeoint.org/clarke/g/guarana.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "gunp": {
     "abbr": "gunp",
@@ -3697,7 +3815,8 @@
       "rel_path": "g/gunp.htm",
       "full_url": "http://www.homeoint.org/clarke/g/gunp.htm",
       "letter": "G"
-    }
+    },
+    "clarke_available": true
   },
   "gymno": {
     "abbr": "gymno",
@@ -3729,7 +3848,8 @@
       "rel_path": "h/hall.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hall.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "ham": {
     "abbr": "ham",
@@ -3743,7 +3863,8 @@
       "rel_path": "h/ham.htm",
       "full_url": "http://www.homeoint.org/clarke/h/ham.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hecla": {
     "abbr": "hecla",
@@ -3757,7 +3878,8 @@
       "rel_path": "h/hecla.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hecla.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hedeo": {
     "abbr": "hedeo",
@@ -3798,7 +3920,8 @@
       "rel_path": "h/hell_f.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hell_f.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hell-o": {
     "abbr": "hell-o",
@@ -3812,7 +3935,8 @@
       "rel_path": "h/hell_o.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hell_o.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hell-v": {
     "abbr": "hell-v",
@@ -3826,7 +3950,8 @@
       "rel_path": "h/hell_v.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hell_v.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "helo": {
     "abbr": "helo",
@@ -3849,14 +3974,15 @@
       "rel_path": "h/helon.htm",
       "full_url": "http://www.homeoint.org/clarke/h/helon.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hep": {
     "abbr": "hep",
     "full_name": "Hepar Sulphur",
     "boericke_idx": 324,
     "allen_key": "HEPS",
-    "kent_slug": "hep",
+    "kent_slug": "hepar",
     "nash_slug": "heparsulphuriscalcareum",
     "clarke": null
   },
@@ -3924,7 +4050,7 @@
     "full_name": "Hydrastis Canadensis",
     "boericke_idx": 332,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "hydrastis",
     "nash_slug": "hydrastiscanadensis",
     "clarke": null
   },
@@ -3949,7 +4075,8 @@
       "rel_path": "h/hydrang.htm",
       "full_url": "http://www.homeoint.org/clarke/h/hydrang.htm",
       "letter": "H"
-    }
+    },
+    "clarke_available": true
   },
   "hydrc": {
     "abbr": "hydrc",
@@ -3965,7 +4092,7 @@
     "full_name": "Hyoscyamus Niger",
     "boericke_idx": 336,
     "allen_key": "HYOS",
-    "kent_slug": "hyos",
+    "kent_slug": null,
     "nash_slug": "hyoscyamusniger",
     "clarke": null
   },
@@ -3975,7 +4102,7 @@
     "boericke_idx": 337,
     "allen_key": "HYPPER",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "hypericum",
     "clarke": null
   },
   "iber": {
@@ -3990,7 +4117,8 @@
       "rel_path": "i/iber.htm",
       "full_url": "http://www.homeoint.org/clarke/i/iber.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "ichth": {
     "abbr": "ichth",
@@ -4013,7 +4141,8 @@
       "rel_path": "i/ictod.htm",
       "full_url": "http://www.homeoint.org/clarke/i/ictod.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "ign": {
     "abbr": "ign",
@@ -4021,13 +4150,14 @@
     "boericke_idx": 341,
     "allen_key": "IGN",
     "kent_slug": "ign",
-    "nash_slug": "ignatiaamara",
+    "nash_slug": "ignatia",
     "clarke": {
       "name": "Ign",
       "rel_path": "i/ign.htm",
       "full_url": "http://www.homeoint.org/clarke/i/ign.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "ilx-a": {
     "abbr": "ilx-a",
@@ -4050,7 +4180,8 @@
       "rel_path": "i/indg.htm",
       "full_url": "http://www.homeoint.org/clarke/i/indg.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "indol": {
     "abbr": "indol",
@@ -4082,7 +4213,8 @@
       "rel_path": "i/influ.htm",
       "full_url": "http://www.homeoint.org/clarke/i/influ.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "ins": {
     "abbr": "ins",
@@ -4114,7 +4246,8 @@
       "rel_path": "i/iod.htm",
       "full_url": "http://www.homeoint.org/clarke/i/iod.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "iodof": {
     "abbr": "iodof",
@@ -4164,7 +4297,8 @@
       "rel_path": "i/itu.htm",
       "full_url": "http://www.homeoint.org/clarke/i/itu.htm",
       "letter": "I"
-    }
+    },
+    "clarke_available": true
   },
   "jab": {
     "abbr": "jab",
@@ -4178,7 +4312,8 @@
       "rel_path": "j/jab.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jab.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "jac-c": {
     "abbr": "jac-c",
@@ -4192,7 +4327,8 @@
       "rel_path": "j/jac_c.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jac_c.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "jac-g": {
     "abbr": "jac-g",
@@ -4206,7 +4342,8 @@
       "rel_path": "j/jac_g.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jac_g.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "jal": {
     "abbr": "jal",
@@ -4238,7 +4375,8 @@
       "rel_path": "j/jatr_u.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jatr_u.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "joan": {
     "abbr": "joan",
@@ -4261,7 +4399,8 @@
       "rel_path": "j/jug_c.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jug_c.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "jug-r": {
     "abbr": "jug-r",
@@ -4275,7 +4414,8 @@
       "rel_path": "j/jug_r.htm",
       "full_url": "http://www.homeoint.org/clarke/j/jug_r.htm",
       "letter": "J"
-    }
+    },
+    "clarke_available": true
   },
   "junc-e": {
     "abbr": "junc-e",
@@ -4325,7 +4465,8 @@
       "rel_path": "k/kali_bi.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_bi.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-br": {
     "abbr": "kali-br",
@@ -4357,7 +4498,8 @@
       "rel_path": "k/kali_cit.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_cit.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-cy": {
     "abbr": "kali-cy",
@@ -4371,14 +4513,15 @@
       "rel_path": "k/kali_cy.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_cy.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-c": {
     "abbr": "kali-c",
     "full_name": "Kalium Carbonicum",
     "boericke_idx": 366,
     "allen_key": "KALIC",
-    "kent_slug": "kalic",
+    "kent_slug": null,
     "nash_slug": "kalicarbonicum",
     "clarke": null
   },
@@ -4394,7 +4537,8 @@
       "rel_path": "k/kali_fcy.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_fcy.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-i": {
     "abbr": "kali-i",
@@ -4426,7 +4570,8 @@
       "rel_path": "k/kali_n.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_n.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-ox": {
     "abbr": "kali-ox",
@@ -4440,7 +4585,8 @@
       "rel_path": "k/kali_ox.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_ox.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kali-perm": {
     "abbr": "kali-perm",
@@ -4490,7 +4636,8 @@
       "rel_path": "k/kali_tel.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kali_tel.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kalm": {
     "abbr": "kalm",
@@ -4504,7 +4651,8 @@
       "rel_path": "k/kalm.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kalm.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kam": {
     "abbr": "kam",
@@ -4518,7 +4666,8 @@
       "rel_path": "k/kamala.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kamala.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kaol": {
     "abbr": "kaol",
@@ -4541,7 +4690,8 @@
       "rel_path": "k/karaka.htm",
       "full_url": "http://www.homeoint.org/clarke/k/karaka.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kino": {
     "abbr": "kino",
@@ -4555,7 +4705,8 @@
       "rel_path": "k/kino.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kino.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kola": {
     "abbr": "kola",
@@ -4578,7 +4729,8 @@
       "rel_path": "k/kousso.htm",
       "full_url": "http://www.homeoint.org/clarke/k/kousso.htm",
       "letter": "K"
-    }
+    },
+    "clarke_available": true
   },
   "kreos": {
     "abbr": "kreos",
@@ -4603,7 +4755,7 @@
     "full_name": "Lac Caninum",
     "boericke_idx": 382,
     "allen_key": "LACC",
-    "kent_slug": null,
+    "kent_slug": "laccan",
     "nash_slug": "laccaninum",
     "clarke": null
   },
@@ -4628,7 +4780,8 @@
       "rel_path": "l/lach.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lach.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lach": {
     "abbr": "lach",
@@ -4642,7 +4795,8 @@
       "rel_path": "l/lach.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lach.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lachn": {
     "abbr": "lachn",
@@ -4656,7 +4810,8 @@
       "rel_path": "l/lachn.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lachn.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lact-v": {
     "abbr": "lact-v",
@@ -4688,7 +4843,8 @@
       "rel_path": "l/lap_a.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lap_a.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lapa": {
     "abbr": "lapa",
@@ -4702,7 +4858,8 @@
       "rel_path": "l/lap_a.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lap_a.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lappa": {
     "abbr": "lappa",
@@ -4725,7 +4882,8 @@
       "rel_path": "l/lath.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lath.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lat-k": {
     "abbr": "lat-k",
@@ -4739,7 +4897,8 @@
       "rel_path": "l/lat_k.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lat_k.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lat-m": {
     "abbr": "lat-m",
@@ -4762,14 +4921,15 @@
       "rel_path": "l/lath.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lath.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "laur": {
     "abbr": "laur",
     "full_name": "Laurocerasus",
     "boericke_idx": 392,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "lauro",
     "nash_slug": "laurocerasus",
     "clarke": null
   },
@@ -4794,7 +4954,8 @@
       "rel_path": "l/led.htm",
       "full_url": "http://www.homeoint.org/clarke/l/led.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lem-m": {
     "abbr": "lem-m",
@@ -4826,7 +4987,8 @@
       "rel_path": "l/lept.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lept.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "liat": {
     "abbr": "liat",
@@ -4849,7 +5011,8 @@
       "rel_path": "l/lil_t.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lil_t.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lim": {
     "abbr": "lim",
@@ -4890,7 +5053,8 @@
       "rel_path": "l/lith_c.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lith_c.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lob": {
     "abbr": "lob",
@@ -4913,7 +5077,8 @@
       "rel_path": "l/lob_d.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lob_d.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lob-p": {
     "abbr": "lob-p",
@@ -4954,7 +5119,8 @@
       "rel_path": "l/luna.htm",
       "full_url": "http://www.homeoint.org/clarke/l/luna.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lup": {
     "abbr": "lup",
@@ -4968,7 +5134,8 @@
       "rel_path": "l/lup.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lup.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lyc": {
     "abbr": "lyc",
@@ -4982,7 +5149,8 @@
       "rel_path": "l/lyc.htm",
       "full_url": "http://www.homeoint.org/clarke/l/lyc.htm",
       "letter": "L"
-    }
+    },
+    "clarke_available": true
   },
   "lycpr": {
     "abbr": "lycpr",
@@ -5023,7 +5191,8 @@
       "rel_path": "m/mag_c.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mag_c.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mag-m": {
     "abbr": "mag-m",
@@ -5037,7 +5206,8 @@
       "rel_path": "m/mag_m.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mag_m.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mag-p": {
     "abbr": "mag-p",
@@ -5051,7 +5221,8 @@
       "rel_path": "m/mag_p.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mag_p.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mag-s": {
     "abbr": "mag-s",
@@ -5065,7 +5236,8 @@
       "rel_path": "m/mag_s.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mag_s.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "magn-gr": {
     "abbr": "magn-gr",
@@ -5088,7 +5260,8 @@
       "rel_path": "m/maland.htm",
       "full_url": "http://www.homeoint.org/clarke/m/maland.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "malar": {
     "abbr": "malar",
@@ -5102,7 +5275,8 @@
       "rel_path": "m/malar.htm",
       "full_url": "http://www.homeoint.org/clarke/m/malar.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "manc": {
     "abbr": "manc",
@@ -5116,7 +5290,8 @@
       "rel_path": "m/manc.htm",
       "full_url": "http://www.homeoint.org/clarke/m/manc.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mand": {
     "abbr": "mand",
@@ -5130,7 +5305,8 @@
       "rel_path": "m/mand.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mand.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mang": {
     "abbr": "mang",
@@ -5144,7 +5320,8 @@
       "rel_path": "m/mang.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mang.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mang-act": {
     "abbr": "mang-act",
@@ -5178,7 +5355,7 @@
     "full_name": "Medorrhinum",
     "boericke_idx": 422,
     "allen_key": "MED",
-    "kent_slug": null,
+    "kent_slug": "medorrh",
     "nash_slug": "medorrhinum",
     "clarke": null
   },
@@ -5194,7 +5371,8 @@
       "rel_path": "m/medusa.htm",
       "full_url": "http://www.homeoint.org/clarke/m/medusa.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mel-c-s": {
     "abbr": "mel-c-s",
@@ -5235,7 +5413,8 @@
       "rel_path": "m/melit.htm",
       "full_url": "http://www.homeoint.org/clarke/m/melit.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "menis": {
     "abbr": "menis",
@@ -5270,13 +5449,14 @@
     "boericke_idx": 429,
     "allen_key": "MENYT",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "menyanthes",
     "clarke": {
       "name": "Meny",
       "rel_path": "m/meny.htm",
       "full_url": "http://www.homeoint.org/clarke/m/meny.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "meph": {
     "abbr": "meph",
@@ -5290,7 +5470,8 @@
       "rel_path": "m/meph.htm",
       "full_url": "http://www.homeoint.org/clarke/m/meph.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "merc": {
     "abbr": "merc",
@@ -5304,7 +5485,8 @@
       "rel_path": "m/merc.htm",
       "full_url": "http://www.homeoint.org/clarke/m/merc.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "merc-cy": {
     "abbr": "merc-cy",
@@ -5318,7 +5500,8 @@
       "rel_path": "m/merc_cy.htm",
       "full_url": "http://www.homeoint.org/clarke/m/merc_cy.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "merc-c": {
     "abbr": "merc-c",
@@ -5335,7 +5518,7 @@
     "boericke_idx": 434,
     "allen_key": "MERCD",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "mercurius",
     "clarke": null
   },
   "merc-i-f": {
@@ -5344,7 +5527,7 @@
     "boericke_idx": 435,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "mercurius",
     "clarke": null
   },
   "merc-i-r": {
@@ -5353,7 +5536,7 @@
     "boericke_idx": 436,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "mercurius",
     "clarke": null
   },
   "merc-k-i": {
@@ -5362,13 +5545,14 @@
     "boericke_idx": null,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "mercurius",
     "clarke": {
       "name": "Merc. k. i",
       "rel_path": "m/merc_k_i.htm",
       "full_url": "http://www.homeoint.org/clarke/m/merc_k_i.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "merc-sul": {
     "abbr": "merc-sul",
@@ -5376,13 +5560,14 @@
     "boericke_idx": 437,
     "allen_key": "MERCSUL",
     "kent_slug": "mercsul",
-    "nash_slug": null,
+    "nash_slug": "mercurius",
     "clarke": {
       "name": "Merc.         sul",
       "rel_path": "m/merc_sul.htm",
       "full_url": "http://www.homeoint.org/clarke/m/merc_sul.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "merl": {
     "abbr": "merl",
@@ -5414,7 +5599,8 @@
       "rel_path": "m/mez.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mez.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "micr": {
     "abbr": "micr",
@@ -5437,7 +5623,8 @@
       "rel_path": "m/mill.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mill.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mit": {
     "abbr": "mit",
@@ -5469,7 +5656,8 @@
       "rel_path": "m/morph.htm",
       "full_url": "http://www.homeoint.org/clarke/m/morph.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mosch": {
     "abbr": "mosch",
@@ -5483,7 +5671,8 @@
       "rel_path": "m/mosch.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mosch.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mur-ac": {
     "abbr": "mur-ac",
@@ -5497,7 +5686,8 @@
       "rel_path": "m/mur_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/m/mur_ac.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "murx": {
     "abbr": "murx",
@@ -5520,7 +5710,8 @@
       "rel_path": "m/musa.htm",
       "full_url": "http://www.homeoint.org/clarke/m/musa.htm",
       "letter": "M"
-    }
+    },
+    "clarke_available": true
   },
   "mygal": {
     "abbr": "mygal",
@@ -5579,7 +5770,8 @@
       "rel_path": "n/naja.htm",
       "full_url": "http://www.homeoint.org/clarke/n/naja.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "naphtin": {
     "abbr": "naphtin",
@@ -5620,15 +5812,16 @@
       "rel_path": "n/nat_cac.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_cac.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nat-c": {
     "abbr": "nat-c",
     "full_name": "Natrium Carbonicum",
     "boericke_idx": 458,
     "allen_key": "NATC",
-    "kent_slug": null,
-    "nash_slug": null,
+    "kent_slug": "natcarb",
+    "nash_slug": "natrumcarbonicum",
     "clarke": null
   },
   "nat-hchls": {
@@ -5652,7 +5845,8 @@
       "rel_path": "n/nat_m.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_m.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nat-n": {
     "abbr": "nat-n",
@@ -5666,15 +5860,16 @@
       "rel_path": "n/nat_n.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_n.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nat-p": {
     "abbr": "nat-p",
     "full_name": "Natrium Phosphoricum",
     "boericke_idx": 462,
     "allen_key": null,
-    "kent_slug": null,
-    "nash_slug": null,
+    "kent_slug": "natphos",
+    "nash_slug": "natrumphos",
     "clarke": null
   },
   "nat-sal": {
@@ -5689,15 +5884,16 @@
       "rel_path": "n/nat_sal.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_sal.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nat-s": {
     "abbr": "nat-s",
     "full_name": "Natrium Sulphuricum",
     "boericke_idx": 463,
     "allen_key": "NATS",
-    "kent_slug": null,
-    "nash_slug": null,
+    "kent_slug": "natsul",
+    "nash_slug": "natrumsulphuricum",
     "clarke": null
   },
   "nat-sel": {
@@ -5712,7 +5908,8 @@
       "rel_path": "n/nat_sel.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_sel.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nat-sil": {
     "abbr": "nat-sil",
@@ -5726,7 +5923,8 @@
       "rel_path": "n/nat_sil.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nat_sil.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nicc": {
     "abbr": "nicc",
@@ -5740,7 +5938,8 @@
       "rel_path": "n/nicc.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nicc.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nicc-met": {
     "abbr": "nicc-met",
@@ -5763,7 +5962,8 @@
       "rel_path": "n/nicc_s.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nicc_s.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nit-ac": {
     "abbr": "nit-ac",
@@ -5771,13 +5971,14 @@
     "boericke_idx": 467,
     "allen_key": "NITAC",
     "kent_slug": "nitac",
-    "nash_slug": "nitricacid",
+    "nash_slug": null,
     "clarke": {
       "name": "Nit. ac",
       "rel_path": "n/nit_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nit_ac.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nit-m-ac": {
     "abbr": "nit-m-ac",
@@ -5809,7 +6010,8 @@
       "rel_path": "n/nuph.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nuph.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nux-m": {
     "abbr": "nux-m",
@@ -5823,7 +6025,8 @@
       "rel_path": "n/nux_m.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nux_m.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nux-v": {
     "abbr": "nux-v",
@@ -5837,7 +6040,8 @@
       "rel_path": "n/nux_v.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nux_v.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nyct": {
     "abbr": "nyct",
@@ -5851,7 +6055,8 @@
       "rel_path": "n/nyct.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nyct.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "nymph": {
     "abbr": "nymph",
@@ -5865,7 +6070,8 @@
       "rel_path": "n/nymph.htm",
       "full_url": "http://www.homeoint.org/clarke/n/nymph.htm",
       "letter": "N"
-    }
+    },
+    "clarke_available": true
   },
   "oci": {
     "abbr": "oci",
@@ -5897,7 +6103,8 @@
       "rel_path": "o/ol_an.htm",
       "full_url": "http://www.homeoint.org/clarke/o/ol_an.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "ol-j": {
     "abbr": "ol-j",
@@ -5938,7 +6145,8 @@
       "rel_path": "o/onis.htm",
       "full_url": "http://www.homeoint.org/clarke/o/onis.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "onon": {
     "abbr": "onon",
@@ -5952,7 +6160,8 @@
       "rel_path": "o/onon.htm",
       "full_url": "http://www.homeoint.org/clarke/o/onon.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "onos": {
     "abbr": "onos",
@@ -5966,7 +6175,8 @@
       "rel_path": "o/onos.htm",
       "full_url": "http://www.homeoint.org/clarke/o/onos.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "oper": {
     "abbr": "oper",
@@ -5989,7 +6199,8 @@
       "rel_path": "o/op.htm",
       "full_url": "http://www.homeoint.org/clarke/o/op.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "opun-f": {
     "abbr": "opun-f",
@@ -6012,7 +6223,8 @@
       "rel_path": "o/orch.htm",
       "full_url": "http://www.homeoint.org/clarke/o/orch.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "oreo": {
     "abbr": "oreo",
@@ -6035,7 +6247,8 @@
       "rel_path": "o/orig.htm",
       "full_url": "http://www.homeoint.org/clarke/o/orig.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "orni": {
     "abbr": "orni",
@@ -6058,7 +6271,8 @@
       "rel_path": "o/osm.htm",
       "full_url": "http://www.homeoint.org/clarke/o/osm.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "ost": {
     "abbr": "ost",
@@ -6072,7 +6286,8 @@
       "rel_path": "o/ost.htm",
       "full_url": "http://www.homeoint.org/clarke/o/ost.htm",
       "letter": "O"
-    }
+    },
+    "clarke_available": true
   },
   "ov": {
     "abbr": "ov",
@@ -6149,7 +6364,8 @@
       "rel_path": "p/pancr.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pancr.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "paraf": {
     "abbr": "paraf",
@@ -6163,7 +6379,8 @@
       "rel_path": "p/paraf.htm",
       "full_url": "http://www.homeoint.org/clarke/p/paraf.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pareir": {
     "abbr": "pareir",
@@ -6171,7 +6388,7 @@
     "boericke_idx": 499,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "pareira",
     "clarke": null
   },
   "pariet": {
@@ -6186,7 +6403,8 @@
       "rel_path": "p/pariet.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pariet.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "parot": {
     "abbr": "parot",
@@ -6200,7 +6418,8 @@
       "rel_path": "p/parot.htm",
       "full_url": "http://www.homeoint.org/clarke/p/parot.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "par": {
     "abbr": "par",
@@ -6241,7 +6460,8 @@
       "rel_path": "p/past.htm",
       "full_url": "http://www.homeoint.org/clarke/p/past.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pen": {
     "abbr": "pen",
@@ -6264,7 +6484,8 @@
       "rel_path": "p/pers.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pers.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pert": {
     "abbr": "pert",
@@ -6287,7 +6508,8 @@
       "rel_path": "p/pest.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pest.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "petros": {
     "abbr": "petros",
@@ -6295,7 +6517,7 @@
     "boericke_idx": 505,
     "allen_key": "PETROS",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "petroselinum",
     "clarke": null
   },
   "petr": {
@@ -6303,7 +6525,7 @@
     "full_name": "Petroleum",
     "boericke_idx": 504,
     "allen_key": null,
-    "kent_slug": null,
+    "kent_slug": "petrol",
     "nash_slug": "petroleum",
     "clarke": null
   },
@@ -6331,7 +6553,7 @@
     "boericke_idx": 508,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "phellandrium",
     "clarke": null
   },
   "phlor": {
@@ -6346,14 +6568,15 @@
       "rel_path": "p/phlor.htm",
       "full_url": "http://www.homeoint.org/clarke/p/phlor.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "phos": {
     "abbr": "phos",
     "full_name": "Phosphorus",
     "boericke_idx": 509,
     "allen_key": "PHO",
-    "kent_slug": "phos",
+    "kent_slug": null,
     "nash_slug": "phosphorus",
     "clarke": null
   },
@@ -6387,7 +6610,8 @@
       "rel_path": "p/phyt.htm",
       "full_url": "http://www.homeoint.org/clarke/p/phyt.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pic-ac": {
     "abbr": "pic-ac",
@@ -6401,7 +6625,8 @@
       "rel_path": "p/pic_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pic_ac.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "picro": {
     "abbr": "picro",
@@ -6415,7 +6640,8 @@
       "rel_path": "p/picro.htm",
       "full_url": "http://www.homeoint.org/clarke/p/picro.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pilo": {
     "abbr": "pilo",
@@ -6429,7 +6655,8 @@
       "rel_path": "p/pilo.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pilo.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pimp": {
     "abbr": "pimp",
@@ -6443,7 +6670,8 @@
       "rel_path": "p/pimp.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pimp.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pin-s": {
     "abbr": "pin-s",
@@ -6493,7 +6721,8 @@
       "rel_path": "p/pix.htm",
       "full_url": "http://www.homeoint.org/clarke/p/pix.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "plan": {
     "abbr": "plan",
@@ -6510,13 +6739,14 @@
     "boericke_idx": 520,
     "allen_key": "PLAT",
     "kent_slug": "plat",
-    "nash_slug": "platinum",
+    "nash_slug": null,
     "clarke": {
       "name": "Plat",
       "rel_path": "p/plat.htm",
       "full_url": "http://www.homeoint.org/clarke/p/plat.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "plat-m-n": {
     "abbr": "plat-m-n",
@@ -6530,7 +6760,8 @@
       "rel_path": "p/plat_m_n.htm",
       "full_url": "http://www.homeoint.org/clarke/p/plat_m_n.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "platan": {
     "abbr": "platan",
@@ -6555,8 +6786,8 @@
     "full_name": "Plumbum Metallicum",
     "boericke_idx": 522,
     "allen_key": "PLB",
-    "kent_slug": "plb",
-    "nash_slug": "plumbummetallicum",
+    "kent_slug": "plumb",
+    "nash_slug": null,
     "clarke": null
   },
   "podo": {
@@ -6679,7 +6910,8 @@
       "rel_path": "p/puls.htm",
       "full_url": "http://www.homeoint.org/clarke/p/puls.htm",
       "letter": "P"
-    }
+    },
+    "clarke_available": true
   },
   "pulx": {
     "abbr": "pulx",
@@ -6696,7 +6928,7 @@
     "boericke_idx": 536,
     "allen_key": "PYROG",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "pyrogen",
     "clarke": null
   },
   "quas": {
@@ -6720,7 +6952,8 @@
       "rel_path": "q/queb.htm",
       "full_url": "http://www.homeoint.org/clarke/q/queb.htm",
       "letter": "Q"
-    }
+    },
+    "clarke_available": true
   },
   "querc": {
     "abbr": "querc",
@@ -6773,7 +7006,7 @@
     "boericke_idx": 544,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "raphanus",
     "clarke": null
   },
   "rat": {
@@ -6788,7 +7021,8 @@
       "rel_path": "r/rat.htm",
       "full_url": "http://www.homeoint.org/clarke/r/rat.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "rham-cal": {
     "abbr": "rham-cal",
@@ -6814,13 +7048,14 @@
     "boericke_idx": null,
     "allen_key": "RHOD",
     "kent_slug": "rhod",
-    "nash_slug": null,
+    "nash_slug": "rhododendron",
     "clarke": {
       "name": "Rhod",
       "rel_path": "r/rhod.htm",
       "full_url": "http://www.homeoint.org/clarke/r/rhod.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "rhodi": {
     "abbr": "rhodi",
@@ -6854,7 +7089,7 @@
     "full_name": "Rhus Toxicodendron",
     "boericke_idx": 552,
     "allen_key": "RHUST",
-    "kent_slug": "rhust",
+    "kent_slug": null,
     "nash_slug": "rhustoxicodendron",
     "clarke": null
   },
@@ -6879,7 +7114,8 @@
       "rel_path": "r/ric.htm",
       "full_url": "http://www.homeoint.org/clarke/r/ric.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "rob": {
     "abbr": "rob",
@@ -6893,7 +7129,8 @@
       "rel_path": "r/rob.htm",
       "full_url": "http://www.homeoint.org/clarke/r/rob.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "ros-d": {
     "abbr": "ros-d",
@@ -6916,7 +7153,8 @@
       "rel_path": "r/rosm.htm",
       "full_url": "http://www.homeoint.org/clarke/r/rosm.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "rub-t": {
     "abbr": "rub-t",
@@ -6930,7 +7168,8 @@
       "rel_path": "r/rub_t.htm",
       "full_url": "http://www.homeoint.org/clarke/r/rub_t.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "rumx": {
     "abbr": "rumx",
@@ -6953,7 +7192,8 @@
       "rel_path": "r/ruta.htm",
       "full_url": "http://www.homeoint.org/clarke/r/ruta.htm",
       "letter": "R"
-    }
+    },
+    "clarke_available": true
   },
   "sabad": {
     "abbr": "sabad",
@@ -7003,7 +7243,8 @@
       "rel_path": "s/sal_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sal_ac.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sal-n": {
     "abbr": "sal-n",
@@ -7017,7 +7258,8 @@
       "rel_path": "s/sal_n.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sal_n.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "salol": {
     "abbr": "salol",
@@ -7031,7 +7273,8 @@
       "rel_path": "s/salol.htm",
       "full_url": "http://www.homeoint.org/clarke/s/salol.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "salv": {
     "abbr": "salv",
@@ -7063,7 +7306,8 @@
       "rel_path": "s/sang.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sang.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sangin-n": {
     "abbr": "sangin-n",
@@ -7086,7 +7330,8 @@
       "rel_path": "s/sanic.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sanic.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "santal": {
     "abbr": "santal",
@@ -7100,7 +7345,8 @@
       "rel_path": "s/santal.htm",
       "full_url": "http://www.homeoint.org/clarke/s/santal.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "santin": {
     "abbr": "santin",
@@ -7159,7 +7405,8 @@
       "rel_path": "s/sarr.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sarr.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sars": {
     "abbr": "sars",
@@ -7167,13 +7414,14 @@
     "boericke_idx": 575,
     "allen_key": "SARS",
     "kent_slug": "sars",
-    "nash_slug": null,
+    "nash_slug": "sarsaparilla",
     "clarke": {
       "name": "Sars",
       "rel_path": "s/sars.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sars.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "scam": {
     "abbr": "scam",
@@ -7187,7 +7435,8 @@
       "rel_path": "s/scam.htm",
       "full_url": "http://www.homeoint.org/clarke/s/scam.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "scol": {
     "abbr": "scol",
@@ -7201,7 +7450,8 @@
       "rel_path": "s/scol.htm",
       "full_url": "http://www.homeoint.org/clarke/s/scol.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "scroph-n": {
     "abbr": "scroph-n",
@@ -7224,7 +7474,8 @@
       "rel_path": "s/scut.htm",
       "full_url": "http://www.homeoint.org/clarke/s/scut.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sec": {
     "abbr": "sec",
@@ -7238,7 +7489,8 @@
       "rel_path": "s/sec.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sec.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sed-ac": {
     "abbr": "sed-ac",
@@ -7255,13 +7507,14 @@
     "boericke_idx": 580,
     "allen_key": "SEL",
     "kent_slug": "sel",
-    "nash_slug": null,
+    "nash_slug": "selenium",
     "clarke": {
       "name": "Sel",
       "rel_path": "s/sel.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sel.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "semp": {
     "abbr": "semp",
@@ -7275,7 +7528,8 @@
       "rel_path": "s/semp.htm",
       "full_url": "http://www.homeoint.org/clarke/s/semp.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "senec": {
     "abbr": "senec",
@@ -7289,7 +7543,8 @@
       "rel_path": "s/senec.htm",
       "full_url": "http://www.homeoint.org/clarke/s/senec.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "seneg": {
     "abbr": "seneg",
@@ -7303,7 +7558,8 @@
       "rel_path": "s/seneg.htm",
       "full_url": "http://www.homeoint.org/clarke/s/seneg.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "senn": {
     "abbr": "senn",
@@ -7317,7 +7573,8 @@
       "rel_path": "s/senna.htm",
       "full_url": "http://www.homeoint.org/clarke/s/senna.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sep": {
     "abbr": "sep",
@@ -7325,13 +7582,14 @@
     "boericke_idx": 585,
     "allen_key": "SEP",
     "kent_slug": "sep",
-    "nash_slug": "sepia",
+    "nash_slug": null,
     "clarke": {
       "name": "Sep",
       "rel_path": "s/sep.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sep.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "ser-ang": {
     "abbr": "ser-ang",
@@ -7354,7 +7612,8 @@
       "rel_path": "s/sil.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sil.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sil-mar": {
     "abbr": "sil-mar",
@@ -7368,7 +7627,8 @@
       "rel_path": "s/sil_mar.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sil_mar.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "silphu": {
     "abbr": "silphu",
@@ -7400,7 +7660,8 @@
       "rel_path": "s/sium.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sium.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "skat": {
     "abbr": "skat",
@@ -7432,7 +7693,8 @@
       "rel_path": "s/slag.htm",
       "full_url": "http://www.homeoint.org/clarke/s/slag.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sol": {
     "abbr": "sol",
@@ -7446,7 +7708,8 @@
       "rel_path": "s/sol.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sol.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sol-ni": {
     "abbr": "sol-ni",
@@ -7469,7 +7732,8 @@
       "rel_path": "s/sol_t_ae.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sol_t_ae.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "solid": {
     "abbr": "solid",
@@ -7483,15 +7747,16 @@
       "rel_path": "s/solid.htm",
       "full_url": "http://www.homeoint.org/clarke/s/solid.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "spig": {
     "abbr": "spig",
     "full_name": "Spigelia Anthelmia",
     "boericke_idx": 594,
     "allen_key": "SPIG",
-    "kent_slug": "spig",
-    "nash_slug": "spigeliaanthelmia",
+    "kent_slug": null,
+    "nash_slug": null,
     "clarke": null
   },
   "spira": {
@@ -7527,7 +7792,7 @@
     "boericke_idx": 598,
     "allen_key": null,
     "kent_slug": "squil",
-    "nash_slug": null,
+    "nash_slug": "squilla",
     "clarke": null
   },
   "stach": {
@@ -7542,7 +7807,8 @@
       "rel_path": "s/stach.htm",
       "full_url": "http://www.homeoint.org/clarke/s/stach.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "stann": {
     "abbr": "stann",
@@ -7559,13 +7825,14 @@
     "boericke_idx": 601,
     "allen_key": "STAPH",
     "kent_slug": "staph",
-    "nash_slug": "staphysagria",
+    "nash_slug": "staphisagria",
     "clarke": {
       "name": "Staph",
       "rel_path": "s/staph.htm",
       "full_url": "http://www.homeoint.org/clarke/s/staph.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "stel": {
     "abbr": "stel",
@@ -7579,7 +7846,8 @@
       "rel_path": "s/stel.htm",
       "full_url": "http://www.homeoint.org/clarke/s/stel.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "stict": {
     "abbr": "stict",
@@ -7605,13 +7873,14 @@
     "boericke_idx": 605,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "stillingia",
     "clarke": {
       "name": "Still",
       "rel_path": "s/still.htm",
       "full_url": "http://www.homeoint.org/clarke/s/still.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "stram": {
     "abbr": "stram",
@@ -7625,7 +7894,8 @@
       "rel_path": "s/stram.htm",
       "full_url": "http://www.homeoint.org/clarke/s/stram.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "stront-c": {
     "abbr": "stront-c",
@@ -7684,7 +7954,8 @@
       "rel_path": "s/succ.htm",
       "full_url": "http://www.homeoint.org/clarke/s/succ.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sul-ac": {
     "abbr": "sul-ac",
@@ -7692,13 +7963,14 @@
     "boericke_idx": 613,
     "allen_key": "SULAC",
     "kent_slug": "sulac",
-    "nash_slug": null,
+    "nash_slug": "sulphur",
     "clarke": {
       "name": "Sul. ac",
       "rel_path": "s/sul_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sul_ac.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sul-h": {
     "abbr": "sul-h",
@@ -7706,13 +7978,14 @@
     "boericke_idx": null,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "sulphur",
     "clarke": {
       "name": "Sul. h",
       "rel_path": "s/sul_h.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sul_h.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sul-i": {
     "abbr": "sul-i",
@@ -7720,7 +7993,7 @@
     "boericke_idx": 614,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "sulphur",
     "clarke": null
   },
   "sulfon": {
@@ -7738,7 +8011,7 @@
     "boericke_idx": 616,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "sulphur",
     "clarke": null
   },
   "sulph": {
@@ -7746,7 +8019,7 @@
     "full_name": "Sulphur",
     "boericke_idx": 617,
     "allen_key": "SUL",
-    "kent_slug": "sulph",
+    "kent_slug": null,
     "nash_slug": "sulphur",
     "clarke": null
   },
@@ -7762,7 +8035,8 @@
       "rel_path": "s/sumb.htm",
       "full_url": "http://www.homeoint.org/clarke/s/sumb.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "sym-r": {
     "abbr": "sym-r",
@@ -7785,7 +8059,8 @@
       "rel_path": "s/symph.htm",
       "full_url": "http://www.homeoint.org/clarke/s/symph.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "syph": {
     "abbr": "syph",
@@ -7799,7 +8074,8 @@
       "rel_path": "s/syph.htm",
       "full_url": "http://www.homeoint.org/clarke/s/syph.htm",
       "letter": "S"
-    }
+    },
+    "clarke_available": true
   },
   "syzyg": {
     "abbr": "syzyg",
@@ -7822,7 +8098,8 @@
       "rel_path": "t/tab.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tab.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tanac": {
     "abbr": "tanac",
@@ -7848,7 +8125,7 @@
     "boericke_idx": 626,
     "allen_key": "TARAX",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "taraxacum",
     "clarke": null
   },
   "tarent": {
@@ -7881,7 +8158,8 @@
       "rel_path": "t/tart_ac.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tart_ac.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tax": {
     "abbr": "tax",
@@ -7895,7 +8173,8 @@
       "rel_path": "t/tax.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tax.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tell": {
     "abbr": "tell",
@@ -7903,13 +8182,14 @@
     "boericke_idx": 631,
     "allen_key": null,
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "tellurium",
     "clarke": {
       "name": "Tell",
       "rel_path": "t/tell.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tell.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "ter": {
     "abbr": "ter",
@@ -7917,13 +8197,14 @@
     "boericke_idx": 632,
     "allen_key": "TER",
     "kent_slug": null,
-    "nash_slug": null,
+    "nash_slug": "terebinthina",
     "clarke": {
       "name": "Ter",
       "rel_path": "t/ter.htm",
       "full_url": "http://www.homeoint.org/clarke/t/ter.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "teucr": {
     "abbr": "teucr",
@@ -7946,7 +8227,8 @@
       "rel_path": "t/thal.htm",
       "full_url": "http://www.homeoint.org/clarke/t/thal.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "thal-met": {
     "abbr": "thal-met",
@@ -7969,14 +8251,15 @@
       "rel_path": "t/thea.htm",
       "full_url": "http://www.homeoint.org/clarke/t/thea.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "ther": {
     "abbr": "ther",
     "full_name": "Theridion Curassavicum",
     "boericke_idx": 636,
     "allen_key": "THER",
-    "kent_slug": null,
+    "kent_slug": "therid",
     "nash_slug": "theridioncurassavicum",
     "clarke": null
   },
@@ -7992,7 +8275,8 @@
       "rel_path": "t/thev.htm",
       "full_url": "http://www.homeoint.org/clarke/t/thev.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "thiosin": {
     "abbr": "thiosin",
@@ -8017,7 +8301,7 @@
     "full_name": "Thuja Occidentalis",
     "boericke_idx": 639,
     "allen_key": "THUJ",
-    "kent_slug": "thuj",
+    "kent_slug": null,
     "nash_slug": "thujaoccidentalis",
     "clarke": null
   },
@@ -8051,7 +8335,8 @@
       "rel_path": "t/thyr.htm",
       "full_url": "http://www.homeoint.org/clarke/t/thyr.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "til": {
     "abbr": "til",
@@ -8065,7 +8350,8 @@
       "rel_path": "t/til.htm",
       "full_url": "http://www.homeoint.org/clarke/t/til.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "titan": {
     "abbr": "titan",
@@ -8079,7 +8365,8 @@
       "rel_path": "t/titan.htm",
       "full_url": "http://www.homeoint.org/clarke/t/titan.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tong": {
     "abbr": "tong",
@@ -8093,7 +8380,8 @@
       "rel_path": "t/tong.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tong.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tor": {
     "abbr": "tor",
@@ -8116,7 +8404,8 @@
       "rel_path": "t/trach.htm",
       "full_url": "http://www.homeoint.org/clarke/t/trach.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "trad": {
     "abbr": "trad",
@@ -8130,7 +8419,8 @@
       "rel_path": "t/trad.htm",
       "full_url": "http://www.homeoint.org/clarke/t/trad.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "trib": {
     "abbr": "trib",
@@ -8207,7 +8497,8 @@
       "rel_path": "t/trop.htm",
       "full_url": "http://www.homeoint.org/clarke/t/trop.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tub": {
     "abbr": "tub",
@@ -8215,13 +8506,14 @@
     "boericke_idx": 654,
     "allen_key": "TUB",
     "kent_slug": "tub",
-    "nash_slug": null,
+    "nash_slug": "tuberculinum",
     "clarke": {
       "name": "Tub",
       "rel_path": "t/tub.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tub.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "tus-p": {
     "abbr": "tus-p",
@@ -8235,7 +8527,8 @@
       "rel_path": "t/tus_p.htm",
       "full_url": "http://www.homeoint.org/clarke/t/tus_p.htm",
       "letter": "T"
-    }
+    },
+    "clarke_available": true
   },
   "upa": {
     "abbr": "upa",
@@ -8267,7 +8560,8 @@
       "rel_path": "u/urea.htm",
       "full_url": "http://www.homeoint.org/clarke/u/urea.htm",
       "letter": "U"
-    }
+    },
+    "clarke_available": true
   },
   "urin": {
     "abbr": "urin",
@@ -8281,7 +8575,8 @@
       "rel_path": "u/urinum.htm",
       "full_url": "http://www.homeoint.org/clarke/u/urinum.htm",
       "letter": "U"
-    }
+    },
+    "clarke_available": true
   },
   "urt-u": {
     "abbr": "urt-u",
@@ -8295,7 +8590,8 @@
       "rel_path": "u/urt_u.htm",
       "full_url": "http://www.homeoint.org/clarke/u/urt_u.htm",
       "letter": "U"
-    }
+    },
+    "clarke_available": true
   },
   "usn": {
     "abbr": "usn",
@@ -8318,7 +8614,8 @@
       "rel_path": "u/ust.htm",
       "full_url": "http://www.homeoint.org/clarke/u/ust.htm",
       "letter": "U"
-    }
+    },
+    "clarke_available": true
   },
   "uva": {
     "abbr": "uva",
@@ -8332,7 +8629,8 @@
       "rel_path": "u/uva.htm",
       "full_url": "http://www.homeoint.org/clarke/u/uva.htm",
       "letter": "U"
-    }
+    },
+    "clarke_available": true
   },
   "vac": {
     "abbr": "vac",
@@ -8355,7 +8653,8 @@
       "rel_path": "v/vacc_m.htm",
       "full_url": "http://www.homeoint.org/clarke/v/vacc_m.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "valer": {
     "abbr": "valer",
@@ -8398,7 +8697,7 @@
     "full_name": "Veratrum Album",
     "boericke_idx": 668,
     "allen_key": "VERAT",
-    "kent_slug": "verat",
+    "kent_slug": null,
     "nash_slug": "veratrumalbum",
     "clarke": null
   },
@@ -8423,7 +8722,8 @@
       "rel_path": "v/verb.htm",
       "full_url": "http://www.homeoint.org/clarke/v/verb.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "verbe-u": {
     "abbr": "verbe-u",
@@ -8446,7 +8746,8 @@
       "rel_path": "v/vesp.htm",
       "full_url": "http://www.homeoint.org/clarke/v/vesp.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "vib": {
     "abbr": "vib",
@@ -8469,7 +8770,8 @@
       "rel_path": "v/vib_p.htm",
       "full_url": "http://www.homeoint.org/clarke/v/vib_p.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "vib-t": {
     "abbr": "vib-t",
@@ -8483,7 +8785,8 @@
       "rel_path": "v/vib_t.htm",
       "full_url": "http://www.homeoint.org/clarke/v/vib_t.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "vinc": {
     "abbr": "vinc",
@@ -8524,7 +8827,8 @@
       "rel_path": "v/vip.htm",
       "full_url": "http://www.homeoint.org/clarke/v/vip.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "visc": {
     "abbr": "visc",
@@ -8538,7 +8842,8 @@
       "rel_path": "v/visc.htm",
       "full_url": "http://www.homeoint.org/clarke/v/visc.htm",
       "letter": "V"
-    }
+    },
+    "clarke_available": true
   },
   "wildb": {
     "abbr": "wildb",
@@ -8552,7 +8857,8 @@
       "rel_path": "w/wildb.htm",
       "full_url": "http://www.homeoint.org/clarke/w/wildb.htm",
       "letter": "W"
-    }
+    },
+    "clarke_available": true
   },
   "wye": {
     "abbr": "wye",
@@ -8584,7 +8890,8 @@
       "rel_path": "x/xan.htm",
       "full_url": "http://www.homeoint.org/clarke/x/xan.htm",
       "letter": "X"
-    }
+    },
+    "clarke_available": true
   },
   "xero": {
     "abbr": "xero",
@@ -8607,7 +8914,8 @@
       "rel_path": "y/yohim.htm",
       "full_url": "http://www.homeoint.org/clarke/y/yohim.htm",
       "letter": "Y"
-    }
+    },
+    "clarke_available": true
   },
   "yuc": {
     "abbr": "yuc",
@@ -8621,7 +8929,8 @@
       "rel_path": "y/yuc.htm",
       "full_url": "http://www.homeoint.org/clarke/y/yuc.htm",
       "letter": "Y"
-    }
+    },
+    "clarke_available": true
   },
   "zinc": {
     "abbr": "zinc",
@@ -8662,6 +8971,7 @@
       "rel_path": "z/ziz.htm",
       "full_url": "http://www.homeoint.org/clarke/z/ziz.htm",
       "letter": "Z"
-    }
+    },
+    "clarke_available": true
   }
 }
