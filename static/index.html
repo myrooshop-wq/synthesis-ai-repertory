@@ -1564,7 +1564,7 @@
   </div>
 
   <!-- Classical Materia Medica Multi-Author Modal -->
-  <div class="modal-backdrop" id="mmModalBackdrop">
+  <div class="modal-backdrop" id="mmModalBackdrop" style="z-index: 2000;">
     <div class="modal-box mm-modal-box">
       <div class="modal-header mm-modal-header">
         <div>
@@ -1576,7 +1576,12 @@
             Classical Materia Medica Differential
           </div>
         </div>
-        <div class="modal-close" onclick="closeMateriaMedicaModal()"><i class="fa-solid fa-xmark"></i></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button id="mmBackToLibBtn" onclick="backToMMLibrary()" style="display:none; align-items: center; gap: 6px; padding: 5px 12px; font-size: 12px; font-weight: 600; border-radius: 6px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1d4ed8; cursor: pointer;">
+            <i class="fa-solid fa-arrow-left"></i> Library
+          </button>
+          <div class="modal-close" onclick="closeMateriaMedicaModal()"><i class="fa-solid fa-xmark"></i></div>
+        </div>
       </div>
       <!-- Author Navigation Tabs -->
       <div class="mm-tabs-bar" id="mmTabsBar">
@@ -3655,17 +3660,31 @@ function cycleWeight(badge, id) {
       container.innerHTML = `<div class="mm-lib-grid">${cardsHtml}</div>`;
     }
 
+    let mmOpenedFromLibrary = false;
+
     async function openRemedyFromLibrary(abbr, fullName, author) {
-      // Open the reader modal
+      mmOpenedFromLibrary = true;
+      const backBtn = document.getElementById('mmBackToLibBtn');
+      if (backBtn) backBtn.style.display = 'inline-flex';
+
+      // Open the reader modal directly on top of the library
       await openMateriaMedicaModal(abbr, fullName);
       if (author) {
         switchMMAuthorTab(author);
       }
     }
 
+    function backToMMLibrary() {
+      closeMateriaMedicaModal();
+      const libModal = document.getElementById('mmLibraryModalBackdrop');
+      if (libModal) libModal.style.display = 'flex';
+    }
+
     function closeMateriaMedicaModal() {
       const modal = document.getElementById('mmModalBackdrop');
       if (modal) modal.style.display = 'none';
+      const backBtn = document.getElementById('mmBackToLibBtn');
+      if (backBtn) backBtn.style.display = 'none';
     }
 
     // Close on clicking backdrop
